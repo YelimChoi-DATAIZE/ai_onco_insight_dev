@@ -1,0 +1,16 @@
+:root {
+    --high-color: rgba(255, 99, 132, 0.8);
+    --medium-color: rgba(54, 162, 235, 0.8);
+    --low-color: rgba(75, 192, 192, 0.8);
+    --high-color-highlight: rgba(255, 99, 132, 1);
+    --medium-color-highlight: rgba(54, 162, 235, 1);
+    --low-color-highlight: rgba(75, 192, 192, 1);
+  }
+  
+  body {
+    font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+  }
+  

@@ -1,0 +1,42 @@
+/* 세로줄 추가 */
+.ag-theme-alpine .ag-root-wrapper-body .ag-row .ag-cell {
+    border-right: 1px solid #ddd !important; /* 세로 경계선 추가 */
+    border-radius: 0px !important; /* 둥근 모서리 제거 */
+  }
+  
+  /* 마지막 셀의 불필요한 세로선 제거 */
+  .ag-theme-alpine .ag-root-wrapper-body .ag-row .ag-cell:last-child {
+    border-right: none !important;
+  }
+  
+  /* 헤더 셀 둥근 모서리 제거 */
+  .ag-theme-alpine .ag-header-cell {
+    border-radius: 0px !important;
+  }
+  
+  /* 그리드 외부 컨테이너 둥근 모서리 제거 */
+  .ag-theme-alpine {
+    border-radius: 0px !important;
+  }
+
+  .ag-theme-alpine .ag-root-wrapper  {
+    border-radius: 0px !important;
+}
+
+/* 컬럼 헤더의 폰트 크기 */
+.ag-theme-alpine .ag-header-cell {
+    font-size: 12px !important; /* 헤더 폰트 크기 */
+  }
+  
+  /* 셀의 폰트 크기 */
+  .ag-theme-alpine .ag-cell {
+    font-size: 12px !important; /* 셀 폰트 크기 */
+  }
+  
+  .ag-theme-quartz {
+    --ag-header-height: 30px;
+    --ag-header-foreground-color: white;
+    --ag-header-background-color: black;
+    --ag-header-cell-hover-background-color: rgb(80, 40, 140);
+    --ag-header-cell-moving-background-color: rgb(80, 40, 140);
+}

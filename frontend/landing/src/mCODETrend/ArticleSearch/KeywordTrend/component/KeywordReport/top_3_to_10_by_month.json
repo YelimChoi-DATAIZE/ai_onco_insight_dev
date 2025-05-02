@@ -1,0 +1,1067 @@
+[
+    {
+        "month": "Apr",
+        "Keyword": "CDK4\/6 inhibitors",
+        "Frequency": 7
+    },
+    {
+        "month": "Apr",
+        "Keyword": "Metastasis",
+        "Frequency": 6
+    },
+    {
+        "month": "Apr",
+        "Keyword": "Prognosis",
+        "Frequency": 6
+    },
+    {
+        "month": "Apr",
+        "Keyword": "metastatic breast cancer",
+        "Frequency": 6
+    },
+    {
+        "month": "Apr",
+        "Keyword": "palbociclib",
+        "Frequency": 6
+    },
+    {
+        "month": "Apr",
+        "Keyword": "Breast neoplasms",
+        "Frequency": 5
+    },
+    {
+        "month": "Apr",
+        "Keyword": "Triple-negative breast cancer",
+        "Frequency": 5
+    },
+    {
+        "month": "Apr",
+        "Keyword": "prognosis",
+        "Frequency": 5
+    },
+    {
+        "month": "Apr",
+        "Keyword": "Cancer",
+        "Frequency": 4
+    },
+    {
+        "month": "Apr",
+        "Keyword": "Endocrine therapy",
+        "Frequency": 4
+    },
+    {
+        "month": "Apr-Jun",
+        "Keyword": "HER2\/neu",
+        "Frequency": 1
+    },
+    {
+        "month": "Apr-Jun",
+        "Keyword": "Survivorship",
+        "Frequency": 1
+    },
+    {
+        "month": "Apr-Jun",
+        "Keyword": "breast cancer",
+        "Frequency": 1
+    },
+    {
+        "month": "Apr-Jun",
+        "Keyword": "cell culture",
+        "Frequency": 1
+    },
+    {
+        "month": "Apr-Jun",
+        "Keyword": "dihydroacridine derivative",
+        "Frequency": 1
+    },
+    {
+        "month": "Apr-Jun",
+        "Keyword": "epidermal growth factor receptor",
+        "Frequency": 1
+    },
+    {
+        "month": "Apr-Jun",
+        "Keyword": "lymph node metastasis",
+        "Frequency": 1
+    },
+    {
+        "month": "Apr-Jun",
+        "Keyword": "molecular docking",
+        "Frequency": 1
+    },
+    {
+        "month": "Apr-Jun",
+        "Keyword": "patient-derived organoid",
+        "Frequency": 1
+    },
+    {
+        "month": "Apr-Jun",
+        "Keyword": "radionuclide diagnostics",
+        "Frequency": 1
+    },
+    {
+        "month": "Aug",
+        "Keyword": "Prognosis",
+        "Frequency": 9
+    },
+    {
+        "month": "Aug",
+        "Keyword": "HER2",
+        "Frequency": 6
+    },
+    {
+        "month": "Aug",
+        "Keyword": "Bone metastasis",
+        "Frequency": 5
+    },
+    {
+        "month": "Aug",
+        "Keyword": "Cancer",
+        "Frequency": 5
+    },
+    {
+        "month": "Aug",
+        "Keyword": "Survival",
+        "Frequency": 5
+    },
+    {
+        "month": "Aug",
+        "Keyword": "cancer",
+        "Frequency": 5
+    },
+    {
+        "month": "Aug",
+        "Keyword": "Brain metastases",
+        "Frequency": 4
+    },
+    {
+        "month": "Aug",
+        "Keyword": "Brain metastasis",
+        "Frequency": 4
+    },
+    {
+        "month": "Aug",
+        "Keyword": "CDK4\/6 inhibitors",
+        "Frequency": 4
+    },
+    {
+        "month": "Aug",
+        "Keyword": "Chemotherapy",
+        "Frequency": 4
+    },
+    {
+        "month": "Dec",
+        "Keyword": "metastatic breast cancer",
+        "Frequency": 10
+    },
+    {
+        "month": "Dec",
+        "Keyword": "Immunotherapy",
+        "Frequency": 8
+    },
+    {
+        "month": "Dec",
+        "Keyword": "Triple-negative breast cancer",
+        "Frequency": 8
+    },
+    {
+        "month": "Dec",
+        "Keyword": "cancer",
+        "Frequency": 8
+    },
+    {
+        "month": "Dec",
+        "Keyword": "CDK4\/6 inhibitors",
+        "Frequency": 7
+    },
+    {
+        "month": "Dec",
+        "Keyword": "Breast Cancer",
+        "Frequency": 6
+    },
+    {
+        "month": "Dec",
+        "Keyword": "CDK4\/6 inhibitor",
+        "Frequency": 6
+    },
+    {
+        "month": "Dec",
+        "Keyword": "Cancer",
+        "Frequency": 6
+    },
+    {
+        "month": "Dec",
+        "Keyword": "Chemotherapy",
+        "Frequency": 6
+    },
+    {
+        "month": "Dec",
+        "Keyword": "TNBC",
+        "Frequency": 6
+    },
+    {
+        "month": "Feb",
+        "Keyword": "cancer",
+        "Frequency": 8
+    },
+    {
+        "month": "Feb",
+        "Keyword": "Bone metastasis",
+        "Frequency": 7
+    },
+    {
+        "month": "Feb",
+        "Keyword": "Cancer",
+        "Frequency": 7
+    },
+    {
+        "month": "Feb",
+        "Keyword": "Triple-negative breast cancer",
+        "Frequency": 6
+    },
+    {
+        "month": "Feb",
+        "Keyword": "metastatic breast cancer",
+        "Frequency": 6
+    },
+    {
+        "month": "Feb",
+        "Keyword": "triple-negative breast cancer",
+        "Frequency": 6
+    },
+    {
+        "month": "Feb",
+        "Keyword": "Advanced breast cancer",
+        "Frequency": 5
+    },
+    {
+        "month": "Feb",
+        "Keyword": "HER2",
+        "Frequency": 5
+    },
+    {
+        "month": "Feb",
+        "Keyword": "Immunotherapy",
+        "Frequency": 5
+    },
+    {
+        "month": "Feb",
+        "Keyword": "TNBC",
+        "Frequency": 5
+    },
+    {
+        "month": "Jan",
+        "Keyword": "Triple-negative breast cancer",
+        "Frequency": 9
+    },
+    {
+        "month": "Jan",
+        "Keyword": "metastatic breast cancer",
+        "Frequency": 9
+    },
+    {
+        "month": "Jan",
+        "Keyword": "Prognosis",
+        "Frequency": 8
+    },
+    {
+        "month": "Jan",
+        "Keyword": "Quality of life",
+        "Frequency": 7
+    },
+    {
+        "month": "Jan",
+        "Keyword": "Chemotherapy",
+        "Frequency": 6
+    },
+    {
+        "month": "Jan",
+        "Keyword": "HER2-low",
+        "Frequency": 6
+    },
+    {
+        "month": "Jan",
+        "Keyword": "HER2-positive",
+        "Frequency": 6
+    },
+    {
+        "month": "Jan",
+        "Keyword": "immunotherapy",
+        "Frequency": 6
+    },
+    {
+        "month": "Jan",
+        "Keyword": "triple-negative breast cancer",
+        "Frequency": 6
+    },
+    {
+        "month": "Jan",
+        "Keyword": "HER2",
+        "Frequency": 5
+    },
+    {
+        "month": "Jan-Dec",
+        "Keyword": "I1",
+        "Frequency": 2
+    },
+    {
+        "month": "Jan-Dec",
+        "Keyword": "Oncology",
+        "Frequency": 2
+    },
+    {
+        "month": "Jan-Dec",
+        "Keyword": "Triple-negative breast cancer",
+        "Frequency": 2
+    },
+    {
+        "month": "Jan-Dec",
+        "Keyword": "brain metastases",
+        "Frequency": 2
+    },
+    {
+        "month": "Jan-Dec",
+        "Keyword": "chemotherapy",
+        "Frequency": 2
+    },
+    {
+        "month": "Jan-Dec",
+        "Keyword": "metastasis",
+        "Frequency": 2
+    },
+    {
+        "month": "Jan-Dec",
+        "Keyword": "nomogram",
+        "Frequency": 2
+    },
+    {
+        "month": "Jan-Dec",
+        "Keyword": "non-small cell lung cancer",
+        "Frequency": 2
+    },
+    {
+        "month": "Jan-Dec",
+        "Keyword": "oncology",
+        "Frequency": 2
+    },
+    {
+        "month": "Jan-Dec",
+        "Keyword": "palliative care",
+        "Frequency": 2
+    },
+    {
+        "month": "Jan-Feb",
+        "Keyword": "Bismuth-213",
+        "Frequency": 1
+    },
+    {
+        "month": "Jan-Feb",
+        "Keyword": "Cancer",
+        "Frequency": 1
+    },
+    {
+        "month": "Jan-Feb",
+        "Keyword": "Dosimetry",
+        "Frequency": 1
+    },
+    {
+        "month": "Jan-Feb",
+        "Keyword": "ERBB4",
+        "Frequency": 1
+    },
+    {
+        "month": "Jan-Feb",
+        "Keyword": "Francium-221",
+        "Frequency": 1
+    },
+    {
+        "month": "Jan-Feb",
+        "Keyword": "Hoffman effect",
+        "Frequency": 1
+    },
+    {
+        "month": "Jan-Feb",
+        "Keyword": "KRAS",
+        "Frequency": 1
+    },
+    {
+        "month": "Jan-Feb",
+        "Keyword": "MHC I",
+        "Frequency": 1
+    },
+    {
+        "month": "Jan-Feb",
+        "Keyword": "MLN64",
+        "Frequency": 1
+    },
+    {
+        "month": "Jan-Feb",
+        "Keyword": "MMP1",
+        "Frequency": 1
+    },
+    {
+        "month": "Jan-Jun",
+        "Keyword": "squamous cell carcinoma",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul",
+        "Keyword": "cancer",
+        "Frequency": 6
+    },
+    {
+        "month": "Jul",
+        "Keyword": "triple-negative breast cancer",
+        "Frequency": 6
+    },
+    {
+        "month": "Jul",
+        "Keyword": "Chemotherapy",
+        "Frequency": 5
+    },
+    {
+        "month": "Jul",
+        "Keyword": "Advanced breast cancer",
+        "Frequency": 4
+    },
+    {
+        "month": "Jul",
+        "Keyword": "EMT",
+        "Frequency": 4
+    },
+    {
+        "month": "Jul",
+        "Keyword": "HER2",
+        "Frequency": 4
+    },
+    {
+        "month": "Jul",
+        "Keyword": "Palbociclib",
+        "Frequency": 4
+    },
+    {
+        "month": "Jul",
+        "Keyword": "Tumor microenvironment",
+        "Frequency": 4
+    },
+    {
+        "month": "Jul",
+        "Keyword": "apoptosis",
+        "Frequency": 4
+    },
+    {
+        "month": "Jul",
+        "Keyword": "chemotherapy",
+        "Frequency": 4
+    },
+    {
+        "month": "Jul-Aug",
+        "Keyword": "Cardiovascular prevention",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Aug",
+        "Keyword": "ESR1 mutation",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Aug",
+        "Keyword": "Elacestrant",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Aug",
+        "Keyword": "Endocrine therapy",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Aug",
+        "Keyword": "Exercise",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Aug",
+        "Keyword": "Hormonotherapie",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Aug",
+        "Keyword": "Inhibiteur aromatase",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Aug",
+        "Keyword": "Inhibiteur selectif du recepteur des oestrogenes",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Aug",
+        "Keyword": "Metastatic breast",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Aug",
+        "Keyword": "Mutation ESR1",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Dec",
+        "Keyword": "Dorsal root ganglia",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Dec",
+        "Keyword": "Metastasis",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Dec",
+        "Keyword": "Modified botulinum compounds",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Dec",
+        "Keyword": "Nerve growth factor",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Dec",
+        "Keyword": "Tumor necrosis factor alpha",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Dec",
+        "Keyword": "Voltage-gated sodium channels",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Sep",
+        "Keyword": "Breast neoplasm",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Sep",
+        "Keyword": "Chromatography",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Sep",
+        "Keyword": "Ion-mobility spectrometry",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Sep",
+        "Keyword": "Liquid",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Sep",
+        "Keyword": "Mass spectrometry",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Sep",
+        "Keyword": "Neoplasms",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Sep",
+        "Keyword": "Protein-protein interaction domain",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Sep",
+        "Keyword": "Proteomics",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Sep",
+        "Keyword": "breast angiosarcoma",
+        "Frequency": 1
+    },
+    {
+        "month": "Jul-Sep",
+        "Keyword": "depression",
+        "Frequency": 1
+    },
+    {
+        "month": "Jun",
+        "Keyword": "metastatic breast cancer",
+        "Frequency": 10
+    },
+    {
+        "month": "Jun",
+        "Keyword": "Cancer",
+        "Frequency": 8
+    },
+    {
+        "month": "Jun",
+        "Keyword": "Chemotherapy",
+        "Frequency": 7
+    },
+    {
+        "month": "Jun",
+        "Keyword": "HER2",
+        "Frequency": 7
+    },
+    {
+        "month": "Jun",
+        "Keyword": "Bone metastasis",
+        "Frequency": 5
+    },
+    {
+        "month": "Jun",
+        "Keyword": "Breast",
+        "Frequency": 5
+    },
+    {
+        "month": "Jun",
+        "Keyword": "Pertuzumab",
+        "Frequency": 5
+    },
+    {
+        "month": "Jun",
+        "Keyword": "Survival",
+        "Frequency": 5
+    },
+    {
+        "month": "Jun",
+        "Keyword": "Triple-negative breast cancer",
+        "Frequency": 5
+    },
+    {
+        "month": "Jun",
+        "Keyword": "brain metastasis",
+        "Frequency": 5
+    },
+    {
+        "month": "Mar",
+        "Keyword": "cancer",
+        "Frequency": 6
+    },
+    {
+        "month": "Mar",
+        "Keyword": "HER2",
+        "Frequency": 5
+    },
+    {
+        "month": "Mar",
+        "Keyword": "chemotherapy",
+        "Frequency": 5
+    },
+    {
+        "month": "Mar",
+        "Keyword": "metastasis",
+        "Frequency": 5
+    },
+    {
+        "month": "Mar",
+        "Keyword": "Cancer du sein",
+        "Frequency": 4
+    },
+    {
+        "month": "Mar",
+        "Keyword": "HER2-low",
+        "Frequency": 4
+    },
+    {
+        "month": "Mar",
+        "Keyword": "Prevention",
+        "Frequency": 4
+    },
+    {
+        "month": "Mar",
+        "Keyword": "Triple-negative breast cancer",
+        "Frequency": 4
+    },
+    {
+        "month": "Mar",
+        "Keyword": "immunotherapy",
+        "Frequency": 4
+    },
+    {
+        "month": "Mar",
+        "Keyword": "prognosis",
+        "Frequency": 4
+    },
+    {
+        "month": "Mar-Apr",
+        "Keyword": "CSF",
+        "Frequency": 1
+    },
+    {
+        "month": "Mar-Apr",
+        "Keyword": "Cancer screening",
+        "Frequency": 1
+    },
+    {
+        "month": "Mar-Apr",
+        "Keyword": "Cancer treatment",
+        "Frequency": 1
+    },
+    {
+        "month": "Mar-Apr",
+        "Keyword": "Cerebrospinal fluid",
+        "Frequency": 1
+    },
+    {
+        "month": "Mar-Apr",
+        "Keyword": "Cytology processing",
+        "Frequency": 1
+    },
+    {
+        "month": "Mar-Apr",
+        "Keyword": "Cytopathology",
+        "Frequency": 1
+    },
+    {
+        "month": "Mar-Apr",
+        "Keyword": "Effusion",
+        "Frequency": 1
+    },
+    {
+        "month": "Mar-Apr",
+        "Keyword": "Federated analysis",
+        "Frequency": 1
+    },
+    {
+        "month": "Mar-Apr",
+        "Keyword": "Fixative",
+        "Frequency": 1
+    },
+    {
+        "month": "Mar-Apr",
+        "Keyword": "Lung cancer",
+        "Frequency": 1
+    },
+    {
+        "month": "May",
+        "Keyword": "Brain metastasis",
+        "Frequency": 5
+    },
+    {
+        "month": "May",
+        "Keyword": "Chemotherapy",
+        "Frequency": 5
+    },
+    {
+        "month": "May",
+        "Keyword": "HER2-positive",
+        "Frequency": 5
+    },
+    {
+        "month": "May",
+        "Keyword": "Metastasis",
+        "Frequency": 5
+    },
+    {
+        "month": "May",
+        "Keyword": "TNBC",
+        "Frequency": 5
+    },
+    {
+        "month": "May",
+        "Keyword": "Triple negative breast cancer",
+        "Frequency": 5
+    },
+    {
+        "month": "May",
+        "Keyword": "Triple-negative breast cancer",
+        "Frequency": 5
+    },
+    {
+        "month": "May",
+        "Keyword": "cancer",
+        "Frequency": 5
+    },
+    {
+        "month": "May",
+        "Keyword": "chemotherapy",
+        "Frequency": 5
+    },
+    {
+        "month": "May",
+        "Keyword": "metastatic breast cancer",
+        "Frequency": 5
+    },
+    {
+        "month": "May-Jun",
+        "Keyword": "Late complications",
+        "Frequency": 1
+    },
+    {
+        "month": "May-Jun",
+        "Keyword": "Local recurrence",
+        "Frequency": 1
+    },
+    {
+        "month": "May-Jun",
+        "Keyword": "Lymphomatoid papulosis",
+        "Frequency": 1
+    },
+    {
+        "month": "May-Jun",
+        "Keyword": "Mycosis fungoides",
+        "Frequency": 1
+    },
+    {
+        "month": "Nov",
+        "Keyword": "metastatic breast cancer",
+        "Frequency": 7
+    },
+    {
+        "month": "Nov",
+        "Keyword": "HER2",
+        "Frequency": 6
+    },
+    {
+        "month": "Nov",
+        "Keyword": "Metastatic breast cancer",
+        "Frequency": 6
+    },
+    {
+        "month": "Nov",
+        "Keyword": "Apoptosis",
+        "Frequency": 5
+    },
+    {
+        "month": "Nov",
+        "Keyword": "Biomarkers",
+        "Frequency": 4
+    },
+    {
+        "month": "Nov",
+        "Keyword": "Breast Cancer",
+        "Frequency": 4
+    },
+    {
+        "month": "Nov",
+        "Keyword": "Triple-negative breast cancer",
+        "Frequency": 4
+    },
+    {
+        "month": "Nov",
+        "Keyword": "immunotherapy",
+        "Frequency": 4
+    },
+    {
+        "month": "Nov",
+        "Keyword": "BRCA",
+        "Frequency": 3
+    },
+    {
+        "month": "Nov",
+        "Keyword": "CDK4\/6 inhibitor",
+        "Frequency": 3
+    },
+    {
+        "month": "Nov-Dec",
+        "Keyword": "Cervix",
+        "Frequency": 1
+    },
+    {
+        "month": "Nov-Dec",
+        "Keyword": "Co-55",
+        "Frequency": 1
+    },
+    {
+        "month": "Nov-Dec",
+        "Keyword": "FACT-B",
+        "Frequency": 1
+    },
+    {
+        "month": "Nov-Dec",
+        "Keyword": "Gastrin-releasing peptide receptor",
+        "Frequency": 1
+    },
+    {
+        "month": "Nov-Dec",
+        "Keyword": "HBOC syndrome",
+        "Frequency": 1
+    },
+    {
+        "month": "Nov-Dec",
+        "Keyword": "HER2",
+        "Frequency": 1
+    },
+    {
+        "month": "Nov-Dec",
+        "Keyword": "Integrated treatment",
+        "Frequency": 1
+    },
+    {
+        "month": "Nov-Dec",
+        "Keyword": "Long term survival",
+        "Frequency": 1
+    },
+    {
+        "month": "Nov-Dec",
+        "Keyword": "Lu-177",
+        "Frequency": 1
+    },
+    {
+        "month": "Nov-Dec",
+        "Keyword": "PEG(12)",
+        "Frequency": 1
+    },
+    {
+        "month": "Oct",
+        "Keyword": "Cancer",
+        "Frequency": 7
+    },
+    {
+        "month": "Oct",
+        "Keyword": "metastatic breast cancer",
+        "Frequency": 7
+    },
+    {
+        "month": "Oct",
+        "Keyword": "triple-negative breast cancer",
+        "Frequency": 7
+    },
+    {
+        "month": "Oct",
+        "Keyword": "HER2",
+        "Frequency": 6
+    },
+    {
+        "month": "Oct",
+        "Keyword": "cancer",
+        "Frequency": 6
+    },
+    {
+        "month": "Oct",
+        "Keyword": "Brain metastasis",
+        "Frequency": 5
+    },
+    {
+        "month": "Oct",
+        "Keyword": "Triple-negative breast cancer",
+        "Frequency": 5
+    },
+    {
+        "month": "Oct",
+        "Keyword": "immunotherapy",
+        "Frequency": 5
+    },
+    {
+        "month": "Oct",
+        "Keyword": "Breast neoplasms",
+        "Frequency": 4
+    },
+    {
+        "month": "Oct",
+        "Keyword": "CDK4\/6 inhibitors",
+        "Frequency": 4
+    },
+    {
+        "month": "Sep",
+        "Keyword": "metastasis",
+        "Frequency": 7
+    },
+    {
+        "month": "Sep",
+        "Keyword": "Breast neoplasms",
+        "Frequency": 5
+    },
+    {
+        "month": "Sep",
+        "Keyword": "chemotherapy",
+        "Frequency": 5
+    },
+    {
+        "month": "Sep",
+        "Keyword": "Cancer",
+        "Frequency": 4
+    },
+    {
+        "month": "Sep",
+        "Keyword": "HER2-low",
+        "Frequency": 4
+    },
+    {
+        "month": "Sep",
+        "Keyword": "Palbociclib",
+        "Frequency": 4
+    },
+    {
+        "month": "Sep",
+        "Keyword": "Prognosis",
+        "Frequency": 4
+    },
+    {
+        "month": "Sep",
+        "Keyword": "Quality of life",
+        "Frequency": 4
+    },
+    {
+        "month": "Sep",
+        "Keyword": "TNBC",
+        "Frequency": 4
+    },
+    {
+        "month": "Sep",
+        "Keyword": "Trastuzumab",
+        "Frequency": 4
+    },
+    {
+        "month": "Sep-Oct",
+        "Keyword": "Colorectal cancers",
+        "Frequency": 1
+    },
+    {
+        "month": "Sep-Oct",
+        "Keyword": "Geldanamycin",
+        "Frequency": 1
+    },
+    {
+        "month": "Sep-Oct",
+        "Keyword": "Glandular features",
+        "Frequency": 1
+    },
+    {
+        "month": "Sep-Oct",
+        "Keyword": "Heat shock protein 90",
+        "Frequency": 1
+    },
+    {
+        "month": "Sep-Oct",
+        "Keyword": "Left atrium",
+        "Frequency": 1
+    },
+    {
+        "month": "Sep-Oct",
+        "Keyword": "Myxoma",
+        "Frequency": 1
+    },
+    {
+        "month": "Sep-Oct",
+        "Keyword": "PET imaging",
+        "Frequency": 1
+    },
+    {
+        "month": "Sep-Oct",
+        "Keyword": "anoikis resistance",
+        "Frequency": 1
+    },
+    {
+        "month": "Sep-Oct",
+        "Keyword": "axillary lymph node dissection",
+        "Frequency": 1
+    },
+    {
+        "month": "Sep-Oct",
+        "Keyword": "axillary management",
+        "Frequency": 1
+    },
+    {
+        "month": "Spring",
+        "Keyword": "Robust optimization",
+        "Frequency": 1
+    },
+    {
+        "month": "Spring",
+        "Keyword": "Soft gradients",
+        "Frequency": 1
+    }
+]

@@ -1,0 +1,281 @@
+[
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "ObservationStatusVS",
+        "Code": "registered",
+        "System": "http://hl7.org/fhir/observation-status",
+        "Display": "Registered",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "ObservationStatusVS",
+        "Code": "preliminary",
+        "System": "http://hl7.org/fhir/observation-status",
+        "Display": "Preliminary",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "ObservationStatusVS",
+        "Code": "final",
+        "System": "http://hl7.org/fhir/observation-status",
+        "Display": "Final",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "ObservationStatusVS",
+        "Code": "amended",
+        "System": "http://hl7.org/fhir/observation-status",
+        "Display": "Amended",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "ObservationStatusVS",
+        "Code": "corrected",
+        "System": "http://hl7.org/fhir/observation-status",
+        "Display": "Corrected",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "ObservationStatusVS",
+        "Code": "cancelled",
+        "System": "http://hl7.org/fhir/observation-status",
+        "Display": "Cancelled",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "ObservationStatusVS",
+        "Code": "entered-in-error",
+        "System": "http://hl7.org/fhir/observation-status",
+        "Display": "Entered in Error",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "ObservationStatusVS",
+        "Code": "unknown",
+        "System": "http://hl7.org/fhir/observation-status",
+        "Display": "Unknown",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "ObservationCategoryVS",
+        "Code": "social-history",
+        "System": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "Display": "Social History",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "ObservationCategoryVS",
+        "Code": "vital-signs",
+        "System": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "Display": "Vital Signs",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "ObservationCategoryVS",
+        "Code": "imaging",
+        "System": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "Display": "Imaging",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "ObservationCategoryVS",
+        "Code": "laboratory",
+        "System": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "Display": "Laboratory",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "ObservationCategoryVS",
+        "Code": "procedure",
+        "System": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "Display": "Procedure",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "ObservationCategoryVS",
+        "Code": "survey",
+        "System": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "Display": "Survey",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "ObservationCategoryVS",
+        "Code": "exam",
+        "System": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "Display": "Exam",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "ObservationCategoryVS",
+        "Code": "therapy",
+        "System": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "Display": "Therapy",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "ObservationCategoryVS",
+        "Code": "activity",
+        "System": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "Display": "Activity",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "UsCoreSimpleObservationVS",
+        "Code": "sdoh",
+        "System": "http://hl7.org/fhir/us/core/CodeSystem/us-core-category",
+        "Display": "SDOH",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "UsCoreSimpleObservationVS",
+        "Code": "functional-status",
+        "System": "http://hl7.org/fhir/us/core/CodeSystem/us-core-category",
+        "Display": "Functional Status",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "UsCoreSimpleObservationVS",
+        "Code": "disability-status",
+        "System": "http://hl7.org/fhir/us/core/CodeSystem/us-core-category",
+        "Display": "Disability Status",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "UsCoreSimpleObservationVS",
+        "Code": "cognitive-status",
+        "System": "http://hl7.org/fhir/us/core/CodeSystem/us-core-category",
+        "Display": "Cognitive Status",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "UsCoreSimpleObservationVS",
+        "Code": "social-history",
+        "System": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "Display": "Social History",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "UsCoreSimpleObservationVS",
+        "Code": "vital-signs",
+        "System": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "Display": "Vital Signs",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "UsCoreSimpleObservationVS",
+        "Code": "imaging",
+        "System": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "Display": "Imaging",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "UsCoreSimpleObservationVS",
+        "Code": "laboratory",
+        "System": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "Display": "Laboratory",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "UsCoreSimpleObservationVS",
+        "Code": "procedure",
+        "System": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "Display": "Procedure",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "UsCoreSimpleObservationVS",
+        "Code": "survey",
+        "System": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "Display": "Survey",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "UsCoreSimpleObservationVS",
+        "Code": "exam",
+        "System": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "Display": "Exam",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "UsCoreSimpleObservationVS",
+        "Code": "therapy",
+        "System": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "Display": "Therapy",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "UsCoreSimpleObservationVS",
+        "Code": "activity",
+        "System": "http://terminology.hl7.org/CodeSystem/observation-category",
+        "Display": "Activity",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    },
+    {
+        "Profile name": "TNM Stage Group Profile",
+        "VS name": "TNMStageGroupStagingTypeVS",
+        "Code": 399390009,
+        "System": "http://snomed.info/sct",
+        "Display": "TNM stage grouping",
+        "category": "disease",
+        "icon": "/static/Images/mcode_icon/Disease.svg"
+    }
+]

@@ -1,0 +1,503 @@
+{
+    "breast cancer": [
+      {
+        "month": "Jan",
+        "value": 179
+      },
+      {
+        "month": "Feb",
+        "value": 153
+      },
+      {
+        "month": "Mar",
+        "value": 146
+      },
+      {
+        "month": "Apr",
+        "value": 204
+      },
+      {
+        "month": "May",
+        "value": 199
+      },
+      {
+        "month": "Jun",
+        "value": 184
+      },
+      {
+        "month": "Jul",
+        "value": 213
+      },
+      {
+        "month": "Aug",
+        "value": 271
+      },
+      {
+        "month": "Sep",
+        "value": 297
+      },
+      {
+        "month": "Oct",
+        "value": 273
+      },
+      {
+        "month": "Nov",
+        "value": 271
+      },
+      {
+        "month": "Dec",
+        "value": 256
+      }
+    ],
+    "lung cancer": [
+      {
+        "month": "Jan",
+        "value": 142
+      },
+      {
+        "month": "Feb",
+        "value": 159
+      },
+      {
+        "month": "Mar",
+        "value": 129
+      },
+      {
+        "month": "Apr",
+        "value": 132
+      },
+      {
+        "month": "May",
+        "value": 108
+      },
+      {
+        "month": "Jun",
+        "value": 74
+      },
+      {
+        "month": "Jul",
+        "value": 91
+      },
+      {
+        "month": "Aug",
+        "value": 58
+      },
+      {
+        "month": "Sep",
+        "value": 39
+      },
+      {
+        "month": "Oct",
+        "value": 38
+      },
+      {
+        "month": "Nov",
+        "value": 19
+      },
+      {
+        "month": "Dec",
+        "value": 76
+      }
+    ],
+    "prognosis": [
+      {
+        "month": "Jan",
+        "value": 110
+      },
+      {
+        "month": "Feb",
+        "value": 73
+      },
+      {
+        "month": "Mar",
+        "value": 75
+      },
+      {
+        "month": "Apr",
+        "value": 50
+      },
+      {
+        "month": "May",
+        "value": 18
+      },
+      {
+        "month": "Jun",
+        "value": 0
+      },
+      {
+        "month": "Jul",
+        "value": 0
+      },
+      {
+        "month": "Aug",
+        "value": 22
+      },
+      {
+        "month": "Sep",
+        "value": 23
+      },
+      {
+        "month": "Oct",
+        "value": 33
+      },
+      {
+        "month": "Nov",
+        "value": 13
+      },
+      {
+        "month": "Dec",
+        "value": 61
+      }
+    ],
+    "metastasis": [
+      {
+        "month": "Jan",
+        "value": 113
+      },
+      {
+        "month": "Feb",
+        "value": 124
+      },
+      {
+        "month": "Mar",
+        "value": 176
+      },
+      {
+        "month": "Apr",
+        "value": 223
+      },
+      {
+        "month": "May",
+        "value": 234
+      },
+      {
+        "month": "Jun",
+        "value": 225
+      },
+      {
+        "month": "Jul",
+        "value": 188
+      },
+      {
+        "month": "Aug",
+        "value": 183
+      },
+      {
+        "month": "Sep",
+        "value": 239
+      },
+      {
+        "month": "Oct",
+        "value": 237
+      },
+      {
+        "month": "Nov",
+        "value": 214
+      },
+      {
+        "month": "Dec",
+        "value": 207
+      }
+    ],
+    "chemotherapy": [
+      {
+        "month": "Jan",
+        "value": 121
+      },
+      {
+        "month": "Feb",
+        "value": 83
+      },
+      {
+        "month": "Mar",
+        "value": 103
+      },
+      {
+        "month": "Apr",
+        "value": 137
+      },
+      {
+        "month": "May",
+        "value": 180
+      },
+      {
+        "month": "Jun",
+        "value": 178
+      },
+      {
+        "month": "Jul",
+        "value": 156
+      },
+      {
+        "month": "Aug",
+        "value": 202
+      },
+      {
+        "month": "Sep",
+        "value": 213
+      },
+      {
+        "month": "Oct",
+        "value": 196
+      },
+      {
+        "month": "Nov",
+        "value": 243
+      },
+      {
+        "month": "Dec",
+        "value": 266
+      }
+    ],
+    "radiation therapy": [
+      {
+        "month": "Jan",
+        "value": 190
+      },
+      {
+        "month": "Feb",
+        "value": 164
+      },
+      {
+        "month": "Mar",
+        "value": 188
+      },
+      {
+        "month": "Apr",
+        "value": 236
+      },
+      {
+        "month": "May",
+        "value": 238
+      },
+      {
+        "month": "Jun",
+        "value": 261
+      },
+      {
+        "month": "Jul",
+        "value": 246
+      },
+      {
+        "month": "Aug",
+        "value": 293
+      },
+      {
+        "month": "Sep",
+        "value": 275
+      },
+      {
+        "month": "Oct",
+        "value": 308
+      },
+      {
+        "month": "Nov",
+        "value": 287
+      },
+      {
+        "month": "Dec",
+        "value": 346
+      }
+    ],
+    "triple negative": [
+      {
+        "month": "Jan",
+        "value": 203
+      },
+      {
+        "month": "Feb",
+        "value": 226
+      },
+      {
+        "month": "Mar",
+        "value": 211
+      },
+      {
+        "month": "Apr",
+        "value": 228
+      },
+      {
+        "month": "May",
+        "value": 275
+      },
+      {
+        "month": "Jun",
+        "value": 262
+      },
+      {
+        "month": "Jul",
+        "value": 240
+      },
+      {
+        "month": "Aug",
+        "value": 245
+      },
+      {
+        "month": "Sep",
+        "value": 213
+      },
+      {
+        "month": "Oct",
+        "value": 258
+      },
+      {
+        "month": "Nov",
+        "value": 236
+      },
+      {
+        "month": "Dec",
+        "value": 274
+      }
+    ],
+    "screening": [
+      {
+        "month": "Jan",
+        "value": 136
+      },
+      {
+        "month": "Feb",
+        "value": 97
+      },
+      {
+        "month": "Mar",
+        "value": 104
+      },
+      {
+        "month": "Apr",
+        "value": 74
+      },
+      {
+        "month": "May",
+        "value": 105
+      },
+      {
+        "month": "Jun",
+        "value": 103
+      },
+      {
+        "month": "Jul",
+        "value": 80
+      },
+      {
+        "month": "Aug",
+        "value": 53
+      },
+      {
+        "month": "Sep",
+        "value": 92
+      },
+      {
+        "month": "Oct",
+        "value": 106
+      },
+      {
+        "month": "Nov",
+        "value": 142
+      },
+      {
+        "month": "Dec",
+        "value": 162
+      }
+    ],
+    "biomarker": [
+      {
+        "month": "Jan",
+        "value": 73
+      },
+      {
+        "month": "Feb",
+        "value": 107
+      },
+      {
+        "month": "Mar",
+        "value": 107
+      },
+      {
+        "month": "Apr",
+        "value": 122
+      },
+      {
+        "month": "May",
+        "value": 124
+      },
+      {
+        "month": "Jun",
+        "value": 161
+      },
+      {
+        "month": "Jul",
+        "value": 213
+      },
+      {
+        "month": "Aug",
+        "value": 185
+      },
+      {
+        "month": "Sep",
+        "value": 183
+      },
+      {
+        "month": "Oct",
+        "value": 239
+      },
+      {
+        "month": "Nov",
+        "value": 251
+      },
+      {
+        "month": "Dec",
+        "value": 273
+      }
+    ],
+    "clinical trial": [
+      {
+        "month": "Jan",
+        "value": 136
+      },
+      {
+        "month": "Feb",
+        "value": 104
+      },
+      {
+        "month": "Mar",
+        "value": 119
+      },
+      {
+        "month": "Apr",
+        "value": 86
+      },
+      {
+        "month": "May",
+        "value": 107
+      },
+      {
+        "month": "Jun",
+        "value": 134
+      },
+      {
+        "month": "Jul",
+        "value": 104
+      },
+      {
+        "month": "Aug",
+        "value": 137
+      },
+      {
+        "month": "Sep",
+        "value": 159
+      },
+      {
+        "month": "Oct",
+        "value": 148
+      },
+      {
+        "month": "Nov",
+        "value": 198
+      },
+      {
+        "month": "Dec",
+        "value": 199
+      }
+    ]
+  }
+  

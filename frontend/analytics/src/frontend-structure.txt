@@ -1,0 +1,147 @@
+C:.
+|   App.css
+|   App.js
+|   App.test.js
+|   ClipboardContext.js
+|   frontend-structure.txt
+|   index.css
+|   index.js
+|   logo.svg
+|   reportWebVitals.js
+|   setupTests.js
+|   
++---DataSheet
+|       index.js
+|       style.css
+|       
++---Menubar
+|       index.js
+|       
++---OutputView
+|   +---Analysis1
+|   |       index.js
+|   |       TransferList.js
+|   |       
+|   +---Engineering1
+|   |   |   index.js
+|   |   |   
+|   |   +---AnalyzedText
+|   |   |   |   index.js
+|   |   |   |   
+|   |   |   +---Entities
+|   |   |   |       index.js
+|   |   |   |       PathQ_temp.js
+|   |   |   |       Result.js
+|   |   |   |       Result1.js
+|   |   |   |       Result10.js
+|   |   |   |       Result11.js
+|   |   |   |       Result12.js
+|   |   |   |       Result2.js
+|   |   |   |       Result3.js
+|   |   |   |       Result4.js
+|   |   |   |       Result5.js
+|   |   |   |       Result6.js
+|   |   |   |       Result7.js
+|   |   |   |       Result8.js
+|   |   |   |       Result9.js
+|   |   |   |       Result_test.js
+|   |   |   |       
+|   |   |   +---ICD10
+|   |   |   |       index.js
+|   |   |   |       
+|   |   |   +---Rxnorm
+|   |   |   |       index.js
+|   |   |   |       
+|   |   |   \---Snomed
+|   |   |           index.js
+|   |   |           
+|   |   +---ResultCard
+|   |   |       index.js
+|   |   |       
+|   |   \---ResultTable
+|   |           index.js
+|   |           index_org.js
+|   |           
+|   +---Engineering2
+|   |   |   index.js
+|   |   |   
+|   |   +---ColumnSelect
+|   |   |       index.js
+|   |   |       
+|   |   \---FoISelect
+|   |           index.js
+|   |           mcode_data_json.json
+|   |           
+|   +---Engineering_temp
+|   |   |   index.js
+|   |   |   
+|   |   +---AnalyzedText
+|   |   |   |   index.js
+|   |   |   |   
+|   |   |   +---Entities
+|   |   |   |       index.js
+|   |   |   |       PathQ_temp.js
+|   |   |   |       Result.js
+|   |   |   |       Result1.js
+|   |   |   |       Result10.js
+|   |   |   |       Result11.js
+|   |   |   |       Result12.js
+|   |   |   |       Result2.js
+|   |   |   |       Result3.js
+|   |   |   |       Result4.js
+|   |   |   |       Result5.js
+|   |   |   |       Result6.js
+|   |   |   |       Result7.js
+|   |   |   |       Result8.js
+|   |   |   |       Result9.js
+|   |   |   |       Result_test.js
+|   |   |   |       
+|   |   |   +---PrimaryCancer
+|   |   |   |       index.js
+|   |   |   |       
+|   |   |   +---Tumor
+|   |   |   |       index.js
+|   |   |   |       
+|   |   |   \---TumorMarkerTest
+|   |   |           index.js
+|   |   |           
+|   |   +---ResultCard
+|   |   |       index.js
+|   |   |       
+|   |   \---ResultTable
+|   |           index.js
+|   |           
+|   +---Result1
+|   |       CustomEditor.js
+|   |       dataSources.js
+|   |       height-weight-data.js
+|   |       index.js
+|   |       Nav.js
+|   |       
+|   +---Result2
+|   |       index.js
+|   |       
+|   +---Result3
+|   |   |   index.jsx
+|   |   |   tips.js
+|   |   |   
+|   |   \---components
+|   |           AgGridPivotTable.jsx
+|   |           
+|   \---Result4
+|           index.js
+|           
++---ProjectBar
+|   |   index.js
+|   |   
+|   +---component
+|   |       RenderTabs.jsx
+|   |       
+|   \---ProjectTree
+|           index(test).js
+|           index.js
+|           
+\---Ribbon
+        index.js
+        popup.js
+        
