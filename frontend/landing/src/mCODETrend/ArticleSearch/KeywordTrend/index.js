@@ -3,7 +3,7 @@ import { Box, Button, Paper, Snackbar, Alert, Typography } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import KeywordReport from "./component/KeywordReport";
 
-const KeywordTrend = () => {
+export default function KeywordTrend({ inputKeywords }) {
   return (
     <Paper
       elevation={0}
@@ -14,9 +14,7 @@ const KeywordTrend = () => {
         backgroundColor: "#F9F9F9",
       }}
     >
-      <KeywordReport />
+      <KeywordReport inputKeywords={inputKeywords} />
     </Paper>
   );
-};
-
-export default KeywordTrend;
+}

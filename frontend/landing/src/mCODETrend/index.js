@@ -18,7 +18,7 @@ export default function Home_F() {
       <SearchBar />
 
       {/* mCODE Diagram */}
-      <Grid
+      {/* <Grid
         item
         xs={12}
         sx={{
@@ -46,8 +46,8 @@ export default function Home_F() {
         >
           <MCODETrendMap />
         </Box>
-      </Grid>
-      {/* <Grid
+      </Grid> */}
+      <Grid
         item
         xs={12}
         sx={{
@@ -69,7 +69,7 @@ export default function Home_F() {
             // overflowX: "auto",
             overflowY: "hidden",
             whiteSpace: "nowrap",
-            mt: 5,            
+            mt: 5,
             backgroundColor: "white",
           }}
         >
@@ -83,7 +83,7 @@ export default function Home_F() {
             }}
           />
         </Box>
-      </Grid> */}
+      </Grid>
       <MenubarUnder />
       <Footer />
     </>

@@ -12,6 +12,7 @@ import {
   Container,
   Typography,
   Avatar,
+  IconButton,
 } from "@mui/material";
 import ReadMoreIcon from "@mui/icons-material/ReadMore";
 import { AgCharts } from "ag-charts-react";
@@ -338,7 +339,7 @@ export default function SearchBar() {
                 ml: { xs: 0, sm: 0 },
               }}
             >
-              {"Discover What’s"}
+              {"Discover ocology"}
               <Box
                 component="span"
                 sx={{
@@ -348,18 +349,18 @@ export default function SearchBar() {
                   px: "4px",
                 }}
               >
-                Trending
+                trends
               </Box>
-              {"in \nOncology Trials and Research — Right Now"}
+              {"now \n using sentences insted of keywords"}
             </Typography>
 
             {/* Search Bar */}
             <TextField
-              placeholder={currentKeyword}
+              placeholder="What Do Articles Say About Partial Breast Re-irradiation for Breast Cancer?"
               variant="outlined"
               size="large"
               sx={{
-                width: { md: "100%", xs: "100%" },
+                width: { md: "150%", xs: "100%" },
                 backgroundColor: "#fff",
                 borderRadius: "25px",
                 "& .MuiOutlinedInput-root": {
@@ -401,24 +402,22 @@ export default function SearchBar() {
                       backgroundColor: "transparent",
                     }}
                   >
-                    <Button
-                      variant="contained"
+                    <IconButton
+                      color="primary"
                       onClick={handleSearch}
                       sx={{
-                        borderRadius: "999px",
-                        backgroundColor: "#4361ee",
-                        textTransform: "none",
-                        fontWeight: 500,
-                        fontSize: "15px",
-                        // px: 2,
-                        minWidth: "auto",
+                        backgroundColor: "transparent",
+                        color: "#000",
+                        width: "30px",
+                        height: "30px",
+                        padding: "10px",
                         "&:hover": {
-                          backgroundColor: "#3a53d6",
+                          backgroundColor: "transparent",
                         },
                       }}
                     >
-                      Explore
-                    </Button>
+                      <SearchIcon />
+                    </IconButton>
                   </InputAdornment>
                 ),
               }}

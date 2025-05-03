@@ -18,10 +18,7 @@ import {
 import { ResponsiveBump } from "@nivo/bump";
 import generateBumpChartData from "./KeywordAnalayzer";
 
-export default function KeywordTrendDashboard() {
-  const [inputValue, setInputValue] = useState(
-    "machine learning, artificial intelligence",
-  );
+export default function KeywordTrendDashboard({ inputKeywords }) {
   const [bumpChartData, setBumpChartData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const pageOptions = [
@@ -35,25 +32,17 @@ export default function KeywordTrendDashboard() {
     offset = pageOptions[currentPage].offset,
     limit = 10,
   ) => {
+    if (!inputKeywords) return;
     try {
       setIsLoading(true);
       const response = await fetch(
-        `http://localhost:8000/cancerkeywords?keywords=${encodeURIComponent(inputValue)}`,
+        `http://localhost:8000/cancerkeywords?keywords=${encodeURIComponent(inputKeywords)}`,
       );
       const json = await response.json();
 
       if (json.success && Array.isArray(json.data)) {
-        const { bumpData, usedKeywords, allKeywords } = generateBumpChartData(
-          json.data,
-          limit,
-          offset,
-        );
+        const { bumpData } = generateBumpChartData(json.data, limit, offset);
         setBumpChartData(bumpData);
-
-        const inputKeywords = inputValue
-          .split(",")
-          .map((kw) => kw.trim().toLowerCase());
-        const excluded = allKeywords.filter((kw) => !usedKeywords.includes(kw));
       }
     } catch (error) {
       console.error("❌ 데이터 fetch 실패:", error);
@@ -68,12 +57,8 @@ export default function KeywordTrendDashboard() {
   };
 
   useEffect(() => {
-    fetchAndVisualize();
-  }, []);
-
-  const handleSearchClick = () => {
-    fetchAndVisualize();
-  };
+    if (inputKeywords) fetchAndVisualize();
+  }, [inputKeywords]);
 
   return (
     <Box px={4}>

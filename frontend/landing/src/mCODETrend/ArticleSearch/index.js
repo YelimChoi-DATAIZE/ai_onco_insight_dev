@@ -80,6 +80,7 @@ const HybridRAGLayout = () => {
   const queryParams = new URLSearchParams(location.search);
   const keywordFromUrl = queryParams.get("query") || "";
   const [searchTerm, setSearchTerm] = useState("");
+  const [sharedKeywords, setSharedKeywords] = useState("");
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -117,12 +118,19 @@ const HybridRAGLayout = () => {
   useEffect(() => {
     const fetchInitialPapers = async () => {
       try {
-        setLoading(true); // ✅ 로딩 시작
-        const response = await fetch(
+        setLoading(true);
+
+        const paperResponse = await fetch(
           `http://3.35.226.37:8000/dataizeai_api/AdvancedPubSearch?query=${encodeURIComponent(keywordFromUrl)}`,
         );
-        const data = await response.json();
+        const paperData = await paperResponse.json();
 
+        // ✅ 첫 번째 논문의 키워드를 sharedKeywords로 사용
+        const firstPaper = paperData?.[0];
+        const firstKeywords = (firstPaper?.Keywords || "").replace(/;/g, ",");
+        setSharedKeywords(firstKeywords);
+
+        // 기존 메시지 및 히스토리 처리 유지
         const userMessage = {
           text: keywordFromUrl,
           sender: "user",
@@ -130,12 +138,11 @@ const HybridRAGLayout = () => {
         };
 
         setMessages([userMessage]);
-        setSearchHistory((prev) => {
-          if (!prev.includes(keywordFromUrl)) {
-            return [keywordFromUrl, ...prev.slice(0, 9)];
-          }
-          return prev;
-        });
+        setSearchHistory((prev) =>
+          !prev.includes(keywordFromUrl)
+            ? [keywordFromUrl, ...prev.slice(0, 9)]
+            : prev,
+        );
 
         setMessages((prev) => [
           ...prev,
@@ -143,23 +150,25 @@ const HybridRAGLayout = () => {
             sender: "chatbot",
             type: "text",
             text:
-              `Matched Pubmed Result ${data.length} Articles:\n\n` +
-              data
+              `Matched Pubmed Result ${paperData.length} Articles:\n\n` +
+              paperData
                 .map(
                   (paper, i) =>
-                    `${i + 1}. ${paper.Title}\n   📅 ${paper.PublicationDate} / PMID: ${
-                      paper.PMID
-                    }${
-                      paper.score !== undefined
-                        ? `/🔸 score: ${paper.score.toFixed(3)}`
-                        : ""
-                    }`,
+                    `${i + 1}. ${paper.Title}\n   📅 ${paper.PublicationDate} / PMID: ${paper.PMID}` +
+                    (paper.Authors ? `\n   👤 ${paper.Authors}` : "") +
+                    (paper.Abstract
+                      ? `\n   🧾 ${paper.Abstract.substring(0, 180)}...`
+                      : "") +
+                    (paper.score !== undefined
+                      ? `\n   🔸 score: ${paper.score.toFixed(3)}`
+                      : ""),
                 )
                 .join("\n\n"),
-            papers: data,
+            papers: paperData,
           },
         ]);
       } catch (error) {
+        console.error("❌ fetchInitialPapers 에러:", error);
         setMessages([
           {
             text: "❌ 논문 불러오기 중 오류가 발생했어요.",
@@ -168,37 +177,49 @@ const HybridRAGLayout = () => {
           },
         ]);
       } finally {
-        setLoading(false); // ✅ 로딩 종료
+        setLoading(false);
       }
     };
+
+    // ✅ 함수 호출 조건 추가
+    if (keywordFromUrl && !hasInitialized) {
+      setHasInitialized(true);
+      fetchInitialPapers();
+    }
   }, [keywordFromUrl, hasInitialized]);
 
-  const sendMessage = async () => {
-    if (input.trim()) {
-      const keyword = input.trim();
+  const sendMessage = () => {
+    if (!input.trim()) return;
+    setSearchTerm(input.trim()); // 👉 이게 핵심
+    setInput("");
+  };
+
+  useEffect(() => {
+    const fetchFromsearchTerm = async () => {
+      if (!searchTerm) return;
 
       const newUserMessage = {
-        text: keyword,
+        text: searchTerm,
         sender: "user",
         type: "text",
       };
 
       setMessages((prev) => [...prev, newUserMessage]);
-      setInput("");
 
-      setSearchHistory((prev) => {
-        if (!prev.includes(keyword)) {
-          return [keyword, ...prev.slice(0, 9)];
-        }
-        return prev;
-      });
+      setSearchHistory((prev) =>
+        !prev.includes(searchTerm) ? [searchTerm, ...prev.slice(0, 9)] : prev,
+      );
 
       try {
-        setLoading(true); // ✅ 로딩 시작
+        setLoading(true);
         const response = await fetch(
-          `http://3.35.226.37:8000/dataizeai_api/AdvancedPubSearch?query=${encodeURIComponent(keyword)}`,
+          `http://3.35.226.37:8000/dataizeai_api/AdvancedPubSearch?query=${encodeURIComponent(searchTerm)}`,
         );
         const data = await response.json();
+
+        const firstKeywords = (data?.[0]?.Keywords || "").replace(/;/g, ",");
+        setSharedKeywords(firstKeywords);
+        console.log("✅ useEffect sharedKeywords:", firstKeywords);
 
         setMessages((prev) => [
           ...prev,
@@ -210,37 +231,116 @@ const HybridRAGLayout = () => {
               data
                 .map(
                   (paper, i) =>
-                    `${i + 1}. ${paper.Title}\n   📅 ${paper.PublicationDate} / PMID: ${
-                      paper.PMID
-                    }${
-                      paper.score !== undefined
-                        ? `/🔸 score: ${paper.score.toFixed(3)}`
-                        : ""
-                    }`,
+                    `${i + 1}. ${paper.Title}\n   📅 ${paper.PublicationDate} / PMID: ${paper.PMID}` +
+                    (paper.Authors ? `\n   👤 ${paper.Authors}` : "") +
+                    (paper.Abstract
+                      ? `\n   🧾 ${paper.Abstract.substring(0, 180)}...`
+                      : "") +
+                    (paper.score !== undefined
+                      ? `\n   🔸 score: ${paper.score.toFixed(3)}`
+                      : ""),
                 )
                 .join("\n\n"),
             papers: data,
           },
         ]);
       } catch (error) {
-        const errorMessage = {
-          text: "❌ 논문 검색 중 오류가 발생했어요.",
-          sender: "chatbot",
-          type: "text",
-        };
-        setMessages((prev) => [...prev, errorMessage]);
+        console.error("❌ useEffect fetch 오류:", error);
+        setMessages((prev) => [
+          ...prev,
+          {
+            text: "❌ 논문 검색 중 오류가 발생했어요.",
+            sender: "chatbot",
+            type: "text",
+          },
+        ]);
       } finally {
-        setLoading(false); // ✅ 로딩 종료
+        setLoading(false);
       }
-    }
-  };
+    };
+
+    fetchFromsearchTerm();
+  }, [searchTerm]);
+
+  // const sendMessage = async () => {
+  //   if (input.trim()) {
+  //     const keyword = input.trim();
+
+  //     const newUserMessage = {
+  //       text: keyword,
+  //       sender: "user",
+  //       type: "text",
+  //     };
+
+  //     setMessages((prev) => [...prev, newUserMessage]);
+  //     setInput("");
+
+  //     setSearchHistory((prev) => {
+  //       if (!prev.includes(keyword)) {
+  //         return [keyword, ...prev.slice(0, 9)];
+  //       }
+  //       return prev;
+  //     });
+
+  //     try {
+  //       setLoading(true);
+
+  //       // (1) PubMed 논문 검색
+  //       const response = await fetch(
+  //         `http://3.35.226.37:8000/dataizeai_api/AdvancedPubSearch?query=${encodeURIComponent(keyword)}`,
+  //       );
+  //       const data = await response.json();
+
+  //       // (2) 첫 번째 논문의 Keywords → sharedKeywords
+  //       const firstPaper = data?.[0];
+  //       const firstKeywords = (firstPaper?.Keywords || "").replace(/;/g, ",");
+  //       setSharedKeywords(firstKeywords);
+  //       console.log("✅ sendMessage sharedKeywords:", firstKeywords);
+
+  //       // (3) 메시지 응답
+  //       setMessages((prev) => [
+  //         ...prev,
+  //         {
+  //           sender: "chatbot",
+  //           type: "text",
+  //           text:
+  //             `Matched Pubmed Result ${data.length} Articles:\n\n` +
+  //             data
+  //               .map(
+  //                 (paper, i) =>
+  //                   `${i + 1}. ${paper.Title}\n   📅 ${paper.PublicationDate} / PMID: ${paper.PMID}` +
+  //                   (paper.Authors ? `\n   👤 ${paper.Authors}` : "") +
+  //                   (paper.Abstract
+  //                     ? `\n   🧾 ${paper.Abstract.substring(0, 180)}...`
+  //                     : "") +
+  //                   (paper.score !== undefined
+  //                     ? `\n   🔸 score: ${paper.score.toFixed(3)}`
+  //                     : ""),
+  //               )
+  //               .join("\n\n"),
+  //           papers: data,
+  //         },
+  //       ]);
+  //     } catch (error) {
+  //       console.error("❌ sendMessage 오류:", error);
+  //       const errorMessage = {
+  //         text: "❌ 논문 검색 중 오류가 발생했어요.",
+  //         sender: "chatbot",
+  //         type: "text",
+  //       };
+  //       setMessages((prev) => [...prev, errorMessage]);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  // };
 
   // Favorite 기능
   const addToFavorites = (paper) => {
-    if (!isLoggedIn) {
-      alert("로그인 후 즐겨찾기 할 수 있습니다.");
-      return;
-    }
+    // if (!isLoggedIn) {
+    //   alert("로그인 후 즐겨찾기 할 수 있습니다.");
+    //   return;
+    // }
 
     setFavorites((prev) => {
       if (prev.find((p) => p.PMID === paper.PMID)) return prev;
@@ -498,7 +598,27 @@ const HybridRAGLayout = () => {
                 >
                   Search Insight
                 </Typography>
-                <KeywordTrend />
+                {/* {sharedKeywords && (
+    <Box sx={{ mx: 5, mb: 2 }}>
+      <Typography
+        fontSize="12px"
+        fontWeight="bold"
+        color="text.secondary"
+        fontFamily="Noto Sans KR"
+      >
+        📌 Common Keywords:
+      </Typography>
+      <Typography
+        fontSize="14px"
+        fontWeight="medium"
+        color="primary"
+        fontFamily="Noto Sans KR"
+      >
+        {sharedKeywords}
+      </Typography>
+    </Box>
+  )} */}
+                <KeywordTrend inputKeywords={sharedKeywords} />
               </Paper>
             </Grid>
           </Grid>

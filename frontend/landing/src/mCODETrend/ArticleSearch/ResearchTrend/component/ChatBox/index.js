@@ -49,7 +49,7 @@ const ChatBox = ({
         elevation={0}
         sx={{
           width: "auto",
-          height: "95vh",
+          height: "85vh",
           display: "flex",
           flexDirection: "column",
           transition: "height 0.3s",
@@ -134,9 +134,9 @@ const ChatBox = ({
           sx={{
             flexGrow: 1,
             overflowY: "auto",
-            padding: 0,
             position: "relative",
-            paddingTop: "100px",
+            paddingTop: "16px",
+            paddingBottom: "80px",
             minHeight: 0,
           }}
         >
@@ -175,38 +175,49 @@ const ChatBox = ({
                         padding: "4px 8px",
                         boxShadow: "none",
                         border: "1px solid #E2E2E2",
-                        position: "relative",
                       }}
                     >
-                      <img
-                        src={"/static/Images/pubmed_icon.png"}
-                        alt="Logo"
-                        style={{
-                          position: "absolute",
-                          top: 8,
-                          right: 8,
-                          width: "50px",
-                          height: "20px",
-                        }}
-                      />
-
                       <CardContent sx={{ paddingBottom: "8px !important" }}>
-                        {/* Title */}
-                        <Typography
-                          variant="subtitle1"
-                          sx={{
-                            fontWeight: "bold",
-                            color: "#1565c0",
-                            mb: 0.5,
-                          }}
-                        >
-                          {i + 1}. {paper.Title}
-                        </Typography>
+                        {/* Title + PubMed Icon */}
+                        <Box sx={{ position: "relative", mb: 0.5 }}>
+                          <Typography
+                            variant="subtitle1"
+                            sx={{
+                              fontWeight: "bold",
+                              color: "#1565c0",
+                              fontFamily: "Noto Sans KR",
+                              width: "80%",
+                              wordBreak: "break-word",
+                              whiteSpace: "normal",
+                              pr: "60px",
+                            }}
+                          >
+                            {i + 1}. {paper.Title}
+                          </Typography>
+
+                          <Box
+                            component="img"
+                            src="/static/Images/pubmed_icon.png"
+                            alt="PubMed"
+                            sx={{
+                              position: "absolute",
+                              top: 0,
+                              right: 0,
+                              width: "50px",
+                              height: "20px",
+                            }}
+                          />
+                        </Box>
 
                         {/* Authors */}
                         <Typography
                           variant="body2"
-                          sx={{ color: "#666", fontSize: "13px", mb: 0.5 }}
+                          sx={{
+                            color: "#666",
+                            fontSize: "13px",
+                            mb: 0.5,
+                            fontFamily: "Noto Sans KR",
+                          }}
                         >
                           {paper.Authors || "Unknown authors"}
                         </Typography>
@@ -220,40 +231,49 @@ const ChatBox = ({
                         >
                           <Typography
                             variant="body2"
-                            sx={{ fontSize: "12px", color: "#2e7d32" }}
-                          >
-                            {paper.Journal || "Unknown Journal"}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            sx={{ fontSize: "12px", color: "#388e3c" }}
+                            sx={{
+                              fontSize: "12px",
+                              color: "#388e3c",
+                              fontFamily: "Noto Sans KR",
+                            }}
                           >
                             📅 {paper.PublicationDate}
                           </Typography>
                           <Typography
                             variant="body2"
-                            sx={{ fontSize: "12px", color: "#6a1b9a" }}
+                            sx={{
+                              fontSize: "12px",
+                              color: "#6a1b9a",
+                              fontFamily: "Noto Sans KR",
+                            }}
                           >
                             PMID: {paper.PMID}
                           </Typography>
                           <Typography
                             variant="body2"
-                            sx={{ fontSize: "12px", color: "#ef6c00" }}
+                            sx={{
+                              fontSize: "12px",
+                              color: "#ef6c00",
+                              fontFamily: "Noto Sans KR",
+                            }}
                           >
                             {paper.isFree ? "Free PMC article" : ""}
                           </Typography>
                         </Stack>
 
-                        {/* Abstract Preview */}
+                        {/* Abstract (3 lines max) */}
                         <Typography
                           variant="body2"
                           sx={{
                             color: "#333",
                             fontSize: "13px",
                             lineHeight: 1.5,
-                            maxHeight: "65px",
+                            display: "-webkit-box",
+                            width: "90%",
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: "vertical",
                             overflow: "hidden",
-                            textOverflow: "ellipsis",
+                            fontFamily: "Noto Sans KR",
                           }}
                         >
                           {paper.Abstract || "No abstract available..."}
@@ -268,6 +288,7 @@ const ChatBox = ({
                             sx={{
                               textTransform: "none",
                               fontSize: "12px",
+                              fontFamily: "Noto Sans KR",
                             }}
                           >
                             Favorites
