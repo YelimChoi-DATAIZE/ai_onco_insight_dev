@@ -16,6 +16,8 @@ import {
   CardContent,
   Stack,
 } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 import PropTypes from "prop-types";
 import { useLocation } from "react-router-dom";
@@ -115,6 +117,7 @@ const HybridRAGLayout = () => {
   useEffect(() => {
     const fetchInitialPapers = async () => {
       try {
+        setLoading(true); // ✅ 로딩 시작
         const response = await fetch(
           `http://3.35.226.37:8000/dataizeai_api/AdvancedPubSearch?query=${encodeURIComponent(keywordFromUrl)}`,
         );
@@ -164,16 +167,12 @@ const HybridRAGLayout = () => {
             type: "text",
           },
         ]);
+      } finally {
+        setLoading(false); // ✅ 로딩 종료
       }
     };
-
-    if (keywordFromUrl && !hasInitialized) {
-      setHasInitialized(true);
-      fetchInitialPapers();
-    }
   }, [keywordFromUrl, hasInitialized]);
 
-  // 채팅창에서 검색한 결과를 보여주기 위한 useEffect
   const sendMessage = async () => {
     if (input.trim()) {
       const keyword = input.trim();
@@ -195,6 +194,7 @@ const HybridRAGLayout = () => {
       });
 
       try {
+        setLoading(true); // ✅ 로딩 시작
         const response = await fetch(
           `http://3.35.226.37:8000/dataizeai_api/AdvancedPubSearch?query=${encodeURIComponent(keyword)}`,
         );
@@ -229,6 +229,8 @@ const HybridRAGLayout = () => {
           type: "text",
         };
         setMessages((prev) => [...prev, errorMessage]);
+      } finally {
+        setLoading(false); // ✅ 로딩 종료
       }
     }
   };
@@ -241,9 +243,13 @@ const HybridRAGLayout = () => {
     }
 
     setFavorites((prev) => {
-      if (prev.find((p) => p.PMID === paper.PMID)) return prev; // ✅ 고유한 PMID로 비교
+      if (prev.find((p) => p.PMID === paper.PMID)) return prev;
       return [...prev, paper];
     });
+  };
+
+  const handleRemoveFavorite = (pmidToRemove) => {
+    setFavorites((prev) => prev.filter((p) => p.PMID !== pmidToRemove));
   };
 
   return (
@@ -254,8 +260,14 @@ const HybridRAGLayout = () => {
         <Menubar />
         <Box sx={{ flex: 1, flexGrow: 1, height: "94vh" }}>
           <Grid container spacing={0}>
-            {/* Left Sidebar */}
-            <Grid item xs={12} sm={12} md={2}>
+            {/* Recent Search and Favorite Articles */}
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={2}
+              sx={{ backgroundColor: "#F9F9F9", order: { xs: 3, md: 1 } }}
+            >
               <Paper
                 elevation={0}
                 sx={{
@@ -263,6 +275,7 @@ const HybridRAGLayout = () => {
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
+                  backgroundColor: "#F9F9F9",
                 }}
               >
                 <Box
@@ -283,7 +296,7 @@ const HybridRAGLayout = () => {
                   </Typography>
                   <Box
                     sx={{
-                      maxHeight: "20vh",
+                      maxHeight: "30vh",
                       overflowY: "auto",
                     }}
                   >
@@ -306,13 +319,14 @@ const HybridRAGLayout = () => {
                             mt: 0.5,
                             mb: 0.5,
                             borderRadius: 2,
-                            backgroundColor: "#f5f5f5",
+                            backgroundColor: "#ffffff",
                             padding: "4px 8px",
                             boxShadow: "none",
                             height: 40,
                             display: "flex",
                             alignItems: "center",
                             cursor: "pointer",
+                            border: "1px solid #F0F0F0",
                           }}
                         >
                           <Typography
@@ -327,7 +341,7 @@ const HybridRAGLayout = () => {
                               width: "100%",
                             }}
                           >
-                            • {term}
+                            {term}
                           </Typography>
                         </Card>
                       ))
@@ -355,7 +369,7 @@ const HybridRAGLayout = () => {
                   </Typography>
                   <Box
                     sx={{
-                      maxHeight: "25vh",
+                      maxHeight: "50vh",
                       overflowY: "auto",
                     }}
                   >
@@ -374,18 +388,19 @@ const HybridRAGLayout = () => {
                       favorites.map((fav, i) => (
                         <Card
                           key={i}
-                          evlevation={0}
                           sx={{
                             mt: 0.5,
                             mb: 0.5,
                             borderRadius: 2,
-                            backgroundColor: "#f5f5f5",
+                            backgroundColor: "#ffffff",
                             padding: "4px 8px",
                             boxShadow: "none",
                             height: 40,
                             display: "flex",
                             alignItems: "center",
+                            justifyContent: "space-between",
                             cursor: "pointer",
+                            border: "1px solid #F0F0F0",
                           }}
                         >
                           <Typography
@@ -397,11 +412,19 @@ const HybridRAGLayout = () => {
                               overflow: "hidden",
                               textOverflow: "ellipsis",
                               whiteSpace: "nowrap",
-                              width: "100%",
+                              flexGrow: 1,
                             }}
                           >
-                            • {fav.Title}
+                            {fav.Title}
                           </Typography>
+
+                          <IconButton
+                            size="small"
+                            onClick={() => handleRemoveFavorite(fav.PMID)}
+                            sx={{ ml: 1 }}
+                          >
+                            <CloseIcon fontSize="6px" />
+                          </IconButton>
                         </Card>
                       ))
                     )}
@@ -410,7 +433,7 @@ const HybridRAGLayout = () => {
               </Paper>
             </Grid>
 
-            {/* ChatBox Panel */}
+            {/* AI Search Panel */}
             <Grid
               item
               xs={12}
@@ -419,18 +442,20 @@ const HybridRAGLayout = () => {
               sx={{
                 borderRight: "1px solid #ddd",
                 borderLeft: "1px solid #ddd",
-                backgroundColor: "#F5F5F5",
+                backgroundColor: "#FFFFFF",
                 height: "94vh",
                 display: "flex",
                 flexDirection: "column",
+                order: { xs: 1, md: 2 },
               }}
             >
               <Typography
-                sx={{ mt: 2, ml: 2 }}
+                sx={{ mt: 3, ml: 5, mb: 3 }}
                 fontWeight="bold"
+                fontSize="16px"
                 fontFamily="Noto Sans KR"
               >
-                Conversation Search
+                Search
               </Typography>
 
               <Box sx={{ flexGrow: 1, overflow: "hidden" }}>
@@ -440,18 +465,38 @@ const HybridRAGLayout = () => {
                   setInput={setInput}
                   sendMessage={sendMessage}
                   addToFavorites={addToFavorites}
+                  isLoading={loading}
                 />
               </Box>
             </Grid>
 
-            <Grid item xs={12} sm={6} md={5}>
-              <Paper elevation={0}>
+            {/* Search Insight */}
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={5}
+              sx={{
+                backgroundColor: "#F9F9F9",
+                order: { xs: 2, md: 3 },
+              }}
+            >
+              <Paper
+                elevation={0}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  backgroundColor: "#F9F9F9",
+                }}
+              >
                 <Typography
-                  sx={{ mt: 2, ml: 2 }}
+                  sx={{ mt: 3, ml: 5, mb: 3 }}
                   fontWeight="bold"
+                  fontSize="16px"
                   fontFamily="Noto Sans KR"
                 >
-                  Information Panel
+                  Search Insight
                 </Typography>
                 <KeywordTrend />
               </Paper>

@@ -2,9 +2,18 @@ import React, { useState, useEffect } from "react";
 import {
   Box,
   TextField,
-  Typography,
+  IconButton,
+  List,
+  ListItem,
+  Paper,
+  Grid,
   Button,
+  Container,
+  Card,
+  CardContent,
   CircularProgress,
+  Typography,
+  Stack,
 } from "@mui/material";
 import { ResponsiveBump } from "@nivo/bump";
 import generateBumpChartData from "./KeywordAnalayzer";
@@ -15,9 +24,17 @@ export default function KeywordTrendDashboard() {
   );
   const [bumpChartData, setBumpChartData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [excludedKeywords, setExcludedKeywords] = useState([]); // ❗ 제외된 키워드
+  const pageOptions = [
+    { label: "Top 10 Keywords", offset: 0 },
+    { label: "Top 20 Keywords", offset: 10 },
+    { label: "Top 30 Keywords", offset: 20 },
+  ];
+  const [currentPage, setCurrentPage] = useState(0);
 
-  const fetchAndVisualize = async () => {
+  const fetchAndVisualize = async (
+    offset = pageOptions[currentPage].offset,
+    limit = 10,
+  ) => {
     try {
       setIsLoading(true);
       const response = await fetch(
@@ -28,24 +45,26 @@ export default function KeywordTrendDashboard() {
       if (json.success && Array.isArray(json.data)) {
         const { bumpData, usedKeywords, allKeywords } = generateBumpChartData(
           json.data,
-          10,
+          limit,
+          offset,
         );
         setBumpChartData(bumpData);
 
         const inputKeywords = inputValue
           .split(",")
           .map((kw) => kw.trim().toLowerCase());
-
         const excluded = allKeywords.filter((kw) => !usedKeywords.includes(kw));
-        setExcludedKeywords(excluded);
-      } else {
-        console.error("📛 잘못된 응답 형식:", json);
       }
     } catch (error) {
       console.error("❌ 데이터 fetch 실패:", error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    fetchAndVisualize(pageOptions[newPage].offset, 10);
   };
 
   useEffect(() => {
@@ -57,68 +76,82 @@ export default function KeywordTrendDashboard() {
   };
 
   return (
-    <Box p={2}>
-      <Typography variant="h6" gutterBottom>
-        Related Keyword Trend
-      </Typography>
-      <Box display="flex" mb={2}>
-        <TextField
-          label="Keyword (comma separated)"
-          variant="outlined"
-          fullWidth
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          size="small"
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSearchClick}
-          sx={{ ml: 2 }}
-        >
-          Search
-        </Button>
-      </Box>
-
-      <Box
-        height={600}
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
+    <Box px={4}>
+      <Card
+        sx={{
+          width: "90%",
+          margin: "0 auto",
+          mb: 2,
+          p: 3,
+          borderRadius: 2,
+          backgroundColor: "#ffffff",
+          // padding: "4px 8px",
+          boxShadow: "none",
+          border: "1px solid #E2E2E2",
+          position: "relative",
+        }}
       >
-        {isLoading ? (
-          <CircularProgress />
-        ) : (
-          <ResponsiveBump
-            data={bumpChartData}
-            colors={{ scheme: "tableau10" }}
-            lineWidth={3}
-            activeLineWidth={6}
-            inactiveLineWidth={3}
-            inactiveOpacity={0.15}
-            pointSize={20}
-            activePointSize={22}
-            inactivePointSize={0}
-            pointColor="transparent"
-            pointBorderWidth={5}
-            pointBorderColor={{ from: "serie.color" }}
-            axisTop={{ tickSize: 5, tickPadding: 5, tickRotation: 0 }}
-            axisBottom={null}
-            axisLeft={null}
-            margin={{ top: 40, right: 120, bottom: 40, left: 40 }}
-          />
-        )}
-      </Box>
+        {/* 카드 제목 */}
+        <Typography
+          fontFamily="Noto Sans KR"
+          fontSize={12}
+          mb={1}
+          sx={{ textAlign: "left", color: "#4B4B4B" }}
+        >
+          {pageOptions[currentPage].label}
+        </Typography>
 
-      {/* Other Keyword */}
-      {!isLoading && excludedKeywords.length > 0 && (
-        <Box mt={4}>
-          <Typography variant="subtitle1" color="error">
-            Other Keywords:
-          </Typography>
-          <Typography variant="body2">{excludedKeywords.join(", ")}</Typography>
+        {/* 차트 영역 */}
+        <Box
+          height="71vh"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+        >
+          {isLoading ? (
+            <CircularProgress />
+          ) : (
+            <ResponsiveBump
+              data={bumpChartData}
+              colors={{ scheme: "tableau10" }}
+              lineWidth={3}
+              activeLineWidth={6}
+              inactiveLineWidth={3}
+              inactiveOpacity={0.15}
+              pointSize={20}
+              activePointSize={22}
+              inactivePointSize={0}
+              pointColor="transparent"
+              pointBorderWidth={5}
+              pointBorderColor={{ from: "serie.color" }}
+              axisTop={{ tickSize: 5, tickPadding: 5, tickRotation: 0 }}
+              axisBottom={null}
+              axisLeft={null}
+              margin={{ top: 40, right: 120, bottom: 40, left: 40 }}
+              label="id"
+              labelTextColor={{ from: "color" }}
+            />
+          )}
         </Box>
-      )}
+      </Card>
+
+      {/* 페이지네이션 dot */}
+      <Box display="flex" justifyContent="center" mt={2}>
+        {pageOptions.map((page, idx) => (
+          <Box
+            key={idx}
+            onClick={() => handlePageChange(idx)}
+            sx={{
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              backgroundColor: currentPage === idx ? "#333" : "#ccc",
+              margin: "0 6px",
+              cursor: "pointer",
+            }}
+          />
+        ))}
+      </Box>
     </Box>
   );
 }

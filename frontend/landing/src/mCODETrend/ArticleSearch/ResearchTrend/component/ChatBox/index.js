@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   TextField,
@@ -13,10 +13,12 @@ import {
   CardContent,
   Typography,
   Stack,
+  CircularProgress,
 } from "@mui/material";
 
 import SendIcon from "@mui/icons-material/Send";
 import BookmarkAddIcon from "@mui/icons-material/BookmarkAdd";
+import SearchIcon from "@mui/icons-material/Search";
 
 const ChatBox = ({
   leftHeight,
@@ -27,7 +29,20 @@ const ChatBox = ({
   handleInputFocus,
   handleInputBlur,
   addToFavorites,
+  isLoading,
 }) => {
+  const listRef = useRef(null);
+
+  const scrollToBottom = () => {
+    if (listRef.current) {
+      listRef.current.scrollTop = listRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   return (
     <Grid item xs={12}>
       <Container
@@ -38,25 +53,109 @@ const ChatBox = ({
           display: "flex",
           flexDirection: "column",
           transition: "height 0.3s",
-          backgroundColor: "#F5F5F5",
+          backgroundColor: "#FFFFFF",
           // borderRadius: "16px",
         }}
       >
-        <List sx={{ flexGrow: 1, overflowY: "auto", padding: 0 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            paddingBottom: 2,
+            position: "sticky",
+            top: 0,
+            zIndex: 2,
+            backgroundColor: "#FFFFFF",
+          }}
+        >
           <Box
             sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              color: "#888",
-              fontSize: "16px",
-              fontWeight: "regular",
-              textAlign: "center",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "#fff",
+              border: "1px solid #D8D8D8",
+              borderRadius: "16px",
+              padding: "5px 15px",
+              width: "90%",
+              height: "35px",
+              position: "relative",
+              boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
             }}
           >
-            BrainStorming Your Research <br />- DATAIZEAI -
+            <TextField
+              fullWidth
+              variant="standard"
+              placeholder="Search More.."
+              multiline
+              InputProps={{
+                disableUnderline: true,
+              }}
+              sx={{
+                flex: 1,
+                padding: "5px",
+                paddingLeft: "5px",
+                paddingTop: "5px",
+                overflowY: "auto",
+                height: "100%",
+              }}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
+            />
+
+            <IconButton
+              color="primary"
+              onClick={sendMessage}
+              sx={{
+                position: "absolute",
+                top: "8px",
+                right: "10px",
+                bottom: "10px",
+                backgroundColor: "transparent",
+                color: "#000",
+                width: "30px",
+                height: "30px",
+                padding: "10px",
+                "&:hover": {
+                  backgroundColor: "transparent",
+                },
+              }}
+            >
+              <SearchIcon />
+            </IconButton>
           </Box>
+        </Box>
+        <List
+          ref={listRef}
+          sx={{
+            flexGrow: 1,
+            overflowY: "auto",
+            padding: 0,
+            position: "relative",
+            paddingTop: "100px",
+            minHeight: 0,
+          }}
+        >
+          {messages.length === 0 && !isLoading && (
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                color: "#888",
+                fontSize: "16px",
+                fontWeight: "regular",
+                textAlign: "center",
+              }}
+            >
+              BrainStorming Your Research <br />- DATAIZEAI -
+            </Box>
+          )}
           {messages.map((msg, index) => {
             const isUser = msg.sender === "user";
             // 논문 결과 응답이면 리스트 렌더링
@@ -67,12 +166,16 @@ const ChatBox = ({
                     <Card
                       key={i}
                       sx={{
-                        position: "relative",
+                        width: "95%",
+                        margin: "0 auto",
                         mb: 2,
                         p: 2,
-                        backgroundColor: "#fff",
-                        borderRadius: "12px",
-                        boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.1)",
+                        borderRadius: 2,
+                        backgroundColor: "#ffffff",
+                        padding: "4px 8px",
+                        boxShadow: "none",
+                        border: "1px solid #E2E2E2",
+                        position: "relative",
                       }}
                     >
                       <img
@@ -93,7 +196,7 @@ const ChatBox = ({
                           variant="subtitle1"
                           sx={{
                             fontWeight: "bold",
-                            color: "#1565c0", // PubMed 스타일 파란색
+                            color: "#1565c0",
                             mb: 0.5,
                           }}
                         >
@@ -177,80 +280,20 @@ const ChatBox = ({
               );
             }
           })}
-        </List>
-        <Box
-          sx={{
-            display: "flex",
-            paddingBottom: 10,
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "flex-start",
-              backgroundColor: "#fff",
-              // border: "1.5px solid #000",
-              borderRadius: "16px",
-              padding: "5px 15px",
-              width: "100%",
-              height: "80px",
-              position: "relative",
-              boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-            }}
-          >
-            <TextField
-              fullWidth
-              variant="standard"
-              placeholder="What is your favorite topic?"
-              multiline
-              InputProps={{
-                disableUnderline: true,
-              }}
+          {isLoading && (
+            <Box
               sx={{
-                flex: 1,
-                padding: "5px",
-                paddingLeft: "5px",
-                paddingTop: "5px",
-                overflowY: "auto",
-                height: "100%",
-              }}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && sendMessage()}
-              onFocus={handleInputFocus}
-              onBlur={handleInputBlur}
-            />
-
-            <IconButton
-              color="primary"
-              onClick={sendMessage}
-              sx={{
-                position: "absolute",
-                right: "10px",
-                bottom: "10px",
-                backgroundColor: "#000",
-                color: "#fff",
-                width: "30px",
-                height: "30px",
-                padding: "10px",
-                "&:hover": {
-                  backgroundColor: "#444",
-                },
+                width: "100%",
+                py: 2,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              <img
-                src="static/Images/ChatButton.png"
-                alt="Send Button"
-                style={{
-                  width: "30px",
-                  height: "30px",
-                  padding: "10px",
-                  borderRadius: "50%",
-                }}
-              />
-            </IconButton>
-          </Box>
-        </Box>
+              <CircularProgress size={28} />
+            </Box>
+          )}
+        </List>
       </Container>
     </Grid>
   );

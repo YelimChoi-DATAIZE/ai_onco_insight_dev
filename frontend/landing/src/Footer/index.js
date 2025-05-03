@@ -6,10 +6,10 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import MKTypography from "./MKTypography";
 
-function CenteredFooter({ 
-  company = { href: "*", name: "DATAIZE AI" }, 
-  links = [], 
-  light = false 
+function CenteredFooter({
+  company = { href: "*", name: "DATAIZE AI" },
+  links = [],
+  light = false,
 }) {
   const { href, name } = company;
   const year = new Date().getFullYear();
@@ -63,7 +63,6 @@ function CenteredFooter({
     </Box>
   );
 }
-
 
 // Setting default values for the props of CenteredFooter
 CenteredFooter.defaultProps = {
