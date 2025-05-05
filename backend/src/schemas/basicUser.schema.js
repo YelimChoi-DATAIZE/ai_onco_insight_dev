@@ -6,8 +6,7 @@ const userSchema = new mongoose.Schema({
   password: String, // bcrypt hashed
   country: String,
   company: String,
-  studyIntroduction: String,
-  dataIntroduction: String,
+  job: String,
   createdAt: {
     type: Date,
     default: Date.now,

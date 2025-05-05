@@ -45,7 +45,7 @@ export const GoogleVerifyHandler = async (req, res) => {
 
 // google sign up handler
 export const GoogleSignUpHandler = async (req, res) => {
-  const { country, company, studyIntroduction, dataIntroduction } = req.body;
+  const { country, company, job } = req.body;
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
@@ -72,16 +72,14 @@ export const GoogleSignUpHandler = async (req, res) => {
         picture,
         country,
         company,
-        studyIntroduction,
-        dataIntroduction,
+        job,
       });
 
       await user.save();
     } else {
       user.country = country;
       user.company = company;
-      user.studyIntroduction = studyIntroduction;
-      user.dataIntroduction = dataIntroduction;
+      user.job = job;
       await user.save();
     }
 
@@ -90,6 +88,14 @@ export const GoogleSignUpHandler = async (req, res) => {
     });
   } catch (error) {
     console.error("Registration Error: ", error.message);
+  
+    if (error.name === "ValidationError") {
+      return res.status(400).json({
+        message: error.message,
+        errors: error.errors,
+      });
+    }
+  
     res.status(500).json({ message: "An error occurred during registration." });
   }
 };

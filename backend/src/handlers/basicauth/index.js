@@ -16,8 +16,7 @@ export const SignUpHandler = async (req, res) => {
       password,
       country,
       company,
-      studyIntroduction,
-      dataIntroduction,
+      job,
     } = req.body;
 
     if (!email || !password) {
@@ -28,7 +27,7 @@ export const SignUpHandler = async (req, res) => {
 
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
-      return res.status(409).json({ message: "이미 등록된 이메일입니다." });
+      return res.status(409).json({ message: "This email is already registered." });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -39,18 +38,28 @@ export const SignUpHandler = async (req, res) => {
       password: hashedPassword,
       country,
       company,
-      studyIntroduction,
-      dataIntroduction,
+      job,
     });
 
     await newUser.save();
 
-    res.status(201).json({ message: "회원가입이 완료되었습니다." });
+    res.status(201).json({ message: "Registration completed successfully." });
   } catch (error) {
     console.error("SignUp Error: ", error.message);
-    res.status(500).json({ message: "회원가입 중 오류가 발생했습니다." });
+
+    // 💡 Mongoose validation 에러 포맷 처리
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({
+        message: "Input validation error",
+        errors: messages, // ex: ["Path `company` is required."]
+      });
+    }
+
+    res.status(500).json({ message: "An error occurred during registration." });
   }
 };
+
 
 // basic signin
 export const SignInHandler = async (req, res) => {
@@ -59,12 +68,12 @@ export const SignInHandler = async (req, res) => {
 
     const user = await userModel.findOne({ email });
     if (!user) {
-      return res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
+      return res.status(404).json({ message: "User not found." });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: "비밀번호가 일치하지 않습니다." });
+      return res.status(401).json({ message: "Incorrect password." });
     }
 
     const token = jwt.sign(
@@ -74,7 +83,7 @@ export const SignInHandler = async (req, res) => {
     );
 
     res.status(200).json({
-      message: "로그인 성공",
+      message: "Login successful.",
       token,
       user: {
         id: user._id,
@@ -86,6 +95,6 @@ export const SignInHandler = async (req, res) => {
     });
   } catch (error) {
     console.error("SignIn Error: ", error.message);
-    res.status(500).json({ message: "로그인 중 오류가 발생했습니다." });
+    res.status(500).json({ message: "An error occurred during login." });
   }
 };

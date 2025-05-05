@@ -7,8 +7,7 @@ const userSchema = new mongoose.Schema({
   country: { type: String, required: true },
   company: { type: String, required: true },
   nickname: { type: String },
-  studyIntroduction: { type: String },
-  dataIntroduction: { type: String },
+  job: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });

@@ -70,7 +70,6 @@ export default function Menubar() {
   const [open, setOpen] = React.useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
-  const [userPicture, setUserPicture] = useState("");
   const navigate = useNavigate();
 
   //authentication check
@@ -85,11 +84,9 @@ export default function Menubar() {
       if (googleUserInfo) {
         const googleUser = JSON.parse(googleUserInfo);
         setUserName(googleUser.name || "User");
-        setUserPicture(googleUser.picture || "");
       } else if (basicUserInfo) {
         const basicUser = JSON.parse(basicUserInfo);
         setUserName(basicUser.name || "User");
-        setUserPicture("");
       }
     } else {
       setIsLoggedIn(false);
@@ -232,19 +229,7 @@ export default function Menubar() {
               >
                 {isLoggedIn ? (
                   <>
-                    <Item_R>
-                      Welcome, {userName}!
-                      <img
-                        src={userPicture}
-                        alt="User Profile"
-                        style={{
-                          width: "30px",
-                          height: "30px",
-                          borderRadius: "50%",
-                          marginLeft: "10px",
-                        }}
-                      />
-                    </Item_R>
+                    <Item_R>Welcome, {userName}!</Item_R>
                     <Item_R>
                       {" "}
                       <Link

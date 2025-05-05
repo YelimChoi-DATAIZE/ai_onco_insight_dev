@@ -18,9 +18,10 @@ import {
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
+import axios from "axios";
 
 import PropTypes from "prop-types";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ChatBox from "./ResearchTrend/component/ChatBox";
 import KeywordTrend from "./KeywordTrend/index";
 import MetaMap from "./ResearchTrend/component/MetaMap";
@@ -77,6 +78,7 @@ function a11yProps(index) {
 
 const HybridRAGLayout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const keywordFromUrl = queryParams.get("query") || "";
   const [searchTerm, setSearchTerm] = useState("");
@@ -262,90 +264,53 @@ const HybridRAGLayout = () => {
     fetchFromsearchTerm();
   }, [searchTerm]);
 
-  // const sendMessage = async () => {
-  //   if (input.trim()) {
-  //     const keyword = input.trim();
+  const API_BASE_URL =
+    process.env.REACT_APP_API_BASE_URL || "http://localhost:8000";
 
-  //     const newUserMessage = {
-  //       text: keyword,
-  //       sender: "user",
-  //       type: "text",
-  //     };
-
-  //     setMessages((prev) => [...prev, newUserMessage]);
-  //     setInput("");
-
-  //     setSearchHistory((prev) => {
-  //       if (!prev.includes(keyword)) {
-  //         return [keyword, ...prev.slice(0, 9)];
-  //       }
-  //       return prev;
-  //     });
-
-  //     try {
-  //       setLoading(true);
-
-  //       // (1) PubMed 논문 검색
-  //       const response = await fetch(
-  //         `http://3.35.226.37:8000/dataizeai_api/AdvancedPubSearch?query=${encodeURIComponent(keyword)}`,
-  //       );
-  //       const data = await response.json();
-
-  //       // (2) 첫 번째 논문의 Keywords → sharedKeywords
-  //       const firstPaper = data?.[0];
-  //       const firstKeywords = (firstPaper?.Keywords || "").replace(/;/g, ",");
-  //       setSharedKeywords(firstKeywords);
-  //       console.log("✅ sendMessage sharedKeywords:", firstKeywords);
-
-  //       // (3) 메시지 응답
-  //       setMessages((prev) => [
-  //         ...prev,
-  //         {
-  //           sender: "chatbot",
-  //           type: "text",
-  //           text:
-  //             `Matched Pubmed Result ${data.length} Articles:\n\n` +
-  //             data
-  //               .map(
-  //                 (paper, i) =>
-  //                   `${i + 1}. ${paper.Title}\n   📅 ${paper.PublicationDate} / PMID: ${paper.PMID}` +
-  //                   (paper.Authors ? `\n   👤 ${paper.Authors}` : "") +
-  //                   (paper.Abstract
-  //                     ? `\n   🧾 ${paper.Abstract.substring(0, 180)}...`
-  //                     : "") +
-  //                   (paper.score !== undefined
-  //                     ? `\n   🔸 score: ${paper.score.toFixed(3)}`
-  //                     : ""),
-  //               )
-  //               .join("\n\n"),
-  //           papers: data,
-  //         },
-  //       ]);
-  //     } catch (error) {
-  //       console.error("❌ sendMessage 오류:", error);
-  //       const errorMessage = {
-  //         text: "❌ 논문 검색 중 오류가 발생했어요.",
-  //         sender: "chatbot",
-  //         type: "text",
-  //       };
-  //       setMessages((prev) => [...prev, errorMessage]);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   }
-  // };
-
-  // Favorite 기능
   const addToFavorites = (paper) => {
-    // if (!isLoggedIn) {
-    //   alert("로그인 후 즐겨찾기 할 수 있습니다.");
-    //   return;
-    // }
+    const token = localStorage.getItem("accessToken");
 
-    setFavorites((prev) => {
-      if (prev.find((p) => p.PMID === paper.PMID)) return prev;
-      return [...prev, paper];
-    });
+    if (!token) {
+      const currentPath = window.location.pathname + window.location.search;
+      if (
+        window.confirm("Login is required for this feature.\nGo to login page?")
+      ) {
+        window.location.href = `/signin?redirect=${encodeURIComponent(currentPath)}`;
+      }
+      return;
+    }
+
+    // 중복 방지
+    if (favorites.find((p) => p.PMID === paper.PMID)) {
+      alert("Already added to favorites.");
+      return;
+    }
+
+    axios
+      .post(
+        `${process.env.REACT_APP_API_BASE_URL || "http://localhost:8000"}/pubmed/favorites`,
+        { pmid: paper.PMID },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      )
+      .then((res) => {
+        if (res.data.success) {
+          setFavorites((prev) => [...prev, paper]);
+        } else {
+          alert("Failed to add to favorites: " + res.data.message);
+        }
+      })
+      .catch((err) => {
+        console.error(
+          "Add to favorite failed:",
+          err.response?.data || err.message,
+        );
+        alert("An error occurred while adding to favorites.");
+      });
   };
 
   const handleRemoveFavorite = (pmidToRemove) => {

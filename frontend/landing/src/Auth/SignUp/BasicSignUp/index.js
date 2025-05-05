@@ -6,6 +6,7 @@ import {
   Typography,
   Box,
   MenuItem,
+  InputAdornment,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -17,11 +18,49 @@ export default function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
+
+  const [authCode, setAuthCode] = useState("");
+  const [sentCode, setSentCode] = useState("");
+  const [emailVerified, setEmailVerified] = useState(false);
+
   const [company, setCompany] = useState("");
-  const [studyIntroduction, setStudyIntroduction] = useState("");
-  const [dataIntroduction, setDataIntroduction] = useState("");
   const [country, setCountry] = useState("");
-  const [animatedTitle, setAnimatedTitle] = useState("");
+  const [job, setJob] = useState("");
+
+  // 실시간 비밀번호 확인
+  useEffect(() => {
+    setPasswordError(passwordConfirm !== "" && password !== passwordConfirm);
+  }, [password, passwordConfirm]);
+
+  // 이메일 인증코드 발송
+  const handleSendAuthCode = async () => {
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    try {
+      const res = await axios.post("http://localhost:8000/send-code", {
+        email,
+      });
+      setSentCode(res.data.code);
+      alert("A verification code has been sent to your email.");
+    } catch (err) {
+      alert("Failed to send the verification code.");
+    }
+  };
+
+  // 인증코드 확인
+  const handleVerifyCode = () => {
+    if (authCode === sentCode) {
+      setEmailVerified(true);
+      alert("Email verification complete.");
+    } else {
+      alert("The verification code does not match.");
+    }
+  };
 
   const navigate = useNavigate();
 
@@ -38,7 +77,37 @@ export default function SignUp() {
     { code: "AU", label: "🇦🇺 Australia" },
   ];
 
+  const joblist = [
+    "Healthcare Provider/Hospital",
+    "Academic Medical Center/Research Institution",
+    "Pharmaceutical Company",
+    "Medical Device Manufacturer",
+    "Digital Health/Health Tech",
+    "Healthcare Consulting",
+    "Government Agency/Regulatory Body",
+    "Other",
+  ];
+
   const handleSubmit = async () => {
+    // 클라이언트 측 유효성 검사
+    if (
+      !name ||
+      !email ||
+      !password ||
+      !passwordConfirm ||
+      !company ||
+      !country ||
+      !job
+    ) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    if (passwordError) {
+      alert("Passwords do not match.");
+      return;
+    }
+
     try {
       const response = await axios.post(
         "http://localhost:8000/basicauth/signup",
@@ -48,8 +117,7 @@ export default function SignUp() {
           password,
           country,
           company,
-          studyIntroduction,
-          dataIntroduction,
+          job,
         },
         {
           headers: {
@@ -57,32 +125,25 @@ export default function SignUp() {
           },
         },
       );
-
-      console.log("회원가입 성공: ", response.data);
-      alert("회원가입이 완료되었습니다. 로그인페이지로 이동합니다.");
+      alert("Sign-up complete. Redirecting to login page.");
       navigate("/signin");
     } catch (error) {
-      console.error("회원가입 오류: ", error.response?.data || error.message);
-      alert("회원가입 중 오류가 발생했습니다.");
+      const defaultMessage = "An error occurred during sign-up.";
+      const response = error.response;
+
+      if (response?.data?.errors && Array.isArray(response.data.errors)) {
+        // 💡 Mongoose validation 오류 처리
+        alert("Input error:\n" + response.data.errors.join("\n"));
+      } else if (response?.data?.message) {
+        // 💬 명시적 메시지 처리
+        alert(response.data.message);
+      } else {
+        alert(defaultMessage);
+      }
+
+      console.error("회원가입 오류:", error);
     }
   };
-
-  useEffect(() => {
-    const fullTitle = "SIGN UP";
-    let current = "";
-    let i = 0;
-
-    const typeTitle = () => {
-      if (i < fullTitle.length) {
-        current += fullTitle[i];
-        setAnimatedTitle(current);
-        i++;
-        setTimeout(typeTitle, 100); // 글자 간 간격 조절
-      }
-    };
-
-    typeTitle();
-  }, []);
 
   //country emoji
   const getFlagUrl = (countryCode) =>
@@ -97,82 +158,198 @@ export default function SignUp() {
             <Typography
               sx={{
                 fontSize: "36px",
-                fontWeight: "bold",
+                fontWeight: "reugular",
                 fontFamily: "IBM Plex Sans KR",
                 letterSpacing: "0.21em",
                 textAlign: "center",
                 lineHeight: "63px",
               }}
             >
-              {animatedTitle}
+              SIGN UP
             </Typography>
           </Grid>
         </Grid>
       </Box>
+
       <Box
         sx={{
-          // height: "50vh",
           width: { xs: "330px", lg: "460px" },
           mx: "auto",
           mt: 5,
           p: 4,
-          boxShadow: 2,
-          borderRadius: 12,
+          // boxShadow: 2,
+          // borderRadius: 4,
           bgcolor: "white",
           mb: 5,
-          alignItems: "center",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
         }}
       >
         <Grid container spacing={2}>
+          {/* Name */}
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              placeholder="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              variant="outlined"
+              InputProps={{
+                style: { backgroundColor: "#F1F5F8", borderRadius: "4px" },
+              }}
+              sx={{ "& .MuiOutlinedInput-notchedOutline": { border: "none" } }}
+            />
+          </Grid>
+
+          {/* Email + 인증코드 버튼 */}
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              variant="outlined"
+              InputProps={{
+                // endAdornment: (
+                //   <InputAdornment position="end">
+                //     <Button
+                //       size="small"
+                //       onClick={handleSendAuthCode}
+                //       disabled={emailVerified}
+                //       sx={{ fontSize: "12px" }}
+                //     >
+                //       인증코드 발송
+                //     </Button>
+                //   </InputAdornment>
+                // ),
+                style: { backgroundColor: "#F1F5F8", borderRadius: "4px" },
+              }}
+              sx={{ "& .MuiOutlinedInput-notchedOutline": { border: "none" } }}
+            />
+          </Grid>
+
+          {/* 인증코드 입력 */}
+          {/* {sentCode && !emailVerified && (
+            <>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  placeholder="Enter verification code"
+                  value={authCode}
+                  onChange={(e) => setAuthCode(e.target.value)}
+                  variant="outlined"
+                  InputProps={{
+                    style: { backgroundColor: "#F1F5F8", borderRadius: "4px" },
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  onClick={handleVerifyCode}
+                >
+                  인증코드 확인
+                </Button>
+              </Grid>
+            </>
+          )}
+
+          {emailVerified && (
+            <Grid item xs={12}>
+              <Typography fontSize="13px" color="green">
+                ✅ 이메일 인증이 완료되었습니다.
+              </Typography>
+            </Grid>
+          )} */}
+
+          {/* Password */}
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              variant="outlined"
+              InputProps={{
+                style: { backgroundColor: "#F1F5F8", borderRadius: "4px" },
+              }}
+              sx={{ "& .MuiOutlinedInput-notchedOutline": { border: "none" } }}
+            />
+          </Grid>
+
+          {/* Password Confirm */}
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              type="password"
+              placeholder="Password Confirm"
+              value={passwordConfirm}
+              onChange={(e) => setPasswordConfirm(e.target.value)}
+              required
+              error={passwordError}
+              helperText={passwordError ? "비밀번호가 일치하지 않습니다." : ""}
+              variant="outlined"
+              InputProps={{
+                style: { backgroundColor: "#F1F5F8", borderRadius: "4px" },
+              }}
+              sx={{ "& .MuiOutlinedInput-notchedOutline": { border: "none" } }}
+            />
+          </Grid>
+
+          {/* Company */}
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              placeholder="Company or Hospital name"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+              variant="outlined"
+              InputProps={{
+                style: { backgroundColor: "#F1F5F8", borderRadius: "4px" },
+              }}
+              sx={{ "& .MuiOutlinedInput-notchedOutline": { border: "none" } }}
+            />
+          </Grid>
+
+          {/* Country */}
           <Grid item xs={12}>
             <Typography
               sx={{
                 fontSize: "14px",
                 fontFamily: "Noto Sans KR",
                 textAlign: "left",
+                color: "#212324",
                 lineHeight: "26px",
+                mb: 0.5,
               }}
             >
-              Country(*required)
+              Country
             </Typography>
             <TextField
               select
               fullWidth
+              required
               value={country}
               onChange={(e) => setCountry(e.target.value)}
               variant="outlined"
-              required
-              label="Select your country"
               InputProps={{
                 style: {
                   backgroundColor: "#F1F5F8",
-                  borderRadius: "3px",
-                  padding: "10px 14px",
-                  height: "45px",
-                  fontSize: "12px",
+                  borderRadius: "4px",
                 },
               }}
               sx={{
-                mt: "10px",
-                boxShadow: 1,
-                fontSize: "12px",
-
-                "& .MuiOutlinedInput-notchedOutline": {
-                  border: "none",
-                },
+                "& .MuiOutlinedInput-notchedOutline": { border: "none" },
               }}
             >
               {countries.map((c) => (
-                <MenuItem
-                  key={c.code}
-                  value={c.code}
-                  sx={{
-                    fontSize: "12px",
-                  }}
-                >
+                <MenuItem key={c.code} value={c.code} sx={{ fontSize: "13px" }}>
                   <img
                     src={getFlagUrl(c.code)}
                     alt={c.label}
@@ -188,284 +365,67 @@ export default function SignUp() {
             </TextField>
           </Grid>
 
+          {/* Job */}
           <Grid item xs={12}>
             <Typography
               sx={{
                 fontSize: "14px",
                 fontFamily: "Noto Sans KR",
+                color: "#212324",
                 textAlign: "left",
                 lineHeight: "26px",
+                mt: 0.5,
+                mb: 0.5,
               }}
             >
-              Name
+              Job Type
             </Typography>
             <TextField
+              select
               fullWidth
-              label="Name"
               required
+              value={job}
+              onChange={(e) => setJob(e.target.value)}
               variant="outlined"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
               InputProps={{
                 style: {
                   backgroundColor: "#F1F5F8",
-                  borderRadius: "3px",
-                  border: "none",
-                  padding: "10px 14px",
-                  height: "25px",
+                  borderRadius: "4px",
                 },
               }}
               sx={{
-                "& .MuiOutlinedInput-notchedOutline": {
-                  border: "none",
-                },
-                "& .MuiInputLabel-root": {
-                  color: "#f5f5f5",
-                },
-                "& .MuiInputBase-input": {
-                  color: "black",
-                },
-                mt: "10px",
-                boxShadow: 1,
-              }}
-            />
-            <Typography
-              sx={{
-                fontSize: "14px",
-                fontFamily: "Noto Sans KR",
-                textAlign: "left",
-                lineHeight: "26px",
+                "& .MuiOutlinedInput-notchedOutline": { border: "none" },
               }}
             >
-              E-mail
-            </Typography>
-            <TextField
-              fullWidth
-              label="E-mail"
-              required
-              variant="outlined"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              InputProps={{
-                style: {
-                  backgroundColor: "#F1F5F8",
-                  borderRadius: "3px",
-                  border: "none",
-                  padding: "10px 14px",
-                  height: "25px",
-                },
-              }}
-              sx={{
-                "& .MuiOutlinedInput-notchedOutline": {
-                  border: "none",
-                },
-                "& .MuiInputLabel-root": {
-                  color: "#f5f5f5",
-                },
-                "& .MuiInputBase-input": {
-                  color: "black",
-                },
-                mt: "10px",
-                boxShadow: 1,
-              }}
-            />
-            <Typography
-              sx={{
-                fontSize: "14px",
-                fontFamily: "Noto Sans KR",
-                textAlign: "left",
-                lineHeight: "26px",
-              }}
-            >
-              Passowrd
-            </Typography>
-            <TextField
-              fullWidth
-              label="Passowrd"
-              required
-              variant="outlined"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              InputProps={{
-                style: {
-                  backgroundColor: "#F1F5F8",
-                  borderRadius: "3px",
-                  border: "none",
-                  padding: "10px 14px",
-                  height: "25px",
-                },
-              }}
-              sx={{
-                "& .MuiOutlinedInput-notchedOutline": {
-                  border: "none",
-                },
-                "& .MuiInputLabel-root": {
-                  color: "#f5f5f5",
-                },
-                "& .MuiInputBase-input": {
-                  color: "black",
-                },
-                mt: "10px",
-                boxShadow: 1,
-              }}
-            />
-            <Typography
-              sx={{
-                fontSize: "14px",
-                fontFamily: "Noto Sans KR",
-                textAlign: "left",
-                lineHeight: "26px",
-              }}
-            >
-              Company or Hospital name(*required)
-            </Typography>
-            <TextField
-              fullWidth
-              label="Company or Hospital name"
-              required
-              variant="outlined"
-              value={company}
-              onChange={(e) => setCompany(e.target.value)}
-              InputProps={{
-                style: {
-                  backgroundColor: "#F1F5F8",
-                  borderRadius: "3px",
-                  border: "none",
-                  padding: "10px 14px",
-                  height: "45px",
-                },
-              }}
-              sx={{
-                "& .MuiOutlinedInput-notchedOutline": {
-                  border: "none",
-                },
-                "& .MuiInputLabel-root": {
-                  color: "#f5f5f5",
-                },
-                "& .MuiInputBase-input": {
-                  color: "black",
-                },
-                mt: "10px",
-                boxShadow: 1,
-              }}
-            />
+              {joblist.map((label, idx) => (
+                <MenuItem key={idx} value={label} sx={{ fontSize: "13px" }}>
+                  {label}
+                </MenuItem>
+              ))}
+            </TextField>
           </Grid>
 
-          <Grid item xs={12}>
-            <Typography
-              sx={{
-                fontSize: "14px",
-                fontFamily: "Noto Sans KR",
-                textAlign: "left",
-                lineHeight: "26px",
-              }}
-            >
-              Introduce your study
-            </Typography>
-            <TextField
-              fullWidth
-              label="Introduce your study"
-              multiline
-              rows={4}
-              required
-              variant="outlined"
-              value={studyIntroduction}
-              onChange={(e) => setStudyIntroduction(e.target.value)}
-              InputProps={{
-                style: {
-                  backgroundColor: "#F1F5F8",
-                  borderRadius: "3px",
-                  border: "none",
-                  padding: "10px 14px",
-                  // height: "45px",
-                },
-              }}
-              sx={{
-                "& .MuiOutlinedInput-notchedOutline": {
-                  border: "none",
-                },
-                "& .MuiInputLabel-root": {
-                  color: "#f5f5f5",
-                },
-                "& .MuiInputBase-input": {
-                  color: "black",
-                },
-                mt: "10px",
-                boxShadow: 1,
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <Typography
-              sx={{
-                fontSize: "14px",
-                fontFamily: "Noto Sans KR",
-                textAlign: "left",
-                lineHeight: "26px",
-              }}
-            >
-              Introduce your data
-            </Typography>
-            <TextField
-              fullWidth
-              label="Introduce your data"
-              multiline
-              rows={4}
-              required
-              variant="outlined"
-              value={dataIntroduction}
-              onChange={(e) => setDataIntroduction(e.target.value)}
-              InputProps={{
-                style: {
-                  backgroundColor: "#F1F5F8",
-                  borderRadius: "3px",
-                  border: "none",
-                  padding: "10px 14px",
-                  // height: "45px",
-                },
-              }}
-              sx={{
-                "& .MuiOutlinedInput-notchedOutline": {
-                  border: "none",
-                },
-                "& .MuiInputLabel-root": {
-                  color: "#f5f5f5",
-                },
-                "& .MuiInputBase-input": {
-                  color: "black",
-                },
-                mt: "10px",
-                boxShadow: 1,
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12} textAlign="center">
+          {/* Submit Button */}
+          <Grid item xs={12} textAlign="center" sx={{ mt: 3, mb: 2 }}>
             <Button
               variant="contained"
+              fullWidth
               sx={{
                 backgroundColor: "#3CA7DF",
                 color: "white",
-                width: {
-                  xs: "100%",
-                  sm: "400px",
-                  md: "400px",
-                  lg: "400px",
-                },
                 height: "45px",
-                borderRadius: "20px",
+                borderRadius: "6px",
                 textTransform: "none",
-                fontSize: "14px",
                 fontWeight: "bold",
-                mt: 5,
-                "&:hover": {
-                  backgroundColor: "#357ae8",
-                },
+                "&:hover": { backgroundColor: "#3399cc" },
               }}
-              onClick={handleSubmit}
+              onClick={() => {
+                // if (!emailVerified) return alert("이메일 인증을 완료해주세요.");
+                if (passwordError) return alert("비밀번호를 확인해주세요.");
+                handleSubmit();
+              }}
             >
-              SUBMIT
+              START
             </Button>
           </Grid>
         </Grid>

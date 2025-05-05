@@ -21,11 +21,11 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
 
   const [error, setError] = useState(null);
+  const [googleerror, setGoogleError] = useState(null);
   const [isNewUser, setIsNewUser] = useState(false);
   const [nickname, setNickname] = useState("");
   const [company, setCompany] = useState("");
   const [message, setMessage] = useState("");
-  const [animatedTitle, setAnimatedTitle] = useState("");
 
   const { handleLogin } = useContext(AuthContext);
 
@@ -52,7 +52,7 @@ export default function SignIn() {
       navigate(from, { replace: true });
     } catch (error) {
       console.error("로그인 오류:", error.response?.data || error.message);
-      setError("이메일 또는 비밀번호가 올바르지 않습니다.");
+      setError("The email or password is incorrect.");
     }
   };
 
@@ -66,7 +66,7 @@ export default function SignIn() {
       onSuccess: async (tokenResponse) => {
         try {
           if (!tokenResponse.access_token) {
-            setError("Google 로그인 오류가 발생했습니다.");
+            setError("A Google sign-in error occurred.");
             return;
           }
 
@@ -98,15 +98,15 @@ export default function SignIn() {
           );
           console.log("서버 응답: ", response.data);
           navigate(from, { replace: true });
-          setError(null);
+          setGoogleError(null);
         } catch (error) {
           console.error("서버 오류: ", error.response?.data || error.message);
-          setError("Google 로그인 오류가 발생했습니다.");
+          setGoogleError("A Google sign-in error occurred.");
         }
       },
       onError: (error) => {
         console.error("로그인 에러: ", error);
-        setError("Google 로그인 오류가 발생했습니다.");
+        setGoogleError("A Google sign-in error occurred.");
       },
     });
 
@@ -159,11 +159,8 @@ export default function SignIn() {
       scope: "openid email profile",
       onSuccess: async (tokenResponse) => {
         try {
-          console.log("Received Token Response: ", tokenResponse);
-
           if (!tokenResponse.access_token) {
-            console.error("Error: Access token is missing.");
-            setError("Google 회원가입 오류가 발생했습니다.");
+            setError("A Google sign-in error occurred.");
             return;
           }
 
@@ -178,88 +175,82 @@ export default function SignIn() {
             },
           );
 
-          //get new user is or not
           if (response.data.message) {
             setMessage(response.data.message);
           }
 
           if (response.data.isNewUser) {
-            console.log("신규 사용자입니다. 회원가입 페이지로 이동합니다.");
             localStorage.setItem("accessToken", tokenResponse.access_token);
             navigate("/google-signup");
           } else {
-            console.log("서버 응답: ", response.data);
             setError(null);
           }
         } catch (error) {
           console.error("서버 오류: ", error.response?.data || error.message);
-          setError("Google 회원가입 오류가 발생했습니다.");
+          setGoogleError("A Google sign-in error occurred.");
         }
       },
       onError: (error) => {
         console.error("로그인 에러: ", error);
-        setError("Google 회원가입 오류가 발생했습니다.");
+        setGoogleError("A Google sign-in error occurred.");
       },
     });
 
     return (
-      <div style={{ textAlign: "center" }}>
-        <Button
-          variant="contained"
-          onClick={() => signUp()}
+      <Box
+        sx={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <Box
           sx={{
-            color: "#212324",
-            borderColor: "#4285F4",
-            backgroundColor: "#f0f0f0",
             width: {
               xs: "100%",
-              sm: "400px",
-              md: "400px",
+              sm: "100%",
+              md: "100%",
               lg: "400px",
-            },
-            height: "45px",
-            borderRadius: "20px",
-            textTransform: "none",
-            fontSize: "14px",
-            // fontWeight: "bold",
-            mt: 0,
-            "&:hover": {
-              borderColor: "#357ae8",
             },
           }}
         >
-          SIGN UP with GOOGLE
-        </Button>
+          <Button
+            variant="contained"
+            onClick={signUp}
+            sx={{
+              color: "#212324",
+              backgroundColor: "#f0f0f0",
+              height: "45px",
+              borderRadius: "20px",
+              textTransform: "none",
+              fontSize: "14px",
+              width: "100%",
+              "&:hover": {
+                backgroundColor: "#e0e0e0",
+              },
+            }}
+          >
+            SIGN UP with GOOGLE
+          </Button>
+        </Box>
 
         {message && (
           <Typography
-            variant="body1"
-            color="primary"
-            sx={{ mt: 2, fontSize: "16px" }}
+            sx={{
+              color: "red", // 파란색
+              textAlign: "center", // 가운데 정렬
+              fontSize: "13px",
+              mt: 1,
+            }}
           >
             {message}
           </Typography>
         )}
-      </div>
+      </Box>
     );
   };
-
-  useEffect(() => {
-    const fullTitle = "SIGN IN";
-    let current = "";
-    let i = 0;
-
-    const typeTitle = () => {
-      if (i < fullTitle.length) {
-        current += fullTitle[i];
-        setAnimatedTitle(current);
-        i++;
-        setTimeout(typeTitle, 100); // 글자 간 간격 조절
-      }
-    };
-
-    typeTitle();
-  }, []);
 
   return (
     <>
@@ -271,153 +262,78 @@ export default function SignIn() {
             <Typography
               sx={{
                 fontSize: "36px",
-                fontWeight: "bold",
+                fontWeight: "reugular",
                 fontFamily: "IBM Plex Sans KR",
                 letterSpacing: "0.21em",
                 textAlign: "center",
                 lineHeight: "63px",
               }}
             >
-              {animatedTitle}
+              SIGN IN
             </Typography>
           </Grid>
         </Grid>
       </Box>
       <Box
         sx={{
-          // height: "50vh",
           width: { xs: "330px", lg: "460px" },
           mx: "auto",
           mt: 5,
           p: 4,
-          boxShadow: 2,
-          borderRadius: 12,
+          // boxShadow: 2,
+          // borderRadius: 4,
           bgcolor: "white",
           mb: 5,
-          alignItems: "center",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
         }}
       >
-        <Grid
-          container
-          spacing={2}
-          justifyContent="center"
-          alignItems="center"
-          direction="column"
-        >
+        <Grid container spacing={2}>
+          {/* Name */}
           <Grid item xs={12}>
-            <Typography
-              sx={{
-                fontSize: "16px",
-                fontFamily: "Noto Sans KR",
-                textAlign: "left",
-                lineHeight: "26px",
-              }}
-            >
-              Email
-            </Typography>
             <TextField
               fullWidth
-              // label="Name*"
               required
-              variant="outlined"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              variant="outlined"
               InputProps={{
-                style: {
-                  backgroundColor: "#F1F5F8",
-                  borderRadius: "3px",
-                  border: "none",
-                  padding: "10px 14px",
-                  height: "45px",
-                },
+                style: { backgroundColor: "#F1F5F8", borderRadius: "4px" },
               }}
-              sx={{
-                "& .MuiOutlinedInput-notchedOutline": {
-                  border: "none",
-                },
-                "& .MuiInputLabel-root": {
-                  color: "black",
-                },
-                "& .MuiInputBase-input": {
-                  color: "black",
-                },
-                mt: "10px",
-                boxShadow: 1,
-                width: {
-                  xs: "100%",
-                  sm: "400px",
-                  md: "400px",
-                  lg: "400px",
-                },
-              }}
+              sx={{ "& .MuiOutlinedInput-notchedOutline": { border: "none" } }}
             />
           </Grid>
 
           <Grid item xs={12}>
-            <Typography
-              sx={{
-                fontSize: "16px",
-                fontFamily: "Noto Sans KR",
-                textAlign: "left",
-                lineHeight: "26px",
-              }}
-            >
-              Password
-            </Typography>
             <TextField
               fullWidth
-              // label="Name*"
               required
-              variant="outlined"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              variant="outlined"
               InputProps={{
-                style: {
-                  backgroundColor: "#F1F5F8",
-                  borderRadius: "3px",
-                  border: "none",
-                  padding: "10px 14px",
-                  height: "45px",
-                },
+                style: { backgroundColor: "#F1F5F8", borderRadius: "4px" },
               }}
-              sx={{
-                "& .MuiOutlinedInput-notchedOutline": {
-                  border: "none",
-                },
-                "& .MuiInputLabel-root": {
-                  color: "black",
-                },
-                "& .MuiInputBase-input": {
-                  color: "black",
-                },
-                mt: "10px",
-                boxShadow: 1,
-                width: {
-                  xs: "100%",
-                  sm: "400px",
-                  md: "400px",
-                  lg: "400px",
-                },
-              }}
+              sx={{ "& .MuiOutlinedInput-notchedOutline": { border: "none" } }}
             />
           </Grid>
-          <Grid item xs={12}>
-            <Box sx={{ width: "100%" }}>
+
+          <Grid item xs={12} sx={{ textAlign: "center" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                width: "100%",
+              }}
+            >
               <Button
                 variant="contained"
                 onClick={handleBasicSignIn}
                 sx={{
                   backgroundColor: "#3CA7DF",
                   color: "white",
-                  width: {
-                    xs: "100%",
-                    sm: "400px",
-                    md: "400px",
-                    lg: "400px",
-                  },
+                  width: "100%",
+                  maxWidth: "400px",
                   height: "45px",
                   borderRadius: "20px",
                   textTransform: "none",
@@ -447,53 +363,70 @@ export default function SignIn() {
                   <GoogleSignInButton setError={setError} />
                 </div>
               </GoogleOAuthProvider>
+              {error && (
+                <Typography
+                  sx={{
+                    color: "red",
+                    textAlign: "center",
+                    fontSize: "13px",
+                    mt: 1,
+                  }}
+                >
+                  {error}
+                </Typography>
+              )}
             </Box>
-            {error && (
-              <div style={{ color: "red", marginTop: "10px" }}>{error}</div>
-            )}
           </Grid>
 
           <Grid item xs={12}>
-            {" "}
-            <Typography
+            <Box
               sx={{
-                fontSize: "16px",
-                fontFamily: "Noto Sans KR",
-                textAlign: "left",
-                lineHeight: "26px",
-                color: "#357ae8",
-                mt: 3,
-                mb: 1,
+                display: "flex",
+                justifyContent: "center",
+                width: "100%",
               }}
             >
-              Don’t have an account?
-            </Typography>
+              {" "}
+              <Typography
+                sx={{
+                  fontSize: "16px",
+                  fontFamily: "Noto Sans KR",
+                  textAlign: "left",
+                  lineHeight: "26px",
+                  color: "#357ae8",
+                  mt: 3,
+                  mb: 1,
+                }}
+              >
+                Don’t have an account?
+              </Typography>
+            </Box>
           </Grid>
 
           {/* basic sign up */}
-          <Grid item xs={12}>
-            <Box sx={{ width: "100%" }}>
+          <Grid item xs={12} sx={{ textAlign: "center" }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                width: "100%",
+              }}
+            >
               <Button
                 variant="contained"
                 onClick={() => navigate("/signup")}
                 sx={{
                   color: "#212324",
-                  borderColor: "#4285F4",
                   backgroundColor: "#f0f0f0",
-                  width: {
-                    xs: "100%",
-                    sm: "400px",
-                    md: "400px",
-                    lg: "400px",
-                  },
+                  width: "100%",
+                  maxWidth: "400px",
                   height: "45px",
                   borderRadius: "20px",
                   textTransform: "none",
                   fontSize: "14px",
-                  // fontWeight: "bold",
                   mt: 0,
                   "&:hover": {
-                    borderColor: "#357ae8",
+                    backgroundColor: "#e0e0e0",
                   },
                 }}
               >
@@ -504,7 +437,7 @@ export default function SignIn() {
 
           {/* Google sign up button */}
           <Grid item xs={12}>
-            <Box sx={{ width: "100%", mb: "50px" }}>
+            <Box sx={{ width: "100%" }}>
               <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
                 <div
                   style={{
@@ -513,17 +446,38 @@ export default function SignIn() {
                     alignItems: "center",
                   }}
                 >
-                  <GoogleSignUpButton setError={setError} />
+                  <GoogleSignUpButton setError={setGoogleError} />
                 </div>
               </GoogleOAuthProvider>
             </Box>
+            {googleerror && (
+              <Typography
+                sx={{
+                  color: "red",
+                  textAlign: "center",
+                  fontSize: "13px",
+                  mt: 1,
+                }}
+              >
+                {googleerror}
+              </Typography>
+            )}
           </Grid>
 
-          <img
-            src={"/static/Images/DataizeLogo.svg"}
-            alt="Logo"
-            style={{ height: "26px" }}
-          />
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              width: "100%",
+              mt: 5,
+            }}
+          >
+            <img
+              src={"/static/Images/DataizeLogo.svg"}
+              alt="Logo"
+              style={{ height: "26px" }}
+            />
+          </Box>
         </Grid>
       </Box>
 
