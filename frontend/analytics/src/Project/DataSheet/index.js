@@ -159,10 +159,11 @@ const DataSheet = ({ open, activeTab, setAddRowFunction, setAddColumnFunction, d
   };
 
   return (
-    <div style={containerStyle(open)}>
+    <>
+      {/* <div style={containerStyle}> */}
       {/* 👇 AG Grid는 result1일 때는 숨김 */}
       {activeTab !== 'result1' && (
-        <div className="ag-theme-alpine" style={tableStyle}>
+        <div className="ag-theme-alpine" style={tableStyle(activeTab)}>
           <AgGridReact
             ref={gridRef}
             rowData={rowData}
@@ -180,41 +181,65 @@ const DataSheet = ({ open, activeTab, setAddRowFunction, setAddColumnFunction, d
       <div style={viewBoxStyle(activeTab)}>
         <ClipboardProvider>{renderViewBox()}</ClipboardProvider>
       </div>
-    </div>
+      {/* </div> */}
+    </>
   );
 };
 
-// ✅ 스타일 정의
-const containerStyle = (open) => ({
-  display: 'flex',
+const containerStyle = {
+  // display: 'flex',
   flexDirection: 'row',
-  width: '97%',
+  width: '90w',
   height: '100vh',
-  marginLeft: open ? '120px' : '40px',
-  transition: 'margin-left 0.3s ease',
-});
-
-// AG Grid 기본 스타일 (숨김 처리할 땐 렌더링 자체를 제거)
-const tableStyle = {
-  flex: 0.5,
-  transition: 'flex 0.3s ease',
-  height: '100vh',
-  width: '95%',
-  marginLeft: '40px',
+  overflow: 'hidden',
 };
 
-// View 영역 스타일: result1이면 전체 확장
+// ✅ tableStyle → 동적으로 수정
+const tableStyle = (activeTab) => ({
+  flex: activeTab === 'result1' ? 1 : 0.5,
+  height: '100%',
+  width: '100%',
+  overflow: 'hidden',
+});
+
+// ✅ viewBoxStyle → 나머지일 때 0.5, result1일 땐 숨김
 const viewBoxStyle = (activeTab) => ({
   flex: activeTab === 'result1' ? 1 : 0.5,
-  height: '100vh',
-  backgroundColor: '#f5f5f5',
-  borderLeft: '2px solid #ddd',
   display: 'flex',
+  height: '100%',
+  overflowY: 'auto',
+  backgroundColor: '#f5f5f5',
+  borderLeft: activeTab === 'result1' ? 'none' : '2px solid #ddd',
+  padding: activeTab === 'result1' ? 0 : '20px',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  fontSize: '18px',
-  fontWeight: 'bold',
 });
+
+// const viewBoxStyle = (activeTab) => ({
+//   flex: activeTab === 'result1' ? 1 : 0.5,
+//   display: activeTab === 'result1' ? 'flex' : 'flex',
+//   height: '100%',
+//   overflowY: 'auto',
+//   backgroundColor: '#f5f5f5',
+//   borderLeft: '2px solid #ddd',
+//   flexDirection: 'column',
+//   alignItems: 'center',
+//   justifyContent: 'center',
+//   padding: '20px',
+// });
+
+// const viewBoxStyle = (activeTab) => ({
+//   flex: activeTab === 'result1' ? 1 : 1,
+//   height: '100%',
+//   overflowY: 'auto',
+//   backgroundColor: '#f5f5f5',
+//   borderLeft: activeTab !== 'result1' ? '2px solid #ddd' : 'none',
+//   display: activeTab === 'result1' ? 'flex' : 'none',
+//   flexDirection: 'column',
+//   alignItems: 'center',
+//   justifyContent: 'center',
+//   padding: '20px',
+// });
 
 export default DataSheet;

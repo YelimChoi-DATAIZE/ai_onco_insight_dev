@@ -19,7 +19,8 @@
   "rules": {
     "prettier/prettier": "error",
     "react/prop-types": "off",
-    "no-unused-vars": "warn"
+    "no-unused-vars": "warn",
+    "react/react-in-jsx-scope": "off" 
   },
   "settings": {
     "react": {

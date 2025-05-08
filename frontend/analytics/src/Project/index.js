@@ -35,7 +35,7 @@ const getDataFromDB = async () => {
   return await store.get('data');
 };
 export default function Project() {
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
   const [data, setData] = useState(null);
   const [activeTab, setActiveTab] = useState(null);
   const [addRowFunction, setAddRowFunction] = useState(null);
@@ -62,16 +62,16 @@ export default function Project() {
     <>
       <Menubar />
       <ProjectBar
-        open={open}
-        onOpen={() => setOpen(true)}
-        onClose={() => setOpen(false)}
+        // open={open}
+        // onOpen={() => setOpen(true)}
+        // onClose={() => setOpen(false)}
         onUpload={handleDataUpload}
         setActiveTab={setActiveTab}
         addRow={addRowFunction}
         addColumn={addColumnFunction}
       />
       <DataSheet
-        open={open}
+        // open={open}
         activeTab={activeTab}
         setAddRowFunction={setAddRowFunction}
         setAddColumnFunction={setAddColumnFunction}

@@ -25,41 +25,12 @@ import RenderTabs from './component/RenderTabs';
 
 const drawerWidth = 240;
 
-const openedMixin = (theme) => ({
-  width: drawerWidth,
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: 'hidden',
-});
-
-const closedMixin = (theme) => ({
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: 'hidden',
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
-  },
-});
-
-const DrawerHeader = styled('div')(({ theme }) => ({
+const DrawerHeader = styled('div')(() => ({
+  height: 90,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'flex-end',
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-  marginTop: '16px', // 기본값
-  [theme.breakpoints.up('lg')]: {
-    marginTop: '30px',
-  },
-  [theme.breakpoints.up('sm')]: {
-    marginTop: '20px',
-  },
+  padding: '0 8px',
 }));
 
 const AppBar = styled(MuiAppBar, {
@@ -75,36 +46,11 @@ const AppBar = styled(MuiAppBar, {
       props: ({ open }) => open,
       style: {
         marginLeft: drawerWidth,
-        width: `calc(100% - ${drawerWidth}px)`,
+        width: `100%`,
         transition: theme.transitions.create(['width', 'margin'], {
           easing: theme.transitions.easing.sharp,
           duration: theme.transitions.duration.enteringScreen,
         }),
-      },
-    },
-  ],
-}));
-
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme }) => ({
-  width: drawerWidth,
-  flexShrink: 0,
-  whiteSpace: 'nowrap',
-  boxSizing: 'border-box',
-  variants: [
-    {
-      props: ({ open }) => open,
-      style: {
-        ...openedMixin(theme),
-        '& .MuiDrawer-paper': openedMixin(theme),
-      },
-    },
-    {
-      props: ({ open }) => !open,
-      style: {
-        ...closedMixin(theme),
-        '& .MuiDrawer-paper': closedMixin(theme),
       },
     },
   ],
@@ -267,10 +213,10 @@ const ProjectBar = ({ open, onOpen, onClose, onUpload, setActiveTab, addRow, add
         <CssBaseline />
         <AppBar
           position="fixed"
-          open={open}
+          // open={open}
           sx={{
             display: 'flex',
-            marginTop: { lg: '40px', xs: '32px' },
+            marginTop: { lg: '40px', xs: '40px' },
             height: '40px',
             backgroundColor: '#F5F5F5',
           }}
@@ -284,41 +230,27 @@ const ProjectBar = ({ open, onOpen, onClose, onUpload, setActiveTab, addRow, add
               sx={{
                 flexWrap: 'wrap', // 버튼 겹침 방지
                 gap: 1, // 간격 조정
-                mt: { lg: -3, sm: -3, xs: -2 },
+                mt: { lg: -5, sm: -5, xs: -4 },
               }}
             >
-              {/* 홈 버튼 */}
-              <Grid item>
-                <IconButton
-                  color="inherit"
-                  aria-label="open drawer"
-                  onClick={onOpen}
-                  edge="start"
-                  sx={[
-                    {
-                      marginRight: 5,
-                    },
-                    open && { display: 'none' },
-                  ]}
-                >
-                  <AddHomeIcon />
-                </IconButton>
-              </Grid>
-
-              {/* 버튼 그룹 */}
-              <Grid item sx={{ flexGrow: 1 }}>
+              <Grid
+                item
+                sx={{
+                  flexGrow: 1,
+                  overflow: 'hidden', // 스크롤 완전 제거
+                  whiteSpace: 'nowrap', // 버튼 줄바꿈 방지
+                  height: '48px', // Button 높이에 맞춤
+                }}
+              >
                 <ButtonGroup
                   variant="contained"
                   sx={{
                     height: '35px',
-                    mt: -3,
-                    ml: -3,
                     backgroundColor: 'grey',
                     boxShadow: 'none',
                     border: 'none',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    flexWrap: 'wrap',
+                    display: 'inline-flex', // ✅ wrap 방지
+                    justifyContent: 'flex-start',
                     '& .MuiButtonGroup-grouped:not(:last-of-type)': {
                       borderRight: '1px solid white',
                     },
@@ -344,9 +276,6 @@ const ProjectBar = ({ open, onOpen, onClose, onUpload, setActiveTab, addRow, add
                             backgroundColor: '#E7EFF3',
                             boxShadow: 'none',
                             color: '#000000',
-                          },
-                          [theme.breakpoints.down('sm')]: {
-                            padding: '0 15px',
                           },
                         }}
                       >
@@ -379,19 +308,20 @@ const ProjectBar = ({ open, onOpen, onClose, onUpload, setActiveTab, addRow, add
             </Grid>
           </Toolbar>
         </AppBar>
-        <ProjectTree open={open} onClose={onClose} />
-        <Box component="main" sx={{ flexGrow: 1 }}>
+        <Box component="main" sx={{ flexGrow: 1, overflowX: 'auto', position: 'relative' }}>
           <DrawerHeader />
-          {/* <Box sx={{position:"sticky"}}>{renderTabs()}</Box> */}
           <Box
             sx={{
               position: 'sticky',
-              top: '80px', // AppBar 높이에 맞춰 조정
-              left: 70,
-              width: '100%',
+              top: '40px',
+              marginTop: '-10px',
+              height: 80,
               zIndex: 1000,
               backgroundColor: '#E7EFF3',
               boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              width: '100%',
             }}
           >
             {renderTabs()}
