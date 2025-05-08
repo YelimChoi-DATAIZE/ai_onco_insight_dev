@@ -1,97 +1,31 @@
-import React, { useState, useEffect } from "react";
-import {
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
-
-import ProjectBar from "./ProjectBar";
-import Menubar from "./Menubar";
-import DataSheet from "./DataSheet";
-import { openDB } from "idb";
-
-const DB_NAME = "AnalyticsDB";
-const STORE_NAME = "uploadedData";
-
-const initDB = async () => {
-  return openDB(DB_NAME, 1, {
-    upgrade(db) {
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME);
-      }
-    },
-  });
-};
-
-const saveDataToDB = async (data) => {
-  const db = await initDB();
-  const tx = db.transaction(STORE_NAME, "readwrite");
-  const store = tx.objectStore(STORE_NAME);
-  await store.put(data, "data");
-  await tx.done;
-  console.log("IndexedDB에 데이터 저장 완료:", data);
-};
-
-const getDataFromDB = async () => {
-  const db = await initDB();
-  const tx = db.transaction(STORE_NAME, "readonly");
-  const store = tx.objectStore(STORE_NAME);
-  return await store.get("data");
-};
-
-const Analytics = () => {
-  const [open, setOpen] = useState(false);
-  const [data, setData] = useState(null);
-  const [activeTab, setActiveTab] = useState(null);
-  const [addRowFunction, setAddRowFunction] = useState(null);
-  const [addColumnFunction, setAddColumnFunction] = useState(null);
-
-  useEffect(() => {
-    const fetchDataFromDB = async () => {
-      const storedData = await getDataFromDB();
-      if (storedData) {
-        console.log("새로고침 후 IndexedDB에서 불러온 데이터:", storedData);
-        setData(storedData);
-      }
-    };
-    fetchDataFromDB();
-  }, []);
-
-  const handleDataUpload = async (uploadedData) => {
-    await saveDataToDB(uploadedData);
-    const updatedData = await getDataFromDB();
-    setData(updatedData);
-  };
-
-  return (
-    <>
-      <Menubar />
-      <ProjectBar
-        open={open}
-        onOpen={() => setOpen(true)}
-        onClose={() => setOpen(false)}
-        onUpload={handleDataUpload}
-        setActiveTab={setActiveTab}
-        addRow={addRowFunction}
-        addColumn={addColumnFunction}
-      />
-      <DataSheet
-        open={open}
-        activeTab={activeTab}
-        setAddRowFunction={setAddRowFunction}
-        setAddColumnFunction={setAddColumnFunction}
-        data={data}
-      />
-    </>
-  );
-};
+import React, { useState, useEffect } from 'react';
+import { Route, Routes, Navigate } from 'react-router-dom';
+import Project from './Project';
+import Console from './Console';
 
 const App = () => {
+  //get token from localStorage(개발환경에서만)
+  useEffect(() => {
+    const receiveMessage = (event) => {
+      if (event.origin === 'http://localhost:3000' && event.data.type === 'TOKEN_TRANSFER') {
+        localStorage.setItem('accessToken', event.data.token);
+        // 이후 자동 로그인 로직 실행 가능
+      }
+    };
+
+    window.addEventListener('message', receiveMessage);
+    return () => window.removeEventListener('message', receiveMessage);
+  }, []);
+
   return (
+    <div style={{ minWidth: '1280px', height: '100vh', overflowX: 'auto' }}>
       <Routes>
-        <Route path="/analytics" element={<Analytics />} />
-        <Route path="*" element={<Navigate to="/analytics" />} />
+        <Route path="/console" element={<Console />} />
+        <Route path="*" element={<Navigate to="/console" />} />
+        <Route path="/project" element={<Project />} />
+        {/* <Route path="/project/:id" element={<Project />} /> */}
       </Routes>
+    </div>
   );
 };
 

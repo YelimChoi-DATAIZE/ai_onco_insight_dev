@@ -101,6 +101,32 @@ export default function Menubar() {
     navigate("/signin");
   };
 
+  // Send the token to the new window(analysis)
+  const handleOpenWorkspace = () => {
+    const token = localStorage.getItem("accessToken");
+    const newWindow = window.open("http://localhost:3001", "_blank");
+
+    if (newWindow) {
+      // 메시지를 보내기 위한 딜레이 (onload 또는 setTimeout)
+      const sendMessage = () => {
+        newWindow.postMessage(
+          { type: "TOKEN_TRANSFER", token },
+          "http://localhost:3001",
+        );
+      };
+
+      // 안전하게 onload 보장
+      newWindow.onload = () => {
+        sendMessage();
+      };
+
+      // 백업: onload가 안 될 경우 timeout 사용
+      setTimeout(() => {
+        sendMessage();
+      }, 1000);
+    }
+  };
+
   const toggleMenu = () => {
     setOpen((prev) => !prev);
   };
@@ -239,27 +265,23 @@ export default function Menubar() {
                         PLAN
                       </Link>
                     </Item_R>
-                    <Link
-                      to="/contactus"
-                      style={{ textDecoration: "none", color: "inherit" }}
+                    <Button
+                      variant="contained"
+                      onClick={handleOpenWorkspace}
+                      sx={{
+                        backgroundColor: "#3CA7DF",
+                        color: "white",
+                        borderRadius: "25px",
+                        textTransform: "none",
+                        fontSize: "12px",
+                        fontWeight: 300,
+                        "&:hover": {
+                          backgroundColor: "#3399cc",
+                        },
+                      }}
                     >
-                      <Button
-                        variant="contained"
-                        sx={{
-                          backgroundColor: "#3CA7DF",
-                          color: "white",
-                          borderRadius: "25px",
-                          textTransform: "none",
-                          fontSize: "12px",
-                          fontWeight: 300,
-                          "&:hover": {
-                            backgroundColor: "#3399cc",
-                          },
-                        }}
-                      >
-                        WORKSPACE
-                      </Button>
-                    </Link>
+                      WORKSPACE
+                    </Button>
                     <Button
                       // variant="contained"
                       onClick={handleLogout}
@@ -300,27 +322,24 @@ export default function Menubar() {
                     </Item_R>
                     <Item_R>
                       {" "}
-                      <Link
-                        to="/contactus"
-                        style={{ textDecoration: "none", color: "inherit" }}
+                      \{" "}
+                      <Button
+                        variant="contained"
+                        onClick={handleOpenWorkspace}
+                        sx={{
+                          backgroundColor: "#3CA7DF",
+                          color: "white",
+                          borderRadius: "25px",
+                          textTransform: "none",
+                          fontSize: "12px",
+                          fontWeight: 300,
+                          "&:hover": {
+                            backgroundColor: "#3399cc",
+                          },
+                        }}
                       >
-                        <Button
-                          variant="contained"
-                          sx={{
-                            backgroundColor: "#3CA7DF",
-                            color: "white",
-                            borderRadius: "25px",
-                            textTransform: "none",
-                            fontSize: "12px",
-                            fontWeight: 300,
-                            "&:hover": {
-                              backgroundColor: "#3399cc",
-                            },
-                          }}
-                        >
-                          WORKSPACE
-                        </Button>
-                      </Link>
+                        WORKSPACE
+                      </Button>
                     </Item_R>
                   </>
                 )}
