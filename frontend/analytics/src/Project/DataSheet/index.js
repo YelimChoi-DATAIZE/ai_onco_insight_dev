@@ -13,53 +13,11 @@ import SaveIcon from '@mui/icons-material/Save';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
+import CircleIcon from '@mui/icons-material/Circle';
 
 import { AgGridReact } from 'ag-grid-react';
 import './style.css';
 import { openDB } from 'idb';
-
-const DB_NAME = 'AnalyticsDB';
-const STORE_NAME = 'uploadedData';
-
-const initDB = async () => {
-  return openDB(DB_NAME, 1, {
-    upgrade(db) {
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME);
-      }
-    },
-  });
-};
-
-// IndexedDB 조회 함수
-const getDataFromDB = async () => {
-  const db = await initDB();
-  const tx = db.transaction(STORE_NAME, 'readonly');
-  const store = tx.objectStore(STORE_NAME);
-  return await store.get('data');
-};
-
-// IndexedDB 삭제 함수
-const deleteDataFromDB = async () => {
-  const db = await initDB();
-  const tx = db.transaction(STORE_NAME, 'readwrite');
-  const store = tx.objectStore(STORE_NAME);
-  await store.delete('data');
-  await tx.done;
-  window.location.reload();
-  console.log('IndexedDB에서 데이터 삭제 완료');
-};
-
-// IndexedDB 저장 함수
-const saveDataToDB = async (data) => {
-  const db = await initDB();
-  const tx = db.transaction(STORE_NAME, 'readwrite');
-  const store = tx.objectStore(STORE_NAME);
-  await store.put(data, 'data');
-  await tx.done;
-  // window.location.reload();
-  console.log('✅ IndexedDB에 저장 완료:', data);
-};
 
 const DataSheet = ({
   open,
@@ -69,7 +27,55 @@ const DataSheet = ({
   data,
   filename,
   projectName,
+  projectId,
 }) => {
+  //indexed DB crud
+  const DB_NAME = 'AnalyticsDB';
+
+  const ensureObjectStoreExists = async (projectId) => {
+    const db = await openDB(DB_NAME, 1);
+    if (!db.objectStoreNames.contains(projectId)) {
+      db.close(); // 꼭 닫아야 upgrade 트리거됨
+      await openDB(DB_NAME, 1, {
+        upgrade(db) {
+          if (!db.objectStoreNames.contains(projectId)) {
+            db.createObjectStore(projectId);
+          }
+        },
+      });
+    }
+  };
+
+  // ✅ IndexedDB 조회
+  const getDataFromDB = async (projectId) => {
+    await ensureObjectStoreExists(projectId);
+    const db = await openDB(DB_NAME, 1);
+    const tx = db.transaction(projectId, 'readonly');
+    const store = tx.objectStore(projectId);
+    return await store.get('data');
+  };
+
+  // ✅ IndexedDB 저장
+  const saveDataToDB = async (projectId, data) => {
+    await ensureObjectStoreExists(projectId);
+    const db = await openDB(DB_NAME, 1);
+    const tx = db.transaction(projectId, 'readwrite');
+    const store = tx.objectStore(projectId);
+    await store.put(data, 'data');
+    await tx.done;
+  };
+
+  // IndexedDB 삭제 함수
+  const deleteDataFromDB = async (projectId) => {
+    const db = await ensureObjectStoreExists(projectId);
+    const tx = db.transaction(projectId, 'readwrite');
+    const store = tx.objectStore(projectId);
+    await store.delete('data');
+    await tx.done;
+    window.location.reload();
+    console.log(`✅ IndexedDB에서 ${projectId} 데이터 삭제 완료`);
+  };
+
   const [columnDefs, setColumnDefs] = useState([]);
   const [rowData, setRowData] = useState([]);
   const [selectedColumns, setSelectedColumns] = useState([]);
@@ -177,24 +183,23 @@ const DataSheet = ({
     }
   };
 
-  // indexed DB 삭제 핸들러
-  const handleDelete = async () => {
-    const confirmed = window.confirm('Are you sure you want to delete it?');
-    if (!confirmed) return;
-
-    await deleteDataFromDB();
-    setColumnDefs([]);
-    setRowData([]);
-    alert('Data Deleted');
-  };
-
-  // indexed DB 저장 핸들러
+  // 저장 버튼
   const handleSave = async () => {
     const headers = columnDefs.map((col) => col.field);
     const updatedData = { headers, rows: rowData };
-    await saveDataToDB(updatedData);
+    await saveDataToDB(projectId, updatedData); // ✅ projectId 포함
     await handleDBServerSave();
     alert('Data Saved');
+  };
+
+  // 삭제 버튼
+  const handleDelete = async () => {
+    const confirmed = window.confirm('Are you sure you want to delete it?');
+    if (!confirmed) return;
+    await deleteDataFromDB(projectId); // ✅ projectId 포함
+    setColumnDefs([]);
+    setRowData([]);
+    alert('Data Deleted');
   };
 
   // Refresh
@@ -301,16 +306,36 @@ const DataSheet = ({
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <IconButton color="primary" onClick={handleSave}>
-            <SaveIcon />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CircleIcon sx={{ fontSize: 10, color: '#316193' }} />
+              <Typography variant="body2" color="#316193" fontFamily="NotoSans KR">
+                save
+              </Typography>
+            </Box>
           </IconButton>
           <IconButton color="primary" onClick={handleRefresh}>
-            <RefreshIcon />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CircleIcon sx={{ fontSize: 10, color: '#4ECC65' }} />
+              <Typography variant="body2" color="#27C93F" fontFamily="NotoSans KR">
+                refresh
+              </Typography>
+            </Box>
           </IconButton>
           <IconButton color="primary" onClick={handleDelete}>
-            <DeleteIcon />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CircleIcon sx={{ fontSize: 10, color: '#FF5F56' }} />
+              <Typography variant="body2" color="#FF5F56" fontFamily="NotoSans KR">
+                delete
+              </Typography>
+            </Box>
           </IconButton>
           <IconButton color="primary" onClick={handleDelete}>
-            <DownloadIcon />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CircleIcon sx={{ fontSize: 10, color: '#FFBD2E' }} />
+              <Typography variant="body2" color="#FFBD2E" fontFamily="NotoSans KR">
+                download
+              </Typography>
+            </Box>
           </IconButton>
         </Box>
       </Box>

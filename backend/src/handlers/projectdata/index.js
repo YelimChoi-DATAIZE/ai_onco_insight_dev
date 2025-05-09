@@ -2,6 +2,31 @@ import { ProjectMetaModel } from '../../schemas/projectmetaData.schema.js';
 import mongoose from 'mongoose';
 import { GridFSBucket } from 'mongodb';
 
+// project uuid를 user 별로 저장
+export const createProjectHandler = async (req, res) => {
+  console.log("[API] POST /projectid_create");
+  console.log("headers:", req.headers);
+  console.log("body:", req.body);
+  console.log("decoded user:", req.user);
+
+  const { projectId, projectName } = req.body;
+  const userId = req.user?.id; // 미들웨어에서 설정됨
+
+  if (!projectId || !projectName || !userId) {
+    return res.status(400).json({ message: 'Missing fields' });
+  }
+
+  const newProject = new ProjectMetaModel({
+    _id: projectId,
+    projectName,
+    userId,
+    updatedAt: new Date(),
+  });
+
+  await newProject.save();
+  res.status(201).json({ message: 'Project created successfully' });
+};
+
 export const saveToGridFsHandler = async (req, res) => {
     try {
       const { projectName, filename } = req.body;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -21,6 +21,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import Project from '../Project';
 import Menubar from '../Menubar';
 import { Link } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Console() {
   const defaultCards = [
@@ -34,17 +35,24 @@ export default function Console() {
     { id: 5, title: 'RESULT', description: '' },
   ];
 
-  const [projectList, setProjectList] = useState(['Project 1']);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [projectContentMap, setProjectContentMap] = useState({
-    'Project 1': {
-      cards: [...defaultCards],
-      cards2: [...defaultCards2],
-    },
+  const [projectList, setProjectList] = useState([{ id: uuidv4(), name: 'Project 1' }]);
+
+  const [projectContentMap, setProjectContentMap] = useState(() => {
+    const initialId = projectList[0].id;
+    return {
+      [initialId]: {
+        cards: [...defaultCards],
+        cards2: [...defaultCards2],
+      },
+    };
   });
 
   const selectedProject = projectList[selectedIndex];
-  const currentProject = projectContentMap[selectedProject] || { cards: [], cards2: [] };
+  const currentProject = projectContentMap[selectedProject.id] || {
+    cards: [],
+    cards2: [],
+  };
 
   const [selectedCard, setSelectedCard] = useState(0);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -54,32 +62,99 @@ export default function Console() {
     setSelectedIndex(index);
   };
 
-  const handleAddProject = () => {
-    const newProjectName = `Project ${projectList.length + 1}`;
-    const updatedProjectList = [...projectList, newProjectName];
-    setProjectList(updatedProjectList);
-    setProjectContentMap({
-      ...projectContentMap,
-      [newProjectName]: {
-        cards: [...defaultCards],
-        cards2: [...defaultCards2],
-      },
-    });
-    setSelectedIndex(updatedProjectList.length - 1);
+  //project 1 번에 대한 project uuid 서버에 저장
+  useEffect(() => {
+    const defaultProject = projectList[0];
+    const token = localStorage.getItem('accessToken');
+
+    const createInitialProject = async () => {
+      try {
+        const res = await fetch('http://localhost:8000/projectdata/projectid_create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            projectId: defaultProject.id,
+            projectName: defaultProject.name,
+          }),
+        });
+
+        const result = await res.json();
+        if (!res.ok) {
+          console.warn('❌ 기본 프로젝트 서버 저장 실패:', result.message || result.error);
+        } else {
+          console.log('✅ 기본 프로젝트 서버 저장 완료');
+        }
+      } catch (err) {
+        console.error('❌ 기본 프로젝트 생성 중 오류:', err);
+      }
+    };
+
+    createInitialProject();
+  }, []);
+
+  //project 생성시 project uuid 서버에 저장
+  const handleAddProject = async () => {
+    const newProjectId = uuidv4();
+    const nextProjectNumber = projectList.length + 1;
+    const newProjectName = `Project ${nextProjectNumber}`;
+
+    const newProject = {
+      id: newProjectId,
+      name: newProjectName,
+    };
+
+    // ✅ 서버에 먼저 저장 시도
+    const token = localStorage.getItem('accessToken');
+    try {
+      const response = await fetch('http://localhost:8000/projectdata/projectid_create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          projectId: newProjectId,
+          projectName: newProjectName,
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        console.warn('❌ 서버 저장 실패:', result.message || result.error);
+        alert(`프로젝트 생성 실패: ${result.message || result.error}`);
+        return;
+      }
+
+      console.log('✅ 서버 저장 성공:', result.message);
+
+      // ✅ UI 상태 업데이트는 서버 저장 성공 후 수행
+      setProjectList((prev) => [...prev, newProject]);
+      setProjectContentMap((prev) => ({
+        ...prev,
+        [newProjectId]: {
+          cards: [...defaultCards],
+          cards2: [...defaultCards2],
+        },
+      }));
+      setSelectedIndex(projectList.length); // 이건 여전히 동기적이므로 주의 필요
+    } catch (error) {
+      console.error('❌ 서버 요청 에러:', error);
+      alert('프로젝트 생성 중 오류가 발생했습니다.');
+    }
   };
 
   const handleProjectRename = () => {
     const updatedList = [...projectList];
-    updatedList[selectedIndex] = editedProjectName;
+    updatedList[selectedIndex] = {
+      ...updatedList[selectedIndex],
+      name: editedProjectName,
+    };
     setProjectList(updatedList);
 
-    // 키 변경도 필요
-    const updatedMap = { ...projectContentMap };
-    const content = updatedMap[selectedProject];
-    delete updatedMap[selectedProject];
-    updatedMap[editedProjectName] = content;
-    setProjectContentMap(updatedMap);
-
+    // contentMap은 project id를 키로 갖기 때문에 변경할 필요 없음
     setIsEditingTitle(false);
   };
 
@@ -168,12 +243,13 @@ export default function Console() {
                   }}
                 >
                   <ListItemText
-                    primary={project}
+                    primary={project.name}
                     primaryTypographyProps={{
                       fontSize: 13.5,
                       fontWeight: selectedIndex === index ? 600 : 400,
                     }}
                   />
+
                   {selectedIndex === index && <ChevronRightIcon fontSize="small" />}
                 </ListItemButton>
               </ListItem>
@@ -208,13 +284,13 @@ export default function Console() {
               />
             ) : (
               <Typography fontSize={20} fontWeight="bold" fontFamily="Noto Sans KR">
-                {selectedProject}
+                {selectedProject.name}
               </Typography>
             )}
             <IconButton
               size="small"
               onClick={() => {
-                setEditedProjectName(selectedProject);
+                setEditedProjectName(selectedProject.name);
                 setIsEditingTitle(true);
               }}
               sx={{ padding: 0 }}
@@ -233,7 +309,7 @@ export default function Console() {
               mr: '50px',
             }}
           >
-            <Link to="/project" state={{ projectName: selectedProject }}>
+            <Link to={`/project/${selectedProject.id}`}>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 &gt; Go
               </Typography>

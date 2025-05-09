@@ -2,7 +2,8 @@
 import express from 'express';
 import multer from 'multer';
 import { GridFsStorage } from 'multer-gridfs-storage';
-import { saveToGridFsHandler } from '../../handlers/projectdata/index.js';
+import { createProjectHandler, saveToGridFsHandler } from '../../handlers/projectdata/index.js';
+import { authenticateToken } from '../../handlers/auth/index.js';
 
 const router = express.Router();
 
@@ -23,6 +24,7 @@ const upload = multer({
     },
   });
   
+router.post('/projectid_create', authenticateToken, createProjectHandler);
 router.post('/save', upload.single('file'), saveToGridFsHandler);
 
 export default router;

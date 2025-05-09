@@ -22,8 +22,7 @@ const App = () => {
       <Routes>
         <Route path="/console" element={<Console />} />
         <Route path="*" element={<Navigate to="/console" />} />
-        <Route path="/project" element={<Project />} />
-        {/* <Route path="/project/:id" element={<Project />} /> */}
+        <Route path="/project/:projectId" element={<Project />} />
       </Routes>
     </div>
   );
