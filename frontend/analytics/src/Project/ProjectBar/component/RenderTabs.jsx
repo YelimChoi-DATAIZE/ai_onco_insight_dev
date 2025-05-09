@@ -223,6 +223,7 @@ const RenderTabs = ({
             onClick={triggerFileUpload}
             sx={{
               ml: 2,
+              minWidth: 120,
               '&:hover': {
                 backgroundColor: '#FFFFFF',
               },
@@ -252,6 +253,7 @@ const RenderTabs = ({
               </span>
             }
             sx={{
+              minWidth: 120,
               '&:hover': {
                 backgroundColor: '#FFFFFF',
               },
@@ -282,6 +284,7 @@ const RenderTabs = ({
               </span>
             }
             sx={{
+              minWidth: 120,
               '&:hover': {
                 backgroundColor: '#FFFFFF',
               },
@@ -331,6 +334,7 @@ const RenderTabs = ({
           }
           sx={{
             ml: 2,
+            minWidth: 120,
             '&:hover': {
               backgroundColor: '#FFFFFF',
             },
@@ -359,6 +363,13 @@ const RenderTabs = ({
               foi extraction
             </span>
           }
+          sx={{
+            ml: 2,
+            minWidth: 120,
+            '&:hover': {
+              backgroundColor: '#FFFFFF',
+            },
+          }}
         />
         <Tab
           icon={
@@ -384,6 +395,8 @@ const RenderTabs = ({
             </span>
           }
           sx={{
+            ml: 2,
+            minWidth: 120,
             '&:hover': {
               backgroundColor: '#FFFFFF',
             },
@@ -431,6 +444,7 @@ const RenderTabs = ({
           }
           sx={{
             ml: 2,
+            minWidth: 120,
             '&:hover': {
               backgroundColor: '#FFFFFF',
             },
@@ -460,6 +474,7 @@ const RenderTabs = ({
             </span>
           }
           sx={{
+            minWidth: 120,
             '&:hover': {
               backgroundColor: '#FFFFFF',
             },
@@ -489,6 +504,7 @@ const RenderTabs = ({
             </span>
           }
           sx={{
+            minWidth: 120,
             '&:hover': {
               backgroundColor: '#FFFFFF',
             },
@@ -547,6 +563,7 @@ const RenderTabs = ({
             </span>
           }
           sx={{
+            minWidth: 120,
             '&:hover': {
               backgroundColor: '#FFFFFF',
             },
@@ -576,6 +593,7 @@ const RenderTabs = ({
             </span>
           }
           sx={{
+            minWidth: 120,
             '&:hover': {
               backgroundColor: '#FFFFFF',
             },

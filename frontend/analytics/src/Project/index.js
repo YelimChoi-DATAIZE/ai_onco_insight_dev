@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes, Navigate, useLocation } from 'react-router-dom';
 
 import ProjectBar from './ProjectBar';
 import Menubar from '../Menubar';
@@ -34,49 +34,61 @@ const getDataFromDB = async () => {
   const store = tx.objectStore(STORE_NAME);
   return await store.get('data');
 };
+
 export default function Project() {
-  // const [open, setOpen] = useState(false);
   const [data, setData] = useState(null);
   const [activeTab, setActiveTab] = useState(null);
   const [addRowFunction, setAddRowFunction] = useState(null);
   const [addColumnFunction, setAddColumnFunction] = useState(null);
+  const [uploadedFilename, setUploadedFilename] = useState('');
+  const location = useLocation();
+  const projectName = location.state?.projectName || 'Untitled';
 
   useEffect(() => {
     const fetchDataFromDB = async () => {
       const storedData = await getDataFromDB();
       if (storedData) {
-        console.log('새로고침 후 IndexedDB에서 불러온 데이터:', storedData);
         setData(storedData);
       }
     };
     fetchDataFromDB();
   }, []);
 
-  const handleDataUpload = async (uploadedData) => {
+  const handleDataUpload = async (uploadedData, filename) => {
     await saveDataToDB(uploadedData);
     const updatedData = await getDataFromDB();
     setData(updatedData);
+    setUploadedFilename(filename);
   };
 
   return (
-    <>
-      <Menubar />
-      <ProjectBar
-        // open={open}
-        // onOpen={() => setOpen(true)}
-        // onClose={() => setOpen(false)}
-        onUpload={handleDataUpload}
-        setActiveTab={setActiveTab}
-        addRow={addRowFunction}
-        addColumn={addColumnFunction}
-      />
-      <DataSheet
-        // open={open}
-        activeTab={activeTab}
-        setAddRowFunction={setAddRowFunction}
-        setAddColumnFunction={setAddColumnFunction}
-        data={data}
-      />
-    </>
+    <div style={{ height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 1300 }}>
+        <Menubar />
+        <ProjectBar
+          onUpload={handleDataUpload}
+          setActiveTab={setActiveTab}
+          addRow={addRowFunction}
+          addColumn={addColumnFunction}
+        />
+      </div>
+
+      <div
+        style={{
+          flexGrow: 1,
+          overflowY: 'auto',
+          marginTop: '155px',
+        }}
+      >
+        <DataSheet
+          activeTab={activeTab}
+          setAddRowFunction={setAddRowFunction}
+          setAddColumnFunction={setAddColumnFunction}
+          data={data}
+          filename={uploadedFilename}
+          projectName={projectName}
+        />
+      </div>
+    </div>
   );
 }

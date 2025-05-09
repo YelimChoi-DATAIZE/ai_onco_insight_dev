@@ -13,6 +13,10 @@
 // };
 
 import mongoose from "mongoose";
+import { GridFSBucket } from 'mongodb';
+
+let gfsBucket;
+
 const uri =
   "mongodb+srv://katechoi:93smedidataize@dataizeaicluster.uxec8.mongodb.net/?retryWrites=true&w=majority&appName=DataizeAICluster";
 
@@ -29,6 +33,13 @@ export const run = () => {
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!",
     );
+
+    // GridFSBucket 생성
+    const db = mongoose.connection.db;
+    gfsBucket = new GridFSBucket(db, {
+      bucketName: "projectDataFiles",
+    });
+
   } finally {
     // Ensures that the client will close when you finish/error
     return mongoose.disconnect();

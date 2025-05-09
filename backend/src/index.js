@@ -7,6 +7,7 @@ import getPubMedArticlesHandler from "../src/routes/pubmed/index.js";
 import GoogleAuthHandler from "../src/routes/googleauth/index.js";
 import BasicAuthHandler from "../src/routes/basicauth/index.js";
 import getPubmedKeywordDataHandler from "../src/routes/cancerkeywords/index.js";
+import saveToGridFsHandler from "../src/routes/projectdata/index.js";
 
 dotenv.config();
 
@@ -16,7 +17,7 @@ const PORT = process.env.PORT || 8000;
 // 미들웨어 설정
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000","http://localhost:3001"],
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "Accept", "Authorization"],
   }),
@@ -37,12 +38,16 @@ mongoose
   .then(() => console.log("MongoDB Atlas connected"))
   .catch((error) => console.error("MongoDB Atlas connection failured:", error));
 
+app.use(express.json({ limit: '50mb' })); // JSON body size 제한 확대
+app.use(express.urlencoded({ limit: '50mb', extended: true })); // form-urlencoded 처리 확대
+
 //routers..
 app.use("/mcodekg", getAllmCODEKGHandler);
 app.use("/pubmed", getPubMedArticlesHandler);
 app.use("/googleauth", GoogleAuthHandler);
 app.use("/basicauth", BasicAuthHandler);
 app.use("/cancerkeywords", getPubmedKeywordDataHandler);
+app.use("/projectdata", saveToGridFsHandler);
 
 app.listen(PORT, () => {
   console.log(`Server Started: http://localhost:${PORT}`);

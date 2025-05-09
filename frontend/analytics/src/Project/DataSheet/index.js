@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Box, Typography, IconButton } from '@mui/material';
 import Engineering1 from '../OutputView/Engineering1';
 import Engineering2 from '../OutputView/Engineering2';
 import Analysis1 from '../OutputView/Analysis1';
@@ -8,28 +9,14 @@ import Result3 from '../OutputView/Result3';
 import Result4 from '../OutputView/Result4';
 import { ClipboardProvider } from '../ClipboardContext';
 
+import SaveIcon from '@mui/icons-material/Save';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import DeleteIcon from '@mui/icons-material/Delete';
+import DownloadIcon from '@mui/icons-material/Download';
+
 import { AgGridReact } from 'ag-grid-react';
-// import {
-//   AllCommunityModule,
-//   ModuleRegistry,
-//   themeQuartz,
-// } from "ag-grid-community";
 import './style.css';
 import { openDB } from 'idb';
-
-// ModuleRegistry.registerModules([AllCommunityModule]);
-
-// const myTheme = themeQuartz.withParams({
-//   backgroundColor: "#ffffff",
-//   foregroundColor: "#000",
-//   headerTextColor: "#000",
-//   headerBackgroundColor: "#E1E1E1",
-//   oddRowBackgroundColor: "rgb(0, 0, 0, 0)",
-//   headerColumnResizeHandleColor: "#E1E1E1",
-//   headerFontFamily: "Brush Script MT",
-//   cellFontFamily: "monospace",
-//   borderRadius: "0px",
-// });
 
 const DB_NAME = 'AnalyticsDB';
 const STORE_NAME = 'uploadedData';
@@ -44,6 +31,7 @@ const initDB = async () => {
   });
 };
 
+// IndexedDB 조회 함수
 const getDataFromDB = async () => {
   const db = await initDB();
   const tx = db.transaction(STORE_NAME, 'readonly');
@@ -51,7 +39,37 @@ const getDataFromDB = async () => {
   return await store.get('data');
 };
 
-const DataSheet = ({ open, activeTab, setAddRowFunction, setAddColumnFunction, data }) => {
+// IndexedDB 삭제 함수
+const deleteDataFromDB = async () => {
+  const db = await initDB();
+  const tx = db.transaction(STORE_NAME, 'readwrite');
+  const store = tx.objectStore(STORE_NAME);
+  await store.delete('data');
+  await tx.done;
+  window.location.reload();
+  console.log('IndexedDB에서 데이터 삭제 완료');
+};
+
+// IndexedDB 저장 함수
+const saveDataToDB = async (data) => {
+  const db = await initDB();
+  const tx = db.transaction(STORE_NAME, 'readwrite');
+  const store = tx.objectStore(STORE_NAME);
+  await store.put(data, 'data');
+  await tx.done;
+  // window.location.reload();
+  console.log('✅ IndexedDB에 저장 완료:', data);
+};
+
+const DataSheet = ({
+  open,
+  activeTab,
+  setAddRowFunction,
+  setAddColumnFunction,
+  data,
+  filename,
+  projectName,
+}) => {
   const [columnDefs, setColumnDefs] = useState([]);
   const [rowData, setRowData] = useState([]);
   const [selectedColumns, setSelectedColumns] = useState([]);
@@ -128,6 +146,7 @@ const DataSheet = ({ open, activeTab, setAddRowFunction, setAddColumnFunction, d
     });
   };
 
+  //우측 결과 박스 렌더링
   const renderViewBox = () => {
     switch (activeTab) {
       case 'settings1':
@@ -158,30 +177,172 @@ const DataSheet = ({ open, activeTab, setAddRowFunction, setAddColumnFunction, d
     }
   };
 
+  // indexed DB 삭제 핸들러
+  const handleDelete = async () => {
+    const confirmed = window.confirm('Are you sure you want to delete it?');
+    if (!confirmed) return;
+
+    await deleteDataFromDB();
+    setColumnDefs([]);
+    setRowData([]);
+    alert('Data Deleted');
+  };
+
+  // indexed DB 저장 핸들러
+  const handleSave = async () => {
+    const headers = columnDefs.map((col) => col.field);
+    const updatedData = { headers, rows: rowData };
+    await saveDataToDB(updatedData);
+    await handleDBServerSave();
+    alert('Data Saved');
+  };
+
+  // Refresh
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
+  // DB save to mongoDB
+  const handleDBServerSave = async () => {
+    const formData = new FormData();
+    formData.append('projectName', projectName ?? '');
+    formData.append('filename', filename ?? '');
+    formData.append('headers', JSON.stringify(columnDefs.map((col) => col.field)));
+    formData.append('rows', JSON.stringify(rowData));
+
+    try {
+      const res = await fetch('http://localhost:8000/projectdata/save', {
+        method: 'POST',
+        body: formData,
+      });
+      const result = await res.json();
+      alert(result.message);
+    } catch (error) {
+      console.error('MongoDB 저장 오류:', error);
+      alert('MongoDB 저장 중 오류 발생');
+    }
+  };
+
+  // 비어 있을 때는 더미 데이터
+  useEffect(() => {
+    if (
+      data &&
+      data.headers &&
+      Array.isArray(data.headers) &&
+      data.rows &&
+      Array.isArray(data.rows)
+    ) {
+      const formattedColumns = data.headers.map((header) => ({
+        headerName: header,
+        field: header,
+        sortable: true,
+        filter: true,
+      }));
+      setColumnDefs(formattedColumns);
+      setRowData(data.rows);
+    } else {
+      const dummyHeaders = Array.from({ length: 10 }, (_, i) => `Column${i + 1}`);
+      const dummyColumns = dummyHeaders.map((header) => ({
+        headerName: header,
+        field: header,
+        sortable: true,
+        filter: true,
+      }));
+      const dummyRows = Array.from({ length: 50 }, () =>
+        dummyHeaders.reduce((acc, header) => {
+          acc[header] = '';
+          return acc;
+        }, {})
+      );
+      setColumnDefs(dummyColumns);
+      setRowData(dummyRows);
+    }
+  }, [data]);
+
   return (
     <>
-      {/* <div style={containerStyle}> */}
-      {/* 👇 AG Grid는 result1일 때는 숨김 */}
-      {activeTab !== 'result1' && (
-        <div className="ag-theme-alpine" style={tableStyle(activeTab)}>
-          <AgGridReact
-            ref={gridRef}
-            rowData={rowData}
-            columnDefs={columnDefs}
-            defaultColDef={{ flex: 1, sortable: true, filter: true }}
-            rowHeight={28}
-            headerHeight={30}
-            // theme={myTheme}
-            onCellClicked={onCellClicked}
-          />
-        </div>
-      )}
+      <Box
+        sx={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mt: 1,
+          px: 2,
+          boxSizing: 'border-box',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: '14px',
+              fontFamily: 'Noto Sans KR',
+              fontWeight: 500,
+            }}
+          >
+            {projectName || 'Untitled'} &gt;
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: '12px',
+              fontFamily: 'Noto Sans KR',
+              color: 'gray',
+            }}
+          >
+            DATA: {filename || 'None'}
+          </Typography>
+        </Box>
 
-      {/* 👇 Result1 포함 View 영역은 result1일 때 전체 width 차지 */}
-      <div style={viewBoxStyle(activeTab)}>
-        <ClipboardProvider>{renderViewBox()}</ClipboardProvider>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <IconButton color="primary" onClick={handleSave}>
+            <SaveIcon />
+          </IconButton>
+          <IconButton color="primary" onClick={handleRefresh}>
+            <RefreshIcon />
+          </IconButton>
+          <IconButton color="primary" onClick={handleDelete}>
+            <DeleteIcon />
+          </IconButton>
+          <IconButton color="primary" onClick={handleDelete}>
+            <DownloadIcon />
+          </IconButton>
+        </Box>
+      </Box>
+      {/* table style */}
+      <div style={containerStyle}>
+        {activeTab !== 'result1' && (
+          <div className="ag-theme-alpine" style={tableStyle(activeTab)}>
+            <AgGridReact
+              ref={gridRef}
+              rowData={rowData}
+              columnDefs={columnDefs}
+              defaultColDef={{
+                flex: 1,
+                sortable: true,
+                filter: true,
+                minWidth: 150,
+                resizable: true,
+                editable: true,
+              }}
+              rowHeight={28}
+              headerHeight={30}
+              // theme={myTheme}
+              onCellClicked={onCellClicked}
+            />
+          </div>
+        )}
+
+        {/* view box style */}
+        <div style={viewBoxStyle(activeTab)}>
+          <ClipboardProvider>{renderViewBox()}</ClipboardProvider>
+        </div>
       </div>
-      {/* </div> */}
     </>
   );
 };
@@ -190,56 +351,30 @@ const containerStyle = {
   // display: 'flex',
   flexDirection: 'row',
   width: '90w',
-  height: '100vh',
+  height: '80vh',
   overflow: 'hidden',
 };
 
-// ✅ tableStyle → 동적으로 수정
 const tableStyle = (activeTab) => ({
+  // display: 'flex',
   flex: activeTab === 'result1' ? 1 : 0.5,
   height: '100%',
-  width: '100%',
+  width: '99%',
   overflow: 'hidden',
+  margin: '0 auto',
 });
 
-// ✅ viewBoxStyle → 나머지일 때 0.5, result1일 땐 숨김
 const viewBoxStyle = (activeTab) => ({
   flex: activeTab === 'result1' ? 1 : 0.5,
   display: 'flex',
-  height: '100%',
+  // height: '100%',
   overflowY: 'auto',
   backgroundColor: '#f5f5f5',
   borderLeft: activeTab === 'result1' ? 'none' : '2px solid #ddd',
   padding: activeTab === 'result1' ? 0 : '20px',
   flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center',
+  // justifyContent: 'center',
 });
-
-// const viewBoxStyle = (activeTab) => ({
-//   flex: activeTab === 'result1' ? 1 : 0.5,
-//   display: activeTab === 'result1' ? 'flex' : 'flex',
-//   height: '100%',
-//   overflowY: 'auto',
-//   backgroundColor: '#f5f5f5',
-//   borderLeft: '2px solid #ddd',
-//   flexDirection: 'column',
-//   alignItems: 'center',
-//   justifyContent: 'center',
-//   padding: '20px',
-// });
-
-// const viewBoxStyle = (activeTab) => ({
-//   flex: activeTab === 'result1' ? 1 : 1,
-//   height: '100%',
-//   overflowY: 'auto',
-//   backgroundColor: '#f5f5f5',
-//   borderLeft: activeTab !== 'result1' ? '2px solid #ddd' : 'none',
-//   display: activeTab === 'result1' ? 'flex' : 'none',
-//   flexDirection: 'column',
-//   alignItems: 'center',
-//   justifyContent: 'center',
-//   padding: '20px',
-// });
 
 export default DataSheet;

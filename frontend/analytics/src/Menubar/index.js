@@ -183,7 +183,7 @@ export default function PrimarySearchAppBar() {
               </Typography> */}
             </Grid>
             <Grid item xs={12} container display="flex" justifyContent="flex-end">
-              <Search sx={{ mt: 0.8, height: '30px' }}>
+              {/* <Search sx={{ mt: 0.8, height: '30px' }}>
                 <SearchIconWrapper>
                   <SearchIcon />
                 </SearchIconWrapper>
@@ -192,10 +192,8 @@ export default function PrimarySearchAppBar() {
                   sx={{ fontSize: '0.875rem' }}
                   inputProps={{ 'aria-label': 'search' }}
                 />
-              </Search>
-              <Box sx={{ flexGrow: 1 }} />
-              <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                <IconButton size="small" aria-label="show 4 new mails" color="inherit">
+              </Search> */}
+              {/* <IconButton size="small" aria-label="show 4 new mails" color="inherit">
                   <Badge badgeContent={4} color="error">
                     <MailIcon
                       sx={{
@@ -212,7 +210,23 @@ export default function PrimarySearchAppBar() {
                       }}
                     />
                   </Badge>
-                </IconButton>
+                </IconButton> */}
+              <Box
+                sx={{
+                  display: { xs: 'none', md: 'flex' },
+                  alignItems: 'center', // ✅ 수직 정렬 맞춤
+                  gap: 1, // ✅ 간격 조절 (선택)
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: '0.9rem',
+                    verticalAlign: 'middle',
+                  }}
+                >
+                  User Id
+                </Typography>
+
                 <IconButton
                   size="large"
                   edge="end"
@@ -222,14 +236,11 @@ export default function PrimarySearchAppBar() {
                   onClick={handleProfileMenuOpen}
                   color="inherit"
                 >
-                  <AccountCircle
-                    sx={{
-                      fontSize: '1.2rem',
-                    }}
-                  />
+                  <AccountCircle sx={{ fontSize: '1.2rem' }} />
                 </IconButton>
               </Box>
-              <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+
+              {/* <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
                 <IconButton
                   size="large"
                   aria-label="show more"
@@ -240,13 +251,13 @@ export default function PrimarySearchAppBar() {
                 >
                   <MoreIcon />
                 </IconButton>
-              </Box>
+              </Box> */}
             </Grid>
           </Grid>
         </Toolbar>
       </AppBar>
-      {renderMobileMenu}
-      {renderMenu}
+      {/* {renderMobileMenu}
+      {renderMenu} */}
     </Box>
   );
 }

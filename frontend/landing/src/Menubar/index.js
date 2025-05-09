@@ -322,7 +322,6 @@ export default function Menubar() {
                     </Item_R>
                     <Item_R>
                       {" "}
-                      \{" "}
                       <Button
                         variant="contained"
                         onClick={handleOpenWorkspace}

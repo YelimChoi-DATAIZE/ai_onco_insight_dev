@@ -160,7 +160,7 @@ const ProjectBar = ({ open, onOpen, onClose, onUpload, setActiveTab, addRow, add
       });
 
       // 부모 컴포넌트로 데이터 전달
-      onUpload?.({ headers, rows });
+      onUpload?.({ headers, rows }, file.name);
 
       console.log('업로드된 데이터:', { headers, rows });
 
@@ -218,11 +218,27 @@ const ProjectBar = ({ open, onOpen, onClose, onUpload, setActiveTab, addRow, add
             display: 'flex',
             marginTop: { lg: '40px', xs: '40px' },
             height: '40px',
-            backgroundColor: '#F5F5F5',
+            backgroundColor: '#FFFFFF',
+            zIndex: 1200,
           }}
           elevation={0}
         >
           <Toolbar>
+            {/* <IconButton
+              onClick={() => console.log('왼쪽 버튼 클릭')}
+              sx={{
+                width: '40px',
+                height: '40px',
+                backgroundColor: '#E7EFF3',
+                borderRadius: 1,
+                mr: 2,
+                '&:hover': {
+                  backgroundColor: '#D0E0EA',
+                },
+              }}
+            >
+              <KeyboardDoubleArrowRightIcon />
+            </IconButton> */}
             <Grid
               container
               alignItems="center"
@@ -240,6 +256,8 @@ const ProjectBar = ({ open, onOpen, onClose, onUpload, setActiveTab, addRow, add
                   overflow: 'hidden', // 스크롤 완전 제거
                   whiteSpace: 'nowrap', // 버튼 줄바꿈 방지
                   height: '48px', // Button 높이에 맞춤
+                  // display: 'flex',
+                  alignItems: 'center', // ✅ 수직 정렬
                 }}
               >
                 <ButtonGroup
@@ -249,7 +267,7 @@ const ProjectBar = ({ open, onOpen, onClose, onUpload, setActiveTab, addRow, add
                     backgroundColor: 'grey',
                     boxShadow: 'none',
                     border: 'none',
-                    display: 'inline-flex', // ✅ wrap 방지
+                    display: 'inline-flex',
                     justifyContent: 'flex-start',
                     '& .MuiButtonGroup-grouped:not(:last-of-type)': {
                       borderRight: '1px solid white',
@@ -264,6 +282,7 @@ const ProjectBar = ({ open, onOpen, onClose, onUpload, setActiveTab, addRow, add
                         key={label}
                         onClick={() => handleGroupChange(label.toLowerCase())}
                         sx={{
+                          width: '160px',
                           height: '48px',
                           padding: '0 15px',
                           textTransform: 'none',
@@ -271,7 +290,7 @@ const ProjectBar = ({ open, onOpen, onClose, onUpload, setActiveTab, addRow, add
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          backgroundColor: '#f5f5f5',
+                          backgroundColor: '#FFFFFF',
                           '&:hover': {
                             backgroundColor: '#E7EFF3',
                             boxShadow: 'none',
@@ -308,20 +327,28 @@ const ProjectBar = ({ open, onOpen, onClose, onUpload, setActiveTab, addRow, add
             </Grid>
           </Toolbar>
         </AppBar>
-        <Box component="main" sx={{ flexGrow: 1, overflowX: 'auto', position: 'relative' }}>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            overflowX: 'auto',
+            position: 'relative',
+            marginTop: '60px', // 기존 고정 영역(40+80)만큼
+            paddingTop: '20px', // 실제 콘텐츠가 Tabs와 겹치지 않도록 여유를 줌
+          }}
+        >
           <DrawerHeader />
           <Box
             sx={{
-              position: 'sticky',
-              top: '40px',
-              marginTop: '-10px',
-              height: 80,
+              position: 'fixed', // fixed로 바꿉니다
+              top: '80px', // AppBar 높이만큼 아래로
+              width: '100%',
+              height: '80px',
               zIndex: 1000,
               backgroundColor: '#E7EFF3',
               boxShadow: '0px 2px 4px rgba(0,0,0,0.1)',
               display: 'flex',
               alignItems: 'center',
-              width: '100%',
             }}
           >
             {renderTabs()}
