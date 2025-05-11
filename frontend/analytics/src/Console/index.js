@@ -22,6 +22,7 @@ import Project from '../Project';
 import Menubar from '../Menubar';
 import { Link } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
+import { initIndexedDB } from '../utils/indexedDB.js';
 
 export default function Console() {
   const defaultCards = [
@@ -61,6 +62,10 @@ export default function Console() {
   const handleListItemClick = (index) => {
     setSelectedIndex(index);
   };
+
+  useEffect(() => {
+    initIndexedDB();
+  }, []);
 
   //project 1 번에 대한 project uuid 서버에 저장
   useEffect(() => {
