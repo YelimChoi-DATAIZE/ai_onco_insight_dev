@@ -55,14 +55,6 @@ export default function Project() {
     }
   }, [projectId, location.key]);
 
-  // const loadData = async () => {
-  //   await initIndexedDB();
-  //   const stored = await getProjectData(projectId);
-  //   if (stored && stored.headers && stored.rows) {
-  //     setData({ headers: stored.headers, rows: stored.rows });
-  //     setUploadedFilename(stored.filename || '');
-  //   }
-  // };
   const loadData = async () => {
     await initIndexedDB();
     let stored = await getProjectData(projectId);

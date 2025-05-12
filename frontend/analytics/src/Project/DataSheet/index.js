@@ -181,6 +181,132 @@ const DataSheet = ({
   //   }
   // };
 
+  //entity extraction
+  const extractEntities = async (text) => {
+    try {
+      console.log('📤 요청 보냄:', text);
+
+      const response = await fetch('http://10.0.3.6:8000/dataizeai_api/extract_entities', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text }),
+      });
+
+      const result = await response.json();
+
+      console.log('✅ 추출 성공:', result);
+      return result;
+    } catch (error) {
+      console.error('❌ 엔티티 추출 오류:', error);
+      return [];
+    }
+  };
+
+  // const annotateColumnEntities = async (targetColumn) => {
+  //   const entityColField = `${targetColumn}_entities`;
+
+  //   // 1. 컬럼이 없으면 추가
+  //   const exists = columnDefs.some((col) => col.field === entityColField);
+  //   if (!exists) {
+  //     const newColDef = {
+  //       headerName: `${targetColumn} Entities`,
+  //       field: entityColField,
+  //       flex: 1,
+  //       editable: false,
+  //       cellRenderer: (params) => {
+  //         const entities = params.value;
+  //         if (!entities || !Array.isArray(entities)) return '';
+  //         return entities
+  //           .filter((e) => e.matched)
+  //           .map((e) => e.text)
+  //           .join(', ');
+  //       },
+  //     };
+  //     setColumnDefs((prev) => [...prev, newColDef]);
+  //   }
+
+  //   // 2. 각 row의 해당 컬럼에 대해 API 호출
+  //   const updatedRows = await Promise.all(
+  //     rowData.map(async (row) => {
+  //       const text = row[targetColumn];
+  //       const entities = await extractEntities(text);
+  //       return {
+  //         ...row,
+  //         [entityColField]: entities,
+  //       };
+  //     })
+  //   );
+
+  //   setRowData(updatedRows);
+
+  //   // 3. IndexedDB 저장 (headers에 새로운 컬럼 추가 포함)
+  //   const updatedHeaders = [...new Set([...columnDefs.map((col) => col.field), entityColField])];
+
+  //   await saveProjectData(projectId, {
+  //     headers: updatedHeaders,
+  //     rows: updatedRows,
+  //     filename,
+  //   });
+
+  //   alert('✅ 엔티티가 추출되어 저장되었습니다.');
+  // };
+
+  const annotateColumnEntitiesWithFlags = async (targetColumn) => {
+    const allEntitySet = new Set(); // 전체 고유 엔티티 모으기
+
+    // 1. 먼저 모든 행에 대해 API 호출 & entity 저장
+    const annotatedRows = await Promise.all(
+      rowData.map(async (row) => {
+        const text = row[targetColumn];
+        const entities = await extractEntities(text);
+
+        const matchedEntities = entities.filter((e) => e.matched && e.text).map((e) => e.text);
+        matchedEntities.forEach((text) => allEntitySet.add(text));
+
+        return {
+          ...row,
+          [`${targetColumn}_entities`]: entities,
+          _matchedTexts: matchedEntities, // 임시로 담아둠
+        };
+      })
+    );
+
+    const allEntityList = Array.from(allEntitySet); // 고유한 엔티티 텍스트 리스트
+
+    // 2. 각 행에 대해 dummy 컬럼 추가
+    const rowsWithFlags = annotatedRows.map((row) => {
+      const newRow = { ...row };
+      allEntityList.forEach((entityText) => {
+        newRow[`ent_${entityText}`] = row._matchedTexts.includes(entityText) ? 1 : 0;
+      });
+      delete newRow._matchedTexts; // 임시필드 제거
+      return newRow;
+    });
+
+    // 3. columnDefs에 새 컬럼들 추가
+    const newEntityColumns = allEntityList.map((text) => ({
+      headerName: text,
+      field: `ent_${text}`,
+      editable: false,
+      sortable: true,
+      filter: true,
+    }));
+
+    setColumnDefs((prev) => [...prev, ...newEntityColumns]);
+    setRowData(rowsWithFlags);
+
+    // 4. IndexedDB에 저장
+    await saveProjectData(projectId, {
+      headers: [...columnDefs.map((col) => col.field), ...newEntityColumns.map((c) => c.field)],
+      rows: rowsWithFlags,
+      filename,
+    });
+
+    alert('✅ 엔티티 더미 컬럼 생성 및 저장 완료');
+  };
+
   return (
     <>
       <Box
@@ -222,6 +348,18 @@ const DataSheet = ({
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <IconButton
+            color="primary"
+            onClick={() => annotateColumnEntitiesWithFlags('CLNC_TEST_ENG_TITLE')}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <CircleIcon sx={{ fontSize: 10, color: '#007FFF' }} />
+              <Typography variant="body2" color="#007FFF" fontFamily="NotoSans KR">
+                extract entities
+              </Typography>
+            </Box>
+          </IconButton>
+
           <IconButton color="primary" onClick={handleSave}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <CircleIcon sx={{ fontSize: 10, color: '#316193' }} />
@@ -268,7 +406,7 @@ const DataSheet = ({
                 flex: 1,
                 sortable: true,
                 filter: true,
-                minWidth: 150,
+                minWidth: 250,
                 resizable: true,
                 editable: true,
               }}
