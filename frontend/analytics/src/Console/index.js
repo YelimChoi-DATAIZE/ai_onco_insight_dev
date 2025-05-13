@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+// Console.jsx
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Box,
   Typography,
@@ -14,104 +15,73 @@ import {
   TextField,
   AppBar,
   Toolbar,
+  Button,
+  TableBody,
+  TableCell,
+  TableRow,
+  Table,
+  TableHead,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import SettingsIcon from '@mui/icons-material/Settings';
-import Project from '../Project';
-import Menubar from '../Menubar';
 import { Link } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import { initIndexedDB } from '../utils/indexedDB.js';
+import { initIndexedDB } from '../utils/indexedDB';
+import Menubar from '../Menubar';
+import {
+  SearchLogCard,
+  DataOverviewCard,
+  EngineeringCard,
+  AnalysisCard,
+  ProjectSummaryCard,
+} from './component/ProjectCard';
+// import DateRangeFilter from './component/DateRangePicker';
+// import dayjs from 'dayjs';
+// // import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+// // import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+// // import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 export default function Console() {
-  const defaultCards = [
-    { id: 1, title: 'mCODE SEARCH', description: '' },
-    { id: 2, title: 'DATA', description: '' },
-    { id: 3, title: 'ENGINEERING', description: '' },
-  ];
+  const defaultCards = useMemo(
+    () => [
+      { id: 1, title: 'mCODE SEARCH', description: '' },
+      { id: 2, title: 'DATA', description: '' },
+      { id: 3, title: 'ENGINEERING', description: '' },
+    ],
+    []
+  );
 
-  const defaultCards2 = [
-    { id: 4, title: 'ANALYSIS', description: '' },
-    { id: 5, title: 'RESULT', description: '' },
-  ];
+  const defaultCards2 = useMemo(
+    () => [
+      { id: 4, title: 'ANALYSIS', description: '' },
+      { id: 5, title: 'RESULT', description: '' },
+    ],
+    []
+  );
 
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [projectList, setProjectList] = useState([{ id: uuidv4(), name: 'Project 1' }]);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [projectList, setProjectList] = useState([]);
+  const [projectContentMap, setProjectContentMap] = useState({});
 
-  const [projectContentMap, setProjectContentMap] = useState(() => {
-    const initialId = projectList[0].id;
-    return {
-      [initialId]: {
-        cards: [...defaultCards],
-        cards2: [...defaultCards2],
-      },
-    };
-  });
-
-  const selectedProject = projectList[selectedIndex];
-  const currentProject = projectContentMap[selectedProject.id] || {
-    cards: [],
-    cards2: [],
-  };
+  const selectedProject = projectList[selectedIndex] || null;
+  const currentProject = selectedProject
+    ? projectContentMap[selectedProject.id] || { cards: [], cards2: [] }
+    : { cards: [], cards2: [] };
 
   const [selectedCard, setSelectedCard] = useState(0);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [editedProjectName, setEditedProjectName] = useState('Project 1');
-
-  const handleListItemClick = (index) => {
-    setSelectedIndex(index);
-  };
+  const [editedProjectName, setEditedProjectName] = useState('');
 
   useEffect(() => {
     initIndexedDB();
   }, []);
 
-  //project 1 번에 대한 project uuid 서버에 저장
-  useEffect(() => {
-    const defaultProject = projectList[0];
-    const token = localStorage.getItem('accessToken');
-
-    const createInitialProject = async () => {
-      try {
-        const res = await fetch('http://localhost:8000/projectdata/projectid_create', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            projectId: defaultProject.id,
-            projectName: defaultProject.name,
-          }),
-        });
-
-        const result = await res.json();
-        if (!res.ok) {
-          console.warn('❌ 기본 프로젝트 서버 저장 실패:', result.message || result.error);
-        } else {
-          console.log('✅ 기본 프로젝트 서버 저장 완료');
-        }
-      } catch (err) {
-        console.error('❌ 기본 프로젝트 생성 중 오류:', err);
-      }
-    };
-
-    createInitialProject();
-  }, []);
-
-  //project 생성시 project uuid 서버에 저장
   const handleAddProject = async () => {
     const newProjectId = uuidv4();
     const nextProjectNumber = projectList.length + 1;
     const newProjectName = `Project ${nextProjectNumber}`;
+    const newProject = { id: newProjectId, name: newProjectName };
 
-    const newProject = {
-      id: newProjectId,
-      name: newProjectName,
-    };
-
-    // ✅ 서버에 먼저 저장 시도
     const token = localStorage.getItem('accessToken');
     try {
       const response = await fetch('http://localhost:8000/projectdata/projectid_create', {
@@ -120,57 +90,45 @@ export default function Console() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          projectId: newProjectId,
-          projectName: newProjectName,
-        }),
+        body: JSON.stringify({ projectId: newProjectId, projectName: newProjectName }),
       });
 
       const result = await response.json();
-      if (!response.ok) {
-        console.warn('❌ 서버 저장 실패:', result.message || result.error);
-        alert(`프로젝트 생성 실패: ${result.message || result.error}`);
-        return;
-      }
+      if (!response.ok) throw new Error(result.message || result.error);
 
-      console.log('✅ 서버 저장 성공:', result.message);
+      setProjectList((prev) => {
+        const updated = [...prev, newProject];
+        setSelectedIndex(updated.length - 1);
+        return updated;
+      });
 
-      // ✅ UI 상태 업데이트는 서버 저장 성공 후 수행
-      setProjectList((prev) => [...prev, newProject]);
       setProjectContentMap((prev) => ({
         ...prev,
-        [newProjectId]: {
-          cards: [...defaultCards],
-          cards2: [...defaultCards2],
-        },
+        [newProjectId]: { cards: [...defaultCards], cards2: [...defaultCards2] },
       }));
-      setSelectedIndex(projectList.length); // 이건 여전히 동기적이므로 주의 필요
     } catch (error) {
-      console.error('❌ 서버 요청 에러:', error);
       alert('프로젝트 생성 중 오류가 발생했습니다.');
+      console.error(error);
     }
   };
 
   const handleProjectRename = () => {
-    const updatedList = [...projectList];
-    updatedList[selectedIndex] = {
-      ...updatedList[selectedIndex],
-      name: editedProjectName,
-    };
-    setProjectList(updatedList);
-
-    // contentMap은 project id를 키로 갖기 때문에 변경할 필요 없음
+    if (!editedProjectName.trim()) return;
+    setProjectList((prev) =>
+      prev.map((p, i) => (i === selectedIndex ? { ...p, name: editedProjectName.trim() } : p))
+    );
     setIsEditingTitle(false);
   };
 
   return (
     <>
       <Menubar />
+      <Divider />
       <AppBar
         position="fixed"
         sx={{
           top: '40px',
-          height: '48px',
+          height: '40px',
           backgroundColor: '#3CA7DF',
           zIndex: 9999,
           display: 'flex',
@@ -179,68 +137,55 @@ export default function Console() {
         elevation={0}
       >
         <Toolbar variant="dense" sx={{ minHeight: '32px !important', px: 2 }}>
-          <img src={'/static/Images/ConsoleIcon.svg'} alt="Logo" style={{ height: '15px' }} />
+          <img
+            src={'/static/Images/ConsoleIcon.svg'}
+            alt="Logo"
+            style={{ mt: -1, height: '15px' }}
+          />
           <Typography
-            variant="h7"
-            noWrap
-            component="div"
-            sx={{ fontWeight: 500, ml: 2, display: { xs: 'none', sm: 'block' } }}
+            sx={{
+              fontWeight: 500,
+              ml: 1,
+              display: { xs: 'none', sm: 'block' },
+              cursor: 'pointer',
+            }}
+            onClick={() => setSelectedIndex(-1)}
           >
             CONSOLE
           </Typography>
         </Toolbar>
       </AppBar>
-      <Box sx={{ display: 'flex', height: '100vh', backgroundColor: '#f5f5f5' }}>
-        {/* 좌측 Project Bar */}
+      <Divider sx={{ borderColor: '#ffffff' }} />
+
+      <Box sx={{ display: 'flex', height: '92vh', backgroundColor: '#f5f5f5', paddingTop: '82px' }}>
+        {/* Left Project List */}
         <Box
           sx={{
             width: 240,
-            height: '100vh',
             borderRight: '1px solid #e0e0e0',
             bgcolor: '#fff',
-            display: 'flex',
-            flexDirection: 'column',
+            pt: '20px',
+            overflowY: 'auto',
           }}
         >
-          <Box
-            sx={{
-              px: 2,
-              pt: 2,
-              pb: 1.5,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingTop: '108px',
-            }}
-          >
+          <Box sx={{ px: 2, pb: 1.5, display: 'flex', justifyContent: 'space-between' }}>
             <Typography fontSize={14} fontWeight="bold">
-              PROJECTS
+              MY PROJECTS
             </Typography>
-            <IconButton
-              size="small"
-              onClick={handleAddProject}
-              sx={{
-                backgroundColor: '#335694',
-                color: '#fff',
-                width: 24,
-                height: 24,
-                '&:hover': {
-                  backgroundColor: '#2b4a7f',
-                },
-              }}
-            >
-              <AddIcon fontSize="small" />
-            </IconButton>
           </Box>
           <Divider />
-
-          {/* 목록 */}
           <List dense disablePadding sx={{ overflowY: 'auto', flexGrow: 1 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Button variant="outlined" sx={{ my: 1, width: '80%' }} onClick={handleAddProject}>
+                + new project
+              </Button>
+            </Box>
+
             {projectList.map((project, index) => (
               <ListItem disablePadding key={index}>
                 <ListItemButton
                   selected={selectedIndex === index}
-                  onClick={() => handleListItemClick(index)}
+                  onClick={() => setSelectedIndex(index)}
                   sx={{
                     px: 2,
                     py: 1.5,
@@ -262,145 +207,233 @@ export default function Console() {
           </List>
         </Box>
 
-        {/* 우측 콘텐츠 영역 */}
+        {/* Right Content */}
         <Box
           sx={{
             flexGrow: 1,
-            padding: 3,
-            overflowY: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
-            paddingTop: '108px',
+            p: 3,
+            pt: '40px',
+            // overflowY: 'auto', // ✅ 스크롤 여기만!
+            overflowX: 'hidden',
+            px: 3,
+            pb: 3,
+            boxSizing: 'border-box',
+            minWidth: 0, // ✅ flex에서 잘림 방지
           }}
         >
-          {/* 프로젝트 이름 + 설정 */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: '50px' }}>
-            {isEditingTitle ? (
-              <TextField
-                value={editedProjectName}
-                onChange={(e) => setEditedProjectName(e.target.value)}
-                onBlur={handleProjectRename}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleProjectRename();
+          {selectedProject ? (
+            <>
+              {/* Project Title */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: '50px' }}>
+                {isEditingTitle ? (
+                  <TextField
+                    value={editedProjectName}
+                    onChange={(e) => setEditedProjectName(e.target.value)}
+                    onBlur={handleProjectRename}
+                    onKeyDown={(e) => e.key === 'Enter' && handleProjectRename()}
+                    size="small"
+                    variant="standard"
+                    autoFocus
+                  />
+                ) : (
+                  <Typography fontSize={20} fontWeight="bold">
+                    {selectedProject.name}
+                  </Typography>
+                )}
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    setEditedProjectName(selectedProject.name);
+                    setIsEditingTitle(true);
+                  }}
+                >
+                  <img src={'/static/Images/setting.svg'} alt="Edit" style={{ height: '15px' }} />
+                </IconButton>
+              </Box>
+
+              {/* Project Link */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  pr: 1,
+                  mb: 1,
+                  mr: '50px',
+                  gap: 1,
                 }}
-                size="small"
-                variant="standard"
-                autoFocus
-              />
-            ) : (
-              <Typography fontSize={20} fontWeight="bold" fontFamily="Noto Sans KR">
-                {selectedProject.name}
-              </Typography>
-            )}
-            <IconButton
-              size="small"
-              onClick={() => {
-                setEditedProjectName(selectedProject.name);
-                setIsEditingTitle(true);
-              }}
-              sx={{ padding: 0 }}
-            >
-              {/* <SettingsIcon fontSize="small" /> */}
-              <img src={'/static/Images/setting.svg'} alt="Logo" style={{ height: '15px' }} />
-            </IconButton>
-          </Box>
+              >
+                <Link to={`/project/${selectedProject.id}`}>
+                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    &gt; Go
+                  </Typography>
+                </Link>
+                {/* <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, ml: 'auto', mr: 3 }}>
+                  <DateRangeFilter />
+                </Box> */}
+              </Box>
 
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              pr: 1,
-              mb: 1,
-              mr: '50px',
-            }}
-          >
-            <Link to={`/project/${selectedProject.id}`}>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                &gt; Go
+              {/* Cards */}
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: 2,
+                  mb: 3,
+                  mx: '50px',
+                }}
+              >
+                {currentProject.cards.map((card, index) => (
+                  <Card key={card.id} sx={{ height: 400 }}>
+                    <CardActionArea onClick={() => setSelectedCard(index)}>
+                      <CardContent>
+                        {/* {card.title === 'mCODE SEARCH' && (
+                          <SearchLogCard filterDate={selectedDate} />
+                        )} */}
+                        {card.title === 'DATA' && <DataOverviewCard />}
+                        {card.title === 'ENGINEERING' && <EngineeringCard />}
+                        {/* {card.title === 'ANALYSIS' && <AnalysisCard />}
+        {card.title === 'RESULT' && <ProjectSummaryCard />} */}
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                ))}
+              </Box>
+              <Box
+                sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2, mx: '50px' }}
+              >
+                {currentProject.cards2.map((card, index) => (
+                  <Card key={card.id} sx={{ height: 400 }}>
+                    <CardActionArea onClick={() => setSelectedCard(index)}>
+                      <CardContent>
+                        {/* {card.title === 'mCODE SEARCH' && <SearchLogCard />}
+        {card.title === 'DATA' && <DataOverviewCard />}
+        {card.title === 'ENGINEERING' && <EngineeringCard />} */}
+                        {card.title === 'ANALYSIS' && <AnalysisCard />}
+                        {card.title === 'RESULT' && (
+                          <ProjectSummaryCard
+                            title="데이터 정보"
+                            data={{
+                              '데이터셋 명칭': 'CancerDataset v1.2',
+                              '수집 기간 및 장소': '2019~2022, 서울',
+                              출처: '다기관',
+                              '최종 업데이트': '2024-12-01',
+                            }}
+                          />
+                        )}
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                ))}
+              </Box>
+            </>
+          ) : (
+            <Box sx={{ px: 5, py: 4, maxWidth: '960px', mx: 'auto' }}>
+              <Typography variant="h4" fontWeight="bold" gutterBottom>
+                Console Home
               </Typography>
-            </Link>
-          </Box>
 
-          {/* cards */}
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: 2,
-              alignContent: 'flex-start',
-              mb: 3,
-              ml: '50px',
-              mr: '50px',
-            }}
-          >
-            {currentProject.cards.map((card, index) => (
-              <Card key={card.id} sx={{ height: 400, boxshadow: 'none' }} evaluation={0}>
-                <CardActionArea
-                  onClick={() => setSelectedCard(index)}
-                  data-active={selectedCard === index ? '' : undefined}
+              {/* 시작하기 */}
+              <Box sx={{ mb: 4 }}>
+                <Typography variant="h5" fontWeight="bold" gutterBottom>
+                  시작하기
+                </Typography>
+                <Typography variant="body2" color="text.secondary" gutterBottom>
+                  ✅ 생성된 프로젝트 수: <strong>{projectList.length}</strong>개
+                </Typography>
+
+                <Button fullWidth variant="outlined" sx={{ my: 1 }} onClick={handleAddProject}>
+                  ➕ 새 프로젝트 생성
+                </Button>
+                <Button fullWidth variant="outlined" sx={{ my: 1 }}>
+                  📂 기존 프로젝트 열기
+                </Button>
+                {/* <Button fullWidth variant="outlined" sx={{ my: 1 }}>
+                  🔗 외부 프로젝트 불러오기
+                </Button> */}
+              </Box>
+
+              {/* 현재 사용량 */}
+              <Box sx={{ mb: 4 }}>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
+                  현재 사용량
+                </Typography>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>항목</TableCell>
+                      <TableCell align="right">값</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>총 프로젝트 수</TableCell>
+                      <TableCell align="right">{projectList.length}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>오늘 생성된 프로젝트</TableCell>
+                      <TableCell align="right">1</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>최근 사용</TableCell>
+                      <TableCell align="right">
+                        {projectList.length > 0 ? projectList[projectList.length - 1].name : '-'}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </Box>
+
+              {/* 사용 가이드 */}
+              <Box>
+                <Typography variant="h5" fontWeight="bold" gutterBottom>
+                  사용 가이드
+                </Typography>
+
+                <Box
                   sx={{
-                    height: '100%',
-                    '&[data-active]': {
-                      backgroundColor: '#ffffff',
-                      '&:hover': {
-                        backgroundColor: '#ffffff',
-                      },
-                    },
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, 1fr)',
+                    gap: 2,
                   }}
                 >
-                  <CardContent sx={{ height: '100%' }}>
-                    <Typography fontSize={15} fontWeight="regular" fontFamily="Noto Sans KR">
-                      {card.title}
-                    </Typography>
-                    <Divider flexItem sx={{ height: 10 }} />
-                    <Typography variant="body2" color="text.secondary">
-                      {card.description}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            ))}
-          </Box>
-
-          {/* cards2 */}
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: 2,
-              alignContent: 'flex-start',
-              ml: '50px',
-              mr: '50px',
-            }}
-          >
-            {currentProject.cards2.map((card, index) => (
-              <Card key={card.id} sx={{ height: 400 }} evaluation={0}>
-                <CardActionArea
-                  onClick={() => setSelectedCard(index)}
-                  data-active={selectedCard === index ? '' : undefined}
-                  sx={{
-                    height: '100%',
-                    '&[data-active]': {
-                      backgroundColor: '#ffffff',
-                      '&:hover': {
-                        backgroundColor: '#ffffff',
-                      },
+                  {[
+                    {
+                      icon: '✅',
+                      title: '프로젝트 생성하고 분석 시작하기',
+                      desc: '새로운 프로젝트를 생성한 뒤 데이터 엔지니어링부터 시각화까지!',
                     },
-                  }}
-                >
-                  <CardContent sx={{ height: '100%' }}>
-                    <Typography fontSize={15} fontWeight="regular" fontFamily="Noto Sans KR">
-                      {card.title}
-                    </Typography>
-                    <Divider flexItem sx={{ height: 10 }} />
-                    <Typography variant="body2" color="text.secondary">
-                      {card.description}
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            ))}
-          </Box>
+                    {
+                      icon: '📊',
+                      title: '임상 데이터 시각화',
+                      desc: '다양한 통계 그래프와 대시보드로 분석 결과를 한눈에.',
+                    },
+                    {
+                      icon: '🧠',
+                      title: 'AI 기반 분석',
+                      desc: '자연어로 입력하고 AI가 자동 분석 흐름을 설계합니다.',
+                    },
+                    {
+                      icon: '📁',
+                      title: '결과 저장 및 공유',
+                      desc: '분석 결과를 저장하고 다른 사용자와 쉽게 공유해보세요.',
+                    },
+                  ].map((card, idx) => (
+                    <Card key={idx} variant="outlined" sx={{ height: 200 }}>
+                      <CardContent>
+                        <Typography fontWeight="bold">
+                          {card.icon} {card.title}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                          {card.desc}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </Box>
+              </Box>
+            </Box>
+          )}
         </Box>
       </Box>
     </>
