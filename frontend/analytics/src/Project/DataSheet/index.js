@@ -131,7 +131,7 @@ const DataSheet = ({
       case 'analysis1':
         return <Analysis1 />;
       case 'analysis2':
-        return <TTest />;
+        return <TTest data={data} />;
       case 'result1':
         return <Result1 charts={charts} />;
       case 'result2':
@@ -408,28 +408,29 @@ const DataSheet = ({
       </Box>
       {/* table style */}
       <div style={containerStyle(activeTab)}>
+        {!activeTab?.startsWith('analysis') && (
+          <div className="ag-theme-alpine" style={tableStyle(activeTab)}>
+            <AgGridReact
+              ref={gridRef}
+              rowData={rowData}
+              columnDefs={columnDefs}
+              defaultColDef={{
+                flex: 1,
+                sortable: true,
+                filter: true,
+                minWidth: 250,
+                resizable: true,
+                editable: true,
+              }}
+              rowHeight={28}
+              headerHeight={30}
+              onCellClicked={onCellClicked}
+            />
+          </div>
+        )}
         <ClipboardProvider>
           <div style={{ flexGrow: 1, overflow: 'auto' }}>{renderViewBox()}</div>
         </ClipboardProvider>
-        <div className="ag-theme-alpine" style={tableStyle(activeTab)}>
-          <AgGridReact
-            ref={gridRef}
-            rowData={rowData}
-            columnDefs={columnDefs}
-            defaultColDef={{
-              flex: 1,
-              sortable: true,
-              filter: true,
-              minWidth: 250,
-              resizable: true,
-              editable: true,
-            }}
-            rowHeight={28}
-            headerHeight={30}
-            // theme={myTheme}
-            onCellClicked={onCellClicked}
-          />
-        </div>
         {/* )} */}
       </div>
     </>
@@ -441,7 +442,7 @@ const containerStyle = (activeTab) => ({
   flexDirection: 'column',
   justifyContent: 'space-between',
   // alignItems: 'flex-start',
-  gap: '5px',
+  gap: '1px',
   width: activeTab ? '99vw' : '100vw',
   height: '80vh',
   overflow: 'hidden',
@@ -450,8 +451,8 @@ const containerStyle = (activeTab) => ({
 });
 
 const tableStyle = (activeTab) => ({
-  height: activeTab ? '400px' : '100%',
-  width: '100%',
+  height: '100%',
+  width: activeTab ? '50vw' : '100vw',
   overflow: 'hidden',
 });
 
