@@ -4,13 +4,15 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
+import ButtonGroup from '@mui/material/Button';
 import CardContent from '@mui/material/CardContent';
-import AnalyzedText from './AnalyzedText';
+import TextWithArrow from './AnalyzedText';
 import ResultTable from './ResultTable';
 import ResultCard from './ResultCard';
 import axios from 'axios';
+import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 
-const Engineering1 = ({ selectedCellValue }) => {
+const Engineering1 = ({ selectedCellValue, columnDefs = [], onAnnotate, selectedRow }) => {
   const [text, setText] = useState('');
   const [showSVG, setShowSVG] = useState(false);
   const [message, setMessage] = useState({ selectedCellValue });
@@ -56,6 +58,27 @@ const Engineering1 = ({ selectedCellValue }) => {
     }
   }, [selectedCellValue]);
 
+  const [alignment, setAlignment] = useState('');
+
+  const handleChange = (event, newAlignment) => {
+    if (newAlignment !== null) {
+      setAlignment(newAlignment);
+    }
+  };
+
+  const filteredColumnDefs = columnDefs.filter(
+    (col) => !col.field.startsWith('ent_') && !col.field.endsWith('_entities')
+  );
+
+  const columnOptions = columnDefs.map((col) => col.field);
+  const handleAnnotateClick = () => {
+    if (alignment) {
+      onAnnotate(alignment); // ✅ 선택된 컬럼 이름으로 함수 호출
+    } else {
+      alert('📌 먼저 컬럼을 선택해주세요.');
+    }
+  };
+
   return (
     <>
       <Box
@@ -77,6 +100,84 @@ const Engineering1 = ({ selectedCellValue }) => {
           top: 0,
         }}
       >
+        <Box sx={{ ml: '26px', marginBottom: '15px' }}>
+          <Typography sx={{ fontFamily: 'Noto Sans KR' }}>SELECT TARGET COLUMN</Typography>
+        </Box>
+        <FormControl
+          component="fieldset"
+          sx={{
+            ml: '26px',
+            mr: '26px',
+            mb: 2,
+            overflowX: 'auto',
+            whiteSpace: 'nowrap',
+            // maxHeight: '120px',
+            overflowY: 'auto',
+            border: '1px solid #ccc',
+            borderRadius: '8px',
+            p: 2,
+            backgroundColor: '#f9f9f9',
+          }}
+        >
+          <RadioGroup
+            name="column-radio-group"
+            row
+            value={alignment}
+            onChange={(e) => setAlignment(e.target.value)}
+          >
+            {filteredColumnDefs.map((col) => (
+              <FormControlLabel
+                key={col.field}
+                value={col.field}
+                control={<Radio size="small" />}
+                label={
+                  <Typography
+                    sx={{
+                      fontSize: '12px',
+                      fontFamily: 'Noto Sans KR',
+                    }}
+                  >
+                    {col.field}
+                  </Typography>
+                }
+                sx={{
+                  mr: 1.5,
+                  whiteSpace: 'nowrap',
+                }}
+              />
+            ))}
+          </RadioGroup>
+        </FormControl>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            width: '97%',
+            mr: '28px',
+            marginTop: '15px',
+          }}
+        >
+          <Button
+            onClick={handleAnnotateClick}
+            sx={{
+              mr: '5px',
+              width: '203px',
+              height: '42px',
+              backgroundColor: '#2F72B9',
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: '13px',
+                color: '#ffffff',
+                fontFamily: 'Noto Sans KR',
+              }}
+            >
+              Total Extraction
+            </Typography>
+          </Button>
+        </Box>
+
         <Box sx={{ ml: '26px', marginBottom: '5px' }}>
           <Typography sx={{ fontFamily: 'Noto Sans KR' }}>SELECTED DATA</Typography>
         </Box>
@@ -102,35 +203,6 @@ const Engineering1 = ({ selectedCellValue }) => {
             '& fieldset': { border: 'none' },
           }}
         />
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            width: '97%',
-            mr: '28px',
-            marginTop: '20px',
-          }}
-        >
-          <Button
-            onClick={handleSendMessage}
-            sx={{
-              mr: '5px',
-              width: '203px',
-              height: '42px',
-              backgroundColor: '#EDB369',
-            }}
-          >
-            <Typography
-              sx={{
-                fontSize: '13px',
-                color: '#000000',
-                fontFamily: 'Noto Sans KR',
-              }}
-            >
-              Total Extraction
-            </Typography>
-          </Button>
-        </Box>
 
         {/* Comprehend Result */}
         <Box sx={{ mt: '20px', ml: '26px', width: '95%' }}>
@@ -146,16 +218,10 @@ const Engineering1 = ({ selectedCellValue }) => {
               >
                 Analyzed Text
               </Typography>
-              {/* {showSVG && (
-          <Result sentence={selectedCellValue} word1={word1} word2={word2} />
-        )} */}
-              <AnalyzedText
-                sentence={selectedCellValue}
-                word1={word1}
-                word2={word2}
-                response1={response1}
-                response2={response2}
-                response3={response3}
+
+              <TextWithArrow
+                sentence={selectedRow?._sentence || selectedCellValue}
+                words={selectedRow?._words || []}
               />
 
               <Typography

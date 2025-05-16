@@ -3,6 +3,7 @@ import { Box, Typography, IconButton } from '@mui/material';
 import Engineering1 from '../OutputView/Engineering1';
 import Engineering2 from '../OutputView/Engineering2';
 import Analysis1 from '../OutputView/Analysis1';
+import TTest from '../Analysis/TTest';
 import Result1 from '../OutputView/Result1';
 import Result2 from '../OutputView/Result2';
 import Result3 from '../OutputView/Result3';
@@ -18,6 +19,7 @@ import CircleIcon from '@mui/icons-material/Circle';
 import { AgGridReact } from 'ag-grid-react';
 import './style.css';
 import { saveProjectData, deleteProjectData } from '../../utils/indexedDB.js';
+import { convertToTextWithArrowFormat } from './ConvertTexttoArrow.js';
 
 const DataSheet = ({
   open,
@@ -34,6 +36,7 @@ const DataSheet = ({
   const [selectedColumns, setSelectedColumns] = useState([]);
   const gridRef = useRef();
   const [selectedCellValue, setSelectedCellValue] = useState('');
+  const [selectedRow, setSelectedRow] = useState(null);
 
   // 데이터 로드 및 저장 처리
   useEffect(() => {
@@ -79,6 +82,7 @@ const DataSheet = ({
 
   const onCellClicked = (event) => {
     setSelectedCellValue(event.value || '');
+    setSelectedRow(event.data);
   };
 
   const selectColumn = (column) => {
@@ -105,7 +109,14 @@ const DataSheet = ({
   const renderViewBox = () => {
     switch (activeTab) {
       case 'settings1':
-        return <Engineering1 selectedCellValue={selectedCellValue} />;
+        return (
+          <Engineering1
+            selectedCellValue={selectedCellValue}
+            columnDefs={columnDefs}
+            onAnnotate={annotateColumnEntitiesWithFlags}
+            selectedRow={selectedRow}
+          />
+        );
       case 'settings2':
         return (
           <Engineering2
@@ -119,6 +130,8 @@ const DataSheet = ({
         return <div>Settings 3 내용</div>;
       case 'analysis1':
         return <Analysis1 />;
+      case 'analysis2':
+        return <TTest />;
       case 'result1':
         return <Result1 charts={charts} />;
       case 'result2':
@@ -137,11 +150,11 @@ const DataSheet = ({
     const updatedData = {
       headers,
       rows: rowData,
-      filename, // 현재 filename 상태 포함
+      filename,
     };
 
     await saveProjectData(projectId, updatedData);
-    alert('✅ 데이터가 저장되었습니다.');
+    alert('data saved');
     console.log('💾 Saved to IndexedDB:', updatedData);
   };
 
@@ -152,7 +165,7 @@ const DataSheet = ({
     await deleteProjectData(projectId);
     setColumnDefs([]);
     setRowData([]);
-    alert('✅ 데이터가 삭제되었습니다.');
+    alert('data deleted');
   };
 
   // Refresh
@@ -196,10 +209,10 @@ const DataSheet = ({
 
       const result = await response.json();
 
-      console.log('✅ 추출 성공:', result);
+      console.log('successfully extracted:', result);
       return result;
     } catch (error) {
-      console.error('❌ 엔티티 추출 오류:', error);
+      console.error('error:', error);
       return [];
     }
   };
@@ -262,6 +275,17 @@ const DataSheet = ({
         const text = row[targetColumn];
         const entities = await extractEntities(text);
 
+        // 추가 가공
+        const { sentence, words } = convertToTextWithArrowFormat(text, entities);
+        console.log('🧠 convertToTextWithArrowFormat 결과:', {
+          sentence,
+          words,
+        });
+
+        // 이후 필요 시 저장하거나, 해당 row에 TextWithArrow 렌더링
+        row._sentence = sentence;
+        row._words = words;
+
         const matchedEntities = entities.filter((e) => e.matched && e.text).map((e) => e.text);
         matchedEntities.forEach((text) => allEntitySet.add(text));
 
@@ -304,7 +328,7 @@ const DataSheet = ({
       filename,
     });
 
-    alert('✅ 엔티티 더미 컬럼 생성 및 저장 완료');
+    alert('Data Integration completed.');
   };
 
   return (
@@ -348,18 +372,6 @@ const DataSheet = ({
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <IconButton
-            color="primary"
-            onClick={() => annotateColumnEntitiesWithFlags('CLNC_TEST_ENG_TITLE')}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <CircleIcon sx={{ fontSize: 10, color: '#007FFF' }} />
-              <Typography variant="body2" color="#007FFF" fontFamily="NotoSans KR">
-                extract entities
-              </Typography>
-            </Box>
-          </IconButton>
-
           <IconButton color="primary" onClick={handleSave}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <CircleIcon sx={{ fontSize: 10, color: '#316193' }} />
@@ -395,66 +407,52 @@ const DataSheet = ({
         </Box>
       </Box>
       {/* table style */}
-      <div style={containerStyle}>
-        {activeTab !== 'result1' && (
-          <div className="ag-theme-alpine" style={tableStyle(activeTab)}>
-            <AgGridReact
-              ref={gridRef}
-              rowData={rowData}
-              columnDefs={columnDefs}
-              defaultColDef={{
-                flex: 1,
-                sortable: true,
-                filter: true,
-                minWidth: 250,
-                resizable: true,
-                editable: true,
-              }}
-              rowHeight={28}
-              headerHeight={30}
-              // theme={myTheme}
-              onCellClicked={onCellClicked}
-            />
-          </div>
-        )}
-
-        {/* view box style */}
-        <div style={viewBoxStyle(activeTab)}>
-          <ClipboardProvider>{renderViewBox()}</ClipboardProvider>
+      <div style={containerStyle(activeTab)}>
+        <ClipboardProvider>
+          <div style={{ flexGrow: 1, overflow: 'auto' }}>{renderViewBox()}</div>
+        </ClipboardProvider>
+        <div className="ag-theme-alpine" style={tableStyle(activeTab)}>
+          <AgGridReact
+            ref={gridRef}
+            rowData={rowData}
+            columnDefs={columnDefs}
+            defaultColDef={{
+              flex: 1,
+              sortable: true,
+              filter: true,
+              minWidth: 250,
+              resizable: true,
+              editable: true,
+            }}
+            rowHeight={28}
+            headerHeight={30}
+            // theme={myTheme}
+            onCellClicked={onCellClicked}
+          />
         </div>
+        {/* )} */}
       </div>
     </>
   );
 };
 
-const containerStyle = {
-  // display: 'flex',
-  flexDirection: 'row',
-  width: '90w',
+const containerStyle = (activeTab) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  // alignItems: 'flex-start',
+  gap: '5px',
+  width: activeTab ? '99vw' : '100vw',
   height: '80vh',
   overflow: 'hidden',
-};
-
-const tableStyle = (activeTab) => ({
-  // display: 'flex',
-  flex: activeTab === 'result1' ? 1 : 0.5,
-  height: '100%',
-  width: '99%',
-  overflow: 'hidden',
+  backgroundColor: '#fff',
   margin: '0 auto',
 });
 
-const viewBoxStyle = (activeTab) => ({
-  flex: activeTab === 'result1' ? 1 : 0.5,
-  display: 'flex',
-  // height: '100%',
-  overflowY: 'auto',
-  backgroundColor: '#f5f5f5',
-  borderLeft: activeTab === 'result1' ? 'none' : '2px solid #ddd',
-  padding: activeTab === 'result1' ? 0 : '20px',
-  flexDirection: 'column',
-  alignItems: 'center',
-  // justifyContent: 'center',
+const tableStyle = (activeTab) => ({
+  height: activeTab ? '400px' : '100%',
+  width: '100%',
+  overflow: 'hidden',
 });
 
 export default DataSheet;
