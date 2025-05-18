@@ -2,8 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Box, Typography, IconButton } from '@mui/material';
 import Engineering1 from '../OutputView/Engineering1';
 import Engineering2 from '../OutputView/Engineering2';
-import Analysis1 from '../OutputView/Analysis1';
-import TTest from '../Analysis/TTest';
+import { Exploration, OneSampleTTest } from '../Analysis';
 import Result1 from '../OutputView/Result1';
 import Result2 from '../OutputView/Result2';
 import Result3 from '../OutputView/Result3';
@@ -129,9 +128,9 @@ const DataSheet = ({
       case 'settings3':
         return <div>Settings 3 내용</div>;
       case 'analysis1':
-        return <Analysis1 />;
+        return <Exploration data={data} />;
       case 'analysis2':
-        return <TTest data={data} />;
+        return <OneSampleTTest data={data} />;
       case 'result1':
         return <Result1 charts={charts} />;
       case 'result2':
