@@ -13,7 +13,7 @@
 // };
 
 import mongoose from "mongoose";
-import { GridFSBucket } from 'mongodb';
+import { GridFSBucket } from "mongodb";
 
 let gfsBucket;
 
@@ -39,7 +39,6 @@ export const run = () => {
     gfsBucket = new GridFSBucket(db, {
       bucketName: "projectDataFiles",
     });
-
   } finally {
     // Ensures that the client will close when you finish/error
     return mongoose.disconnect();

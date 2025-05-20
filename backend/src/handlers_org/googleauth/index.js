@@ -88,14 +88,14 @@ export const GoogleSignUpHandler = async (req, res) => {
     });
   } catch (error) {
     console.error("Registration Error: ", error.message);
-  
+
     if (error.name === "ValidationError") {
       return res.status(400).json({
         message: error.message,
         errors: error.errors,
       });
     }
-  
+
     res.status(500).json({ message: "An error occurred during registration." });
   }
 };

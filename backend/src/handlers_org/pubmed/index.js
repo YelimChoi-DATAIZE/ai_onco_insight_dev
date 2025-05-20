@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
 export const getPubMedArticlesHandler = async (req, res) => {
   try {
     const keyword = req.query.keyword;

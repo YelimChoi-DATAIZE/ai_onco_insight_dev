@@ -2,12 +2,14 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import getAllmCODEKGHandler from "../src/routes/mcodekg/index.js";
-import getPubMedArticlesHandler from "../src/routes/pubmed/index.js";
-import GoogleAuthHandler from "../src/routes/googleauth/index.js";
-import BasicAuthHandler from "../src/routes/basicauth/index.js";
-import getPubmedKeywordDataHandler from "../src/routes/cancerkeywords/index.js";
-import saveToGridFsHandler from "../src/routes/projectdata/index.js";
+import {
+  userAuthRoutes,
+  userLogRoutes,
+  dataRoutes,
+  projectRoutes,
+  mcodeTrendRoutes,
+} from "./routes/index.js";
+import { swaggerUi, swaggerSpec } from './swagger/index.js';
 
 dotenv.config();
 
@@ -17,7 +19,7 @@ const PORT = process.env.PORT || 8000;
 // 미들웨어 설정
 app.use(
   cors({
-    origin: ["http://localhost:3000","http://localhost:3001"],
+    origin: ["http://localhost:3000", "http://localhost:3001"],
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "Accept", "Authorization"],
   }),
@@ -38,16 +40,15 @@ mongoose
   .then(() => console.log("MongoDB Atlas connected"))
   .catch((error) => console.error("MongoDB Atlas connection failured:", error));
 
-app.use(express.json({ limit: '50mb' })); // JSON body size 제한 확대
-app.use(express.urlencoded({ limit: '50mb', extended: true })); // form-urlencoded 처리 확대
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-//routers..
-app.use("/mcodekg", getAllmCODEKGHandler);
-app.use("/pubmed", getPubMedArticlesHandler);
-app.use("/googleauth", GoogleAuthHandler);
-app.use("/basicauth", BasicAuthHandler);
-app.use("/cancerkeywords", getPubmedKeywordDataHandler);
-app.use("/projectdata", saveToGridFsHandler);
+app.use("/api/user-auth", userAuthRoutes);
+app.use("/api/user-log", userLogRoutes);
+app.use("/api/data", dataRoutes);
+app.use("/api/project", projectRoutes);
+app.use("/api/mcodetrend", mcodeTrendRoutes);
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.listen(PORT, () => {
   console.log(`Server Started: http://localhost:${PORT}`);

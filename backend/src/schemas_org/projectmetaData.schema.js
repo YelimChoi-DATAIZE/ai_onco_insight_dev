@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const ProjectMetaSchema = new mongoose.Schema({
   _id: { type: String },
@@ -9,4 +9,7 @@ const ProjectMetaSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-export const ProjectMetaModel = mongoose.model('ProjectMeta', ProjectMetaSchema);
+export const ProjectMetaModel = mongoose.model(
+  "ProjectMeta",
+  ProjectMetaSchema,
+);

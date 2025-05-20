@@ -10,14 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "dataize_ai_secret";
 // basic signup
 export const SignUpHandler = async (req, res) => {
   try {
-    const {
-      name,
-      email,
-      password,
-      country,
-      company,
-      job,
-    } = req.body;
+    const { name, email, password, country, company, job } = req.body;
 
     if (!email || !password) {
       return res
@@ -27,7 +20,9 @@ export const SignUpHandler = async (req, res) => {
 
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
-      return res.status(409).json({ message: "This email is already registered." });
+      return res
+        .status(409)
+        .json({ message: "This email is already registered." });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -59,7 +54,6 @@ export const SignUpHandler = async (req, res) => {
     res.status(500).json({ message: "An error occurred during registration." });
   }
 };
-
 
 // basic signin
 export const SignInHandler = async (req, res) => {

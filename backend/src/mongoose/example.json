@@ -1,29 +1,29 @@
 [
-    {
-        "ProfileName": "TNM Stage Group Profile",
-        "VSname": "ObservationStatusVS",
-        "Code": "registered",
-        "System": "http://hl7.org/fhir/observation-status",
-        "Display": "Registered",
-        "category": "disease",
-        "icon": "C:/Users/yelim/Desktop/바탕 화면/알파베이스 _용역_정리/all_prodbeta/backend/src/mongoose/mcode_icon/Disease.svg"
-    },
-    {
-        "ProfileName": "TNM Stage Group Profile",
-        "VSname": "ObservationStatusVS",
-        "Code": "preliminary",
-        "System": "http://hl7.org/fhir/observation-status",
-        "Display": "Preliminary",
-        "category": "disease",
-        "icon": "C:/Users/yelim/Desktop/바탕 화면/알파베이스 _용역_정리/all_prodbeta/backend/src/mongoose/mcode_icon/Disease.svg"
-    },
-    {
-        "ProfileName": "TNM Stage Group Profile",
-        "VSname": "ObservationStatusVS",
-        "Code": "final",
-        "System": "http://hl7.org/fhir/observation-status",
-        "Display": "Final",
-        "category": "disease",
-        "icon": "C:/Users/yelim/Desktop/바탕 화면/알파베이스 _용역_정리/all_prodbeta/backend/src/mongoose/mcode_icon/Disease.svg"
-    }
+  {
+    "ProfileName": "TNM Stage Group Profile",
+    "VSname": "ObservationStatusVS",
+    "Code": "registered",
+    "System": "http://hl7.org/fhir/observation-status",
+    "Display": "Registered",
+    "category": "disease",
+    "icon": "C:/Users/yelim/Desktop/바탕 화면/알파베이스 _용역_정리/all_prodbeta/backend/src/mongoose/mcode_icon/Disease.svg"
+  },
+  {
+    "ProfileName": "TNM Stage Group Profile",
+    "VSname": "ObservationStatusVS",
+    "Code": "preliminary",
+    "System": "http://hl7.org/fhir/observation-status",
+    "Display": "Preliminary",
+    "category": "disease",
+    "icon": "C:/Users/yelim/Desktop/바탕 화면/알파베이스 _용역_정리/all_prodbeta/backend/src/mongoose/mcode_icon/Disease.svg"
+  },
+  {
+    "ProfileName": "TNM Stage Group Profile",
+    "VSname": "ObservationStatusVS",
+    "Code": "final",
+    "System": "http://hl7.org/fhir/observation-status",
+    "Display": "Final",
+    "category": "disease",
+    "icon": "C:/Users/yelim/Desktop/바탕 화면/알파베이스 _용역_정리/all_prodbeta/backend/src/mongoose/mcode_icon/Disease.svg"
+  }
 ]

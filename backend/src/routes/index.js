@@ -1,25 +1,13 @@
-import googleLoginRoutes from "./googleauth/index.js";
-import mCODEKGRoutes from "./mcodekg/index.js";
-import pubmedRoutes from "./pubmed/index.js";
-import {
-  GoogleSignInHandler,
-  GoogleSignUpHandler,
-} from '../handlers/googleauth/index.js';
-import {
-  SignInHandler,
-  SignUpHandler,
-} from '../handlers/basicauth/index.js';
-import { getPubmedKeywordDataHandler } from "../handlers/cancerkeywords/index.js";
-import { saveToGridFsHandler } from "../handlers/projectdata/index.js";
+import userAuthRoutes from "./user_auth/index.js";
+import userLogRoutes from "./user_log/index.js";
+import dataRoutes from "./data/index.js";
+import projectRoutes from "./project/index.js";
+import mcodeTrendRoutes from "./mcodetrend/index.js";
 
 export {
-  googleLoginRoutes,
-  mCODEKGRoutes,
-  pubmedRoutes,
-  GoogleSignUpHandler,
-  GoogleSignInHandler,
-  SignInHandler,
-  SignUpHandler,
-  getPubmedKeywordDataHandler,
-  saveToGridFsHandler,
+  userAuthRoutes,
+  userLogRoutes,
+  dataRoutes,
+  projectRoutes,
+  mcodeTrendRoutes,
 };
