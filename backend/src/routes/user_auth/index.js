@@ -2,6 +2,7 @@ import express from "express";
 import {
   SignUpHandler,
   SignInHandler,
+  GoogleVerifyHandler,
   GoogleSignUpHandler,
   GoogleSignInHandler,
   readUserProfileHandler,
@@ -19,6 +20,9 @@ router.post("/signin", async (req, res) => {
   await SignInHandler(req, res);
 });
 
+router.post("/google-verify", async (req, res) => {
+  await GoogleVerifyHandler(req, res);
+});
 router.post("/google-signup", async (req, res) => {
   await GoogleSignUpHandler(req, res);
 });

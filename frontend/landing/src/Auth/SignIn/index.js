@@ -80,7 +80,7 @@ export default function SignIn() {
             },
           );
           const response = await axios.post(
-            "http://localhost:8000/googleauth/signin",
+            "http://localhost:8000/api/user-auth/google-signin",
             JSON.stringify({ token: tokenResponse.access_token }),
             {
               headers: {
@@ -165,7 +165,7 @@ export default function SignIn() {
           }
 
           const response = await axios.post(
-            "http://localhost:8000/googleauth/verify",
+            "http://localhost:8000/api/user-auth/google-verify",
             { token: tokenResponse.access_token },
             {
               headers: {

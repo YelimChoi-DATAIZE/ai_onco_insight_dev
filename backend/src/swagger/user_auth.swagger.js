@@ -65,7 +65,7 @@
 
 /**
  * @swagger
- * /auth/google-signup:
+ * /api/user-auth/google-signup:
  *   post:
  *     summary: 구글 회원가입
  *     tags: [Auth]
@@ -91,7 +91,7 @@
 
 /**
  * @swagger
- * /auth/google-signin:
+ * /api/user-auth/google-signin:
  *   post:
  *     summary: 구글 로그인
  *     tags: [Auth]

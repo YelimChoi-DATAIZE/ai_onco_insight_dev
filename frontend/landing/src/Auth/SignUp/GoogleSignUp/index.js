@@ -55,11 +55,12 @@ export default function SignUp() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/googleauth/signup",
+        "http://localhost:8000/api/user-auth/google-signup",
         {
           country,
           company,
           job,
+          auth_provider: "google",
         },
         {
           headers: {

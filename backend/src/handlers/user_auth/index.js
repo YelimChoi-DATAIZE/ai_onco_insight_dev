@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { userModel } from "../../schemas/user_info.schema.js";
 import { OAuth2Client } from "google-auth-library";
+import axios from "axios";
 
 dotenv.config();
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
@@ -172,21 +173,23 @@ export const GoogleSignUpHandler = async (req, res) => {
   try {
     // get google user info using the token
     const googleResponse = await axios.get(
-      "https://www.googleapis.com/oauth2/v1/userinfo",
+      "https://www.googleapis.com/oauth2/v1/userinfo?alt=json",
       {
         headers: { Authorization: `Bearer ${token}` },
-      },
+      }
     );
 
-    const { email, name, picture } = googleResponse.data;
+    const { email, name, picture, id: googleId } = googleResponse.data;
 
     let user = await userModel.findOne({ email, auth_provider: "google" });
 
     if (!user) {
       user = new userModel({
         email,
-        name,
-        picture,
+        username: name,
+        profile_image: picture,
+        auth_provider: "google",
+        google_id: googleId,
         country,
         company,
         job,
@@ -228,28 +231,52 @@ export const GoogleSignInHandler = async (req, res) => {
   try {
     const response = await axios.get(
       "https://www.googleapis.com/oauth2/v1/userinfo?alt=json",
-      { headers: { Authorization: `Bearer ${token}` } },
+      { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    const { email, name, picture } = response.data;
+    const { email, name, picture, id: googleId } = response.data;
+
     let user = await userModel.findOne({ email, auth_provider: "google" });
+
+    // 구글 로그인 후 첫 방문이면 DB에 사용자 추가
+    if (!user) {
+      user = new userModel({
+        email,
+        username: name,
+        profile_image: picture,
+        auth_provider: "google",
+        google_id: googleId,
+        state: "active",
+        role: "researcher",
+      });
+
+      await user.save();
+    }
 
     const jwtToken = jwt.sign(
       { id: user._id.toString(), email: user.email },
       JWT_SECRET,
-      { expiresIn: "6h" },
+      { expiresIn: "6h" }
     );
 
     res.status(200).json({
       message: "Login successful",
       token: jwtToken,
-      user: { email, name, picture, id: user._id },
+      user: {
+        id: user._id,
+        email: user.email,
+        username: user.username,
+        profile_image: user.profile_image,
+        role: user.role,
+        state: user.state,
+      },
     });
   } catch (error) {
     console.error("[Verification Error]:", error);
     res.status(500).send("Login Error Occurred.");
   }
 };
+
 
 // GET /api/user/profile
 export const readUserProfileHandler = async (req, res) => {
