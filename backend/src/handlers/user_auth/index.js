@@ -61,13 +61,16 @@ export const SignUpHandler = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new userModel({
-      name,
+      username: name, // ✅ 이름 필드 통일
       email,
       password_hash: hashedPassword,
       auth_provider: "dataizeai",
       country,
       company,
       job,
+      profile_image: null, // ✅ Google 사용자와 필드 통일
+      state: "active",
+      role: "researcher",
     });
 
     await newUser.save();
@@ -106,7 +109,7 @@ export const SignInHandler = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id.toString(), email: user.email }, //client의 detail 정보는 db에서 참고해서 사용
+      { id: user._id.toString(), email: user.email },
       JWT_SECRET,
       { expiresIn: "6h" },
     );
@@ -116,10 +119,14 @@ export const SignInHandler = async (req, res) => {
       token,
       user: {
         id: user._id,
-        name: user.name,
         email: user.email,
-        country: user.country,
-        picture: null,
+        username: user.username || "",
+        profile_image: user.profile_image || null,
+        country: user.country || "",
+        company: user.company || "",
+        job: user.job || "",
+        role: user.role || "researcher",
+        state: user.state || "active",
       },
     });
   } catch (error) {
@@ -176,7 +183,7 @@ export const GoogleSignUpHandler = async (req, res) => {
       "https://www.googleapis.com/oauth2/v1/userinfo?alt=json",
       {
         headers: { Authorization: `Bearer ${token}` },
-      }
+      },
     );
 
     const { email, name, picture, id: googleId } = googleResponse.data;
@@ -231,7 +238,7 @@ export const GoogleSignInHandler = async (req, res) => {
   try {
     const response = await axios.get(
       "https://www.googleapis.com/oauth2/v1/userinfo?alt=json",
-      { headers: { Authorization: `Bearer ${token}` } }
+      { headers: { Authorization: `Bearer ${token}` } },
     );
 
     const { email, name, picture, id: googleId } = response.data;
@@ -256,7 +263,7 @@ export const GoogleSignInHandler = async (req, res) => {
     const jwtToken = jwt.sign(
       { id: user._id.toString(), email: user.email },
       JWT_SECRET,
-      { expiresIn: "6h" }
+      { expiresIn: "6h" },
     );
 
     res.status(200).json({
@@ -276,7 +283,6 @@ export const GoogleSignInHandler = async (req, res) => {
     res.status(500).send("Login Error Occurred.");
   }
 };
-
 
 // GET /api/user/profile
 export const readUserProfileHandler = async (req, res) => {

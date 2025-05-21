@@ -36,7 +36,7 @@ export default function SignIn() {
 
   const handleBasicSignIn = async () => {
     try {
-      const response = await signIn(email, password);
+      const response = await signIn({ email, password });
       const { token, user } = response.data;
 
       // 토큰 저장 및 로그인 처리

@@ -9,7 +9,7 @@ import {
   projectRoutes,
   mcodeTrendRoutes,
 } from "./routes/index.js";
-import { swaggerUi, swaggerSpec } from './swagger/index.js';
+import { swaggerUi, swaggerSpec } from "./swagger/index.js";
 
 dotenv.config();
 
@@ -48,7 +48,7 @@ app.use("/dataize-api/user-log", userLogRoutes);
 app.use("/dataize-api/mcodetrend", mcodeTrendRoutes);
 app.use("/dataize-api/data", dataRoutes);
 app.use("/dataize-api/project", projectRoutes);
-app.use('/dataize-api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/dataize-api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.listen(PORT, () => {
   console.log(`Server Started: http://localhost:${PORT}`);
