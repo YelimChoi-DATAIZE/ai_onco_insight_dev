@@ -83,10 +83,10 @@ export default function Menubar() {
 
       if (googleUserInfo) {
         const googleUser = JSON.parse(googleUserInfo);
-        setUserName(googleUser.name || "User");
+        setUserName(googleUser.username || "User");
       } else if (basicUserInfo) {
         const basicUser = JSON.parse(basicUserInfo);
-        setUserName(basicUser.name || "User");
+        setUserName(basicUser.username || "User");
       }
     } else {
       setIsLoggedIn(false);

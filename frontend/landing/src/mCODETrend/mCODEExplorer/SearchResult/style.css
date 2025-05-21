@@ -2,17 +2,16 @@
 .ag-theme-alpine .ag-cell {
   font-size: 13px !important; /* 원하는 폰트 크기 */
   font-weight: 400 !important; /* 원하는 폰트 두께 */
-  font-family: 'Noto Sans KR', sans-serif !important; /* 원하는 폰트 적용 */
+  font-family: "Noto Sans KR", sans-serif !important; /* 원하는 폰트 적용 */
   color: #333 !important; /* 글자 색상 */
 }
 
 .ag-theme-alpine .ag-header {
   font-size: 13px !important; /* 원하는 폰트 크기 */
   font-weight: 400 !important; /* 원하는 폰트 두께 */
-  font-family: 'Noto Sans KR', sans-serif !important; /* 원하는 폰트 적용 */
+  font-family: "Noto Sans KR", sans-serif !important; /* 원하는 폰트 적용 */
   color: #333 !important; /* 글자 색상 */
 }
-
 
 /* 세로줄 추가 */
 .ag-theme-alpine .ag-root-wrapper-body .ag-row .ag-cell {
@@ -35,7 +34,7 @@
   border-radius: 0px !important;
 }
 
-.ag-theme-alpine .ag-root-wrapper  {
+.ag-theme-alpine .ag-root-wrapper {
   border-radius: 0px !important;
 }
 

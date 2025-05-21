@@ -6,6 +6,7 @@ import Menubar from "../../Menubar";
 import MenubarUnder from "../../MenubarUnder";
 import Footer from "../../Footer";
 import google from "../../Images/GoogleLogo.png";
+import { signIn, googleSignIn, googleVerify } from "../../Remote/apis/user-auth";
 
 //social login
 import {
@@ -35,14 +36,7 @@ export default function SignIn() {
 
   const handleBasicSignIn = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:8000/basicauth/signin",
-        {
-          email,
-          password,
-        },
-      );
-
+      const response = await signIn(email, password);
       const { token, user } = response.data;
 
       // 토큰 저장 및 로그인 처리
@@ -79,16 +73,7 @@ export default function SignIn() {
               },
             },
           );
-          const response = await axios.post(
-            "http://localhost:8000/api/user-auth/google-signin",
-            JSON.stringify({ token: tokenResponse.access_token }),
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              },
-            },
-          );
+          const response = await googleSignIn(tokenResponse.access_token);
 
           localStorage.setItem("accessToken", response.data.token);
           handleLogin(response.data.token);
@@ -164,16 +149,7 @@ export default function SignIn() {
             return;
           }
 
-          const response = await axios.post(
-            "http://localhost:8000/api/user-auth/google-verify",
-            { token: tokenResponse.access_token },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              },
-            },
-          );
+          const response = await googleVerify(tokenResponse.access_token);
 
           if (response.data.message) {
             setMessage(response.data.message);

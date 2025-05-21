@@ -13,6 +13,7 @@ import axios from "axios";
 import Menubar from "../../../Menubar";
 import MenubarUnder from "../../../MenubarUnder";
 import Footer from "../../../Footer";
+import { signUp } from "../../../Remote/apis/user-auth";
 
 export default function SignUp() {
   const [name, setName] = useState("");
@@ -109,22 +110,14 @@ export default function SignUp() {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:8000/basicauth/signup",
-        {
-          name,
-          email,
-          password,
-          country,
-          company,
-          job,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
+      const response = await signUp({
+        name,
+        email,
+        password,
+        country,
+        company,
+        job,
+      });
       alert("Sign-up complete. Redirecting to login page.");
       navigate("/signin");
     } catch (error) {

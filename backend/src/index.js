@@ -43,12 +43,12 @@ mongoose
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-app.use("/api/user-auth", userAuthRoutes);
-app.use("/api/user-log", userLogRoutes);
-app.use("/api/data", dataRoutes);
-app.use("/api/project", projectRoutes);
-app.use("/api/mcodetrend", mcodeTrendRoutes);
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/dataize-api/user-auth", userAuthRoutes);
+app.use("/dataize-api/user-log", userLogRoutes);
+app.use("/dataize-api/mcodetrend", mcodeTrendRoutes);
+app.use("/dataize-api/data", dataRoutes);
+app.use("/dataize-api/project", projectRoutes);
+app.use('/dataize-api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.listen(PORT, () => {
   console.log(`Server Started: http://localhost:${PORT}`);

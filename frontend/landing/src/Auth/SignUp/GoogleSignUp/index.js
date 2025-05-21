@@ -12,6 +12,7 @@ import axios from "axios";
 import Menubar from "../../../Menubar";
 import MenubarUnder from "../../../MenubarUnder";
 import Footer from "../../../Footer";
+import { googleSignUp } from "../../../Remote/apis/user-auth";
 
 export default function SignUp() {
   const [company, setCompany] = useState("");
@@ -44,49 +45,39 @@ export default function SignUp() {
     "Other",
   ];
 
-  const handleSubmit = async () => {
-    const accessToken = localStorage.getItem("accessToken");
+const handleSubmit = async () => {
+  const accessToken = localStorage.getItem("accessToken");
 
-    if (!accessToken) {
-      alert("No Google login info found. Please log in again.");
-      navigate("/signin");
-      return;
-    }
+  if (!accessToken) {
+    alert("No Google login info found. Please log in again.");
+    navigate("/signin");
+    return;
+  }
 
-    try {
-      const response = await axios.post(
-        "http://localhost:8000/api/user-auth/google-signup",
-        {
-          country,
-          company,
-          job,
-          auth_provider: "google",
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
+  try {
+    const formData = {
+      country,
+      company,
+      job,
+      auth_provider: "google",
+    };
 
-      console.log("회원가입 성공: ", response.data);
-      alert("Registration completed. Redirecting to the login page.");
-      navigate("/signin");
-    } catch (error) {
-      const defaultMessage = "An issue occurred during registration.";
+    const response = await googleSignUp(formData, accessToken);
 
-      // 서버에서 응답이 왔고, 메시지가 있으면 그것을 표시
-      const serverMessage = error.response?.data?.message;
-      const readableMessage =
-        serverMessage === "Unauthorized. Please log in."
-          ? "Your authentication is invalid. Please log in again."
-          : serverMessage || defaultMessage;
+    console.log("회원가입 성공: ", response.data);
+    alert("Registration completed. Redirecting to the login page.");
+    navigate("/signin");
+  } catch (error) {
+    const serverMessage = error.response?.data?.message;
+    const readableMessage =
+      serverMessage === "Unauthorized. Please log in."
+        ? "Your authentication is invalid. Please log in again."
+        : serverMessage || "An issue occurred during registration.";
 
-      console.error("회원가입 오류: ", serverMessage || error.message);
-      alert(readableMessage);
-    }
-  };
+    console.error("회원가입 오류: ", serverMessage || error.message);
+    alert(readableMessage);
+  }
+};
 
   //country emoji
   const getFlagUrl = (countryCode) =>
