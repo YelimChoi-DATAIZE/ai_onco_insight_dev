@@ -1,8 +1,18 @@
+import dotenv from "dotenv";
+dotenv.config({ path: "../.env" });
+
 import mongoose from "mongoose";
 import { DataMetaDataModel } from "../../schemas/data_metadata.schema.js";
 import AWS from "aws-sdk";
 import { v4 as uuidv4 } from "uuid";
 import multer from "multer";
+import { parse as csvParser } from 'csv-parse/sync';
+
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+});
 
 const s3 = new AWS.S3();
 
@@ -152,8 +162,8 @@ export const createDataFileHandler = [
         return res.status(400).json({ message: "Missing file or user ID" });
       }
 
-      const bucket = "your-s3-bucket-name"; // replace with your bucket
-      const asset_id = new mongoose.Types.ObjectId(); // 새 asset_id
+      const bucket = "ai-onco-insight-project-raw-data";
+      const asset_id = new mongoose.Types.ObjectId();
       const key = `user-${user_id}/${asset_id.toString()}/${version}/${file.originalname}`;
 
       // 1. S3에 파일 업로드
@@ -206,45 +216,129 @@ export const createDataFileHandler = [
 ];
 
 // S3에서 파일 내용 조회
+// export const readDataFileHandler = async (req, res) => {
+//   try {
+//     const { asset_id } = req.params;
+
+//     // 1. MongoDB에서 metadata 조회
+//     const metadata = await DataMetaDataModel.findOne({
+//       asset_id,
+//       user_id: req.user.id,
+//       is_deleted: false,
+//     });
+//     if (!metadata) {
+//       return res.status(404).json({ message: "Metadata not found" });
+//     }
+
+//     const { bucket, path } = metadata.data_storage_config;
+//     if (!bucket || !path) {
+//       return res.status(400).json({ message: "Invalid S3 path in metadata" });
+//     }
+
+//     // 2. S3에서 파일 가져오기
+//     const s3Object = await s3
+//       .getObject({
+//         Bucket: bucket,
+//         Key: path,
+//       })
+//       .promise();
+
+//     const contentType = metadata.uri.includes(".json")
+//       ? "application/json"
+//       : "text/csv";
+//     const fileContent = s3Object.Body.toString("utf-8");
+
+//     // 3. JSON 파싱 (선택적)
+//     if (contentType === "application/json") {
+//       return res.status(200).json(JSON.parse(fileContent));
+//     }
+
+//     // CSV 등 텍스트 반환
+//     res.status(200).send(fileContent);
+//   } catch (err) {
+//     console.error("[Read S3 File Error]", err);
+//     res.status(500).json({ message: "Failed to read file from S3" });
+//   }
+// };
 export const readDataFileHandler = async (req, res) => {
   try {
     const { asset_id } = req.params;
 
-    // 1. MongoDB에서 metadata 조회
+    // 1. Metadata 조회
     const metadata = await DataMetaDataModel.findOne({
       asset_id,
       user_id: req.user.id,
       is_deleted: false,
     });
+
     if (!metadata) {
       return res.status(404).json({ message: "Metadata not found" });
     }
 
     const { bucket, path } = metadata.data_storage_config;
-    if (!bucket || !path) {
-      return res.status(400).json({ message: "Invalid S3 path in metadata" });
-    }
 
-    // 2. S3에서 파일 가져오기
+    // 2. S3에서 CSV 파일 가져오기
     const s3Object = await s3
-      .getObject({
-        Bucket: bucket,
-        Key: path,
-      })
+      .getObject({ Bucket: bucket, Key: path })
       .promise();
 
-    const contentType = metadata.uri.includes(".json")
-      ? "application/json"
-      : "text/csv";
-    const fileContent = s3Object.Body.toString("utf-8");
+    const rawText = s3Object.Body.toString("utf-8").replace(/^\uFEFF/, ""); // BOM 제거
 
-    // 3. JSON 파싱 (선택적)
-    if (contentType === "application/json") {
-      return res.status(200).json(JSON.parse(fileContent));
+    // 3. CSV 파싱
+    const records = csvParser(rawText, {
+      columns: true, // 첫 줄을 header로 인식
+      skip_empty_lines: true,
+    });
+
+    res.status(200).json(records); // [{col1: val, col2: val, ...}]
+  } catch (err) {
+    console.error("[Read S3 File Error]", err);
+    res.status(500).json({ message: "Failed to read file from S3" });
+  }
+};
+
+export const readDataFileByProjectHandler = async (req, res) => {
+  try {
+    const { project_id } = req.params;
+
+    // 1. project_id 기반 최신 asset 조회
+    const metadata = await DataMetaDataModel.findOne({
+      project_id,
+      // user_id: req.user.id,
+      user_id: String(req.user.id),
+      is_deleted: false,
+      is_latest: true,
+    }).sort({ issued: -1 }); // 최신 파일 기준
+
+    // if (!metadata) {
+    //   return res.status(404).json({ message: 'No data file found for this project' });
+    // }
+
+    console.log("🔍 Comparing user_id:", {
+      fromReq: req.user.id,
+      expected: metadata?.user_id,
+    });
+
+    if (!metadata) {
+      console.log("❌ No metadata found for project:", project_id);
+      return res.status(404).json({ message: "Metadata not found" });
     }
 
-    // CSV 등 텍스트 반환
-    res.status(200).send(fileContent);
+    const { bucket, path } = metadata.data_storage_config;
+
+    // 2. S3에서 파일 읽기
+    const s3Object = await s3
+      .getObject({ Bucket: bucket, Key: path })
+      .promise();
+    const rawText = s3Object.Body.toString("utf-8").replace(/^\uFEFF/, ""); // BOM 제거
+
+    // 3. CSV 파싱
+    const records = csvParser(rawText, {
+      columns: true,
+      skip_empty_lines: true,
+    });
+
+    res.status(200).json(records);
   } catch (err) {
     console.error("[Read S3 File Error]", err);
     res.status(500).json({ message: "Failed to read file from S3" });

@@ -1,4 +1,6 @@
 import dotenv from "dotenv";
+dotenv.config({ path: "../.env" });
+
 import nodemailer from "nodemailer";
 import randomToken from "random-token";
 import bcrypt from "bcryptjs";
@@ -7,7 +9,6 @@ import { userModel } from "../../schemas/user_info.schema.js";
 import { OAuth2Client } from "google-auth-library";
 import axios from "axios";
 
-dotenv.config();
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
 const JWT_SECRET = process.env.JWT_SECRET || "dataize_ai_secret";
@@ -22,7 +23,7 @@ const transporter = nodemailer.createTransport({
 });
 
 export const authenticateToken = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1]; // Bearer <token>
+  const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).json({ message: "No token provided." });
 
   try {
@@ -30,7 +31,7 @@ export const authenticateToken = (req, res, next) => {
       token,
       process.env.JWT_SECRET || "dataize_ai_secret",
     );
-    req.user = decoded; // token payload: { id, email, ... }
+    req.user = decoded;
     next();
   } catch (err) {
     res.status(403).json({ message: "Invalid token." });
@@ -61,14 +62,14 @@ export const SignUpHandler = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new userModel({
-      username: name, // ✅ 이름 필드 통일
+      username: name,
       email,
       password_hash: hashedPassword,
       auth_provider: "dataizeai",
       country,
       company,
       job,
-      profile_image: null, // ✅ Google 사용자와 필드 통일
+      profile_image: null,
       state: "active",
       role: "researcher",
     });

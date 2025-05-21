@@ -2,16 +2,16 @@ import mongoose from "mongoose";
 
 const DataMetaDataSchema = new mongoose.Schema({
   asset_id: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     required: true,
     index: true,
   },
   user_id: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     required: true,
   },
   project_id: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     default: null,
   },
   file_name: {
@@ -28,7 +28,7 @@ const DataMetaDataSchema = new mongoose.Schema({
     default: "",
   },
   parent_version_id: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     default: null,
   },
   is_latest: {

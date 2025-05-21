@@ -13,7 +13,7 @@ export const createProjectMetaHandler = async (req, res) => {
 
   try {
     const newProject = new ProjectMetaDataModel({
-      _id: projectId, // 수동 지정 시 문자열로 사용
+      _id: projectId,
       projectName,
       userId,
       updatedAt: new Date(),
@@ -119,6 +119,8 @@ export const deleteProjectMetaHandler = async (req, res) => {
 export const readProjectMetaListHandler = async (req, res) => {
   console.log("[API] GET /project-names");
   const userId = req.user?.id;
+  console.log("req.user.id:", req.user?.id);
+  console.log("userId:", userId);
 
   if (!userId) {
     return res.status(401).json({ message: "Unauthorized" });

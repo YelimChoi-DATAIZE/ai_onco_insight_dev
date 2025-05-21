@@ -6,6 +6,7 @@ import {
   deleteMetaDataHandler,
   createDataFileHandler,
   readDataFileHandler,
+  readDataFileByProjectHandler,
 } from "../../handlers/data/index.js";
 import { authenticateToken } from "../../handlers/user_auth/index.js";
 
@@ -25,5 +26,10 @@ router.delete(
 );
 router.post("/dataasset/create", authenticateToken, createDataFileHandler);
 router.get("/dataasset/read/:asset_id", authenticateToken, readDataFileHandler);
+router.get(
+  "/dataasset/read_by_project/:project_id",
+  authenticateToken,
+  readDataFileByProjectHandler,
+);
 
 export default router;

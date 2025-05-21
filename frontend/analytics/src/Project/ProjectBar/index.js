@@ -22,6 +22,7 @@ import { Tabs, Tab } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import ProjectTree from './ProjectTree';
 import RenderTabs from './component/RenderTabs';
+import { createDataFile } from '../../Remote/apis/data.js';
 
 const drawerWidth = 240;
 
@@ -56,7 +57,16 @@ const AppBar = styled(MuiAppBar, {
   ],
 }));
 
-const ProjectBar = ({ open, onOpen, onClose, onUpload, setActiveTab, addRow, addColumn }) => {
+const ProjectBar = ({
+  open,
+  onOpen,
+  onClose,
+  onUpload,
+  setActiveTab,
+  addRow,
+  addColumn,
+  projectId,
+}) => {
   const theme = useTheme();
   //   const [open, setOpen] = React.useState(false);
   const [tabValue, setTabValue] = useState(0);
@@ -113,7 +123,66 @@ const ProjectBar = ({ open, onOpen, onClose, onUpload, setActiveTab, addRow, add
     fileInputRef.current?.click();
   };
 
-  const handleFileUpload = (event) => {
+  // const handleFileUpload = (event) => {
+  //   const file = event.target.files[0];
+
+  //   if (!file) {
+  //     showErrorModal('파일을 선택하세요.');
+  //     return;
+  //   }
+
+  //   // 파일 확장자 검사
+  //   const allowedExtensions = ['.csv', '.xls', '.xlsx'];
+  //   const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
+
+  //   if (!allowedExtensions.includes(fileExtension)) {
+  //     showErrorModal('CSV 또는 Excel 파일만 업로드 가능합니다.');
+  //     return;
+  //   }
+
+  //   // 파일 크기 제한 (5MB)
+  //   const maxSize = 10 * 1024 * 1024;
+  //   if (file.size > maxSize) {
+  //     showErrorModal('파일 크기가 5MB를 초과합니다.');
+  //     return;
+  //   }
+
+  //   const reader = new FileReader();
+  //   reader.onload = (e) => {
+  //     const data = new Uint8Array(e.target.result);
+  //     const workbook = read(data, { type: 'array' });
+  //     const sheetName = workbook.SheetNames[0];
+  //     const worksheet = workbook.Sheets[sheetName];
+  //     const jsonData = utils.sheet_to_json(worksheet, { header: 1 });
+
+  //     if (jsonData.length === 0) {
+  //       showErrorModal('엑셀 파일에 데이터가 없습니다.');
+  //       return;
+  //     }
+
+  //     const headers = jsonData[0];
+  //     const rows = jsonData.slice(1).map((row) => {
+  //       const rowObject = {};
+  //       headers.forEach((header, colIndex) => {
+  //         rowObject[header] = row[colIndex] || '';
+  //       });
+  //       return rowObject;
+  //     });
+
+  //     // 부모 컴포넌트로 데이터 전달
+  //     onUpload?.({ headers, rows }, file.name, file);
+
+  //     console.log('업로드된 데이터:', { headers, rows });
+
+  //     if (fileInputRef.current) {
+  //       fileInputRef.current.value = '';
+  //     }
+  //   };
+
+  //   reader.readAsArrayBuffer(file);
+  // };
+
+  const handleFileUpload = async (event) => {
     const file = event.target.files[0];
 
     if (!file) {
@@ -121,7 +190,6 @@ const ProjectBar = ({ open, onOpen, onClose, onUpload, setActiveTab, addRow, add
       return;
     }
 
-    // 파일 확장자 검사
     const allowedExtensions = ['.csv', '.xls', '.xlsx'];
     const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
 
@@ -130,42 +198,57 @@ const ProjectBar = ({ open, onOpen, onClose, onUpload, setActiveTab, addRow, add
       return;
     }
 
-    // 파일 크기 제한 (5MB)
     const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
-      showErrorModal('파일 크기가 5MB를 초과합니다.');
+      showErrorModal('파일 크기가 10MB를 초과합니다.');
       return;
     }
 
     const reader = new FileReader();
-    reader.onload = (e) => {
-      const data = new Uint8Array(e.target.result);
-      const workbook = read(data, { type: 'array' });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const jsonData = utils.sheet_to_json(worksheet, { header: 1 });
+    reader.onload = async (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = utils.sheet_to_json(worksheet, { header: 1 });
 
-      if (jsonData.length === 0) {
-        showErrorModal('엑셀 파일에 데이터가 없습니다.');
-        return;
-      }
+        if (jsonData.length === 0) {
+          showErrorModal('엑셀 파일에 데이터가 없습니다.');
+          return;
+        }
 
-      const headers = jsonData[0];
-      const rows = jsonData.slice(1).map((row) => {
-        const rowObject = {};
-        headers.forEach((header, colIndex) => {
-          rowObject[header] = row[colIndex] || '';
+        const headers = jsonData[0];
+        const rows = jsonData.slice(1).map((row) => {
+          const rowObject = {};
+          headers.forEach((header, colIndex) => {
+            rowObject[header] = row[colIndex] || '';
+          });
+          return rowObject;
         });
-        return rowObject;
-      });
 
-      // 부모 컴포넌트로 데이터 전달
-      onUpload?.({ headers, rows }, file.name);
+        // ✅ (1) 프론트 상태 전달
+        onUpload?.({ headers, rows }, file.name, file);
 
-      console.log('업로드된 데이터:', { headers, rows });
+        // ✅ (2) 바로 FormData 생성 후 서버 전송
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('project_id', projectId); // 🔁 상위에서 prop으로 전달받아야 함
+        formData.append('version', 'v1');
+        formData.append('version_description', '업로드 시점 저장');
+        formData.append('row_count', rows.length.toString());
+        formData.append('column_count', headers.length.toString());
 
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+        const res = await createDataFile(formData);
+        if (res.status === 201) {
+          alert('✅ 파일 업로드 및 메타데이터 저장 완료');
+        } else {
+          console.error(res);
+          showErrorModal(res.data.message || '업로드 실패');
+        }
+      } catch (err) {
+        console.error(err);
+        showErrorModal('파일 파싱 또는 업로드 중 오류 발생');
       }
     };
 

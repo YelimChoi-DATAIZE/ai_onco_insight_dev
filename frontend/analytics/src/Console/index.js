@@ -35,6 +35,8 @@ import {
   AnalysisCard,
   ProjectSummaryCard,
 } from './component/ProjectCard';
+import { createProjectMeta, readProjectMetaList } from '../Remote/apis/project.js';
+
 // import DateRangeFilter from './component/DateRangePicker';
 // import dayjs from 'dayjs';
 // // import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -76,25 +78,97 @@ export default function Console() {
     initIndexedDB();
   }, []);
 
+  // useEffect(() => {
+  //   const fetchProjects = async () => {
+  //     try {
+  //       const response = await readProjectMetaList();
+  //       const projects = response.data.map((project) => ({
+  //         id: project._id,
+  //         name: project.projectName,
+  //       }));
+
+  //       setProjectList(projects);
+
+  //       // ✅ 각 프로젝트에 대해 기본 카드 구조를 설정
+  //       const contentMap = {};
+  //       projects.forEach((project) => {
+  //         contentMap[project.id] = {
+  //           cards: [...defaultCards],
+  //           cards2: [...defaultCards2],
+  //         };
+  //       });
+  //       setProjectContentMap(contentMap);
+
+  //       // ✅ 최초 진입 시 첫 번째 프로젝트 자동 선택 (선택적)
+  //       if (projects.length > 0) {
+  //         setSelectedIndex(0);
+  //       }
+  //     } catch (error) {
+  //       console.error('프로젝트 목록 조회 중 오류:', error);
+  //     }
+  //   };
+
+  //   fetchProjects();
+  // }, []);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await readProjectMetaList();
+
+        const projects = response.data.map((project) => ({
+          id: project._id,
+          name: project.projectName,
+        }));
+
+        setProjectList(projects);
+
+        // ✅ 각 프로젝트에 대해 기본 카드 구조 설정
+        const contentMap = {};
+        projects.forEach((project) => {
+          contentMap[project.id] = {
+            cards: [...defaultCards],
+            cards2: [...defaultCards2],
+          };
+        });
+        setProjectContentMap(contentMap);
+
+        // ✅ 첫 번째 프로젝트 자동 선택
+        if (projects.length > 0) {
+          setSelectedIndex(0);
+        }
+      } catch (error) {
+        const status = error.response?.status;
+        const message = error.response?.data?.message || error.message;
+
+        console.error('프로젝트 목록 조회 중 오류:', message);
+
+        if (status === 401 || status === 403) {
+          alert('로그인이 만료되었거나 권한이 없습니다. 다시 로그인해주세요.');
+          localStorage.removeItem('accessToken');
+          window.location.href = '/signin';
+        } else {
+          alert('프로젝트 목록을 불러오는 데 실패했습니다.\n잠시 후 다시 시도해주세요.');
+        }
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
   const handleAddProject = async () => {
     const newProjectId = uuidv4();
     const nextProjectNumber = projectList.length + 1;
     const newProjectName = `Project ${nextProjectNumber}`;
     const newProject = { id: newProjectId, name: newProjectName };
 
-    const token = localStorage.getItem('accessToken');
     try {
-      const response = await fetch('http://localhost:8000/projectdata/projectid_create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ projectId: newProjectId, projectName: newProjectName }),
+      const response = await createProjectMeta({
+        projectId: newProjectId,
+        projectName: newProjectName,
       });
 
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.message || result.error);
+      if (response.status !== 201) throw new Error(response.data.message);
 
       setProjectList((prev) => {
         const updated = [...prev, newProject];
@@ -104,7 +178,10 @@ export default function Console() {
 
       setProjectContentMap((prev) => ({
         ...prev,
-        [newProjectId]: { cards: [...defaultCards], cards2: [...defaultCards2] },
+        [newProjectId]: {
+          cards: [...defaultCards],
+          cards2: [...defaultCards2],
+        },
       }));
     } catch (error) {
       alert('프로젝트 생성 중 오류가 발생했습니다.');

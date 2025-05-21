@@ -2,12 +2,12 @@ import mongoose from "mongoose";
 
 const UserLogSchema = new mongoose.Schema({
   user_id: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     required: true,
     index: true,
   },
   project_id: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     required: true,
     index: true,
   },
@@ -21,12 +21,12 @@ const UserLogSchema = new mongoose.Schema({
     required: true,
     enum: ["ttest", "anova", "regression", "descriptive", "upload"],
   },
-  data_asset_id: {
-    type: mongoose.Schema.Types.ObjectId,
+  asset_id: {
+    type: String,
     default: null,
   },
   solution_instance_id: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     default: null,
   },
   payload: {

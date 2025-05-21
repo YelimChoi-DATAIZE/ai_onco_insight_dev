@@ -19,6 +19,7 @@ import { AgGridReact } from 'ag-grid-react';
 import './style.css';
 import { saveProjectData, deleteProjectData } from '../../utils/indexedDB.js';
 import { convertToTextWithArrowFormat } from './ConvertTexttoArrow.js';
+import { createDataFile, readDataFile } from '../../Remote/apis/data.js';
 
 const DataSheet = ({
   open,
@@ -29,6 +30,7 @@ const DataSheet = ({
   filename,
   projectName,
   projectId,
+  originalFile,
 }) => {
   const [columnDefs, setColumnDefs] = useState([]);
   const [rowData, setRowData] = useState([]);
@@ -144,17 +146,70 @@ const DataSheet = ({
     }
   };
 
-  const handleSave = async () => {
-    const headers = columnDefs.map((col) => col.field);
-    const updatedData = {
-      headers,
-      rows: rowData,
-      filename,
-    };
+  // const handleSave = async () => {
+  //   const headers = columnDefs.map((col) => col.field);
+  //   const updatedData = {
+  //     headers,
+  //     rows: rowData,
+  //     filename,
+  //   };
 
-    await saveProjectData(projectId, updatedData);
-    alert('data saved');
-    console.log('💾 Saved to IndexedDB:', updatedData);
+  //   await saveProjectData(projectId, updatedData);
+  //   alert('data saved');
+  //   console.log('💾 Saved to IndexedDB:', updatedData);
+  // };
+
+  const handleSave = async () => {
+    if (!rowData || !columnDefs || !filename || !projectId) {
+      alert('필수 정보가 누락되었습니다.');
+      return;
+    }
+
+    try {
+      const headers = columnDefs.map((col) => col.field);
+      const updatedData = {
+        headers,
+        rows: rowData,
+        filename,
+        savedAt: new Date(),
+      };
+
+      // ✅ IndexedDB 저장
+      await saveProjectData(projectId, updatedData);
+
+      // ✅ CSV 문자열 생성 (Escape + UTF-8 BOM)
+      const escapeCSV = (text) => `"${String(text).replace(/"/g, '""')}"`; // Excel-safe escape
+
+      const csvHeader = headers.map(escapeCSV).join(',');
+      const csvRows = rowData.map((row) => headers.map((h) => escapeCSV(row[h] ?? '')).join(','));
+
+      const csvString = [csvHeader, ...csvRows].join('\r\n');
+
+      // ✅ UTF-8 BOM 붙이기 (Excel용)
+      const utf8BOM = '\uFEFF';
+      const blob = new Blob([utf8BOM + csvString], { type: 'text/csv;charset=utf-8;' });
+
+      const file = new File([blob], filename, { type: 'text/csv' });
+
+      // ✅ S3 + MongoDB 업로드용 FormData 구성
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('project_id', projectId);
+      formData.append('version', 'v1');
+      formData.append('version_description', 'Refresh 이후 재조립 저장');
+      formData.append('row_count', rowData.length.toString());
+      formData.append('column_count', headers.length.toString());
+
+      const response = await createDataFile(formData);
+      if (response.status === 201) {
+        alert('✅ 저장 완료 (조립된 CSV → S3 + Metadata)');
+      } else {
+        throw new Error(response.data.message || '서버 업로드 실패');
+      }
+    } catch (error) {
+      console.error('❌ 저장 중 오류:', error);
+      alert('저장 실패: ' + error.message);
+    }
   };
 
   const handleDelete = async () => {
@@ -171,27 +226,6 @@ const DataSheet = ({
   const handleRefresh = () => {
     window.location.reload();
   };
-
-  // // DB save to mongoDB
-  // const handleDBServerSave = async () => {
-  //   const formData = new FormData();
-  //   formData.append('projectName', projectName ?? '');
-  //   formData.append('filename', filename ?? '');
-  //   formData.append('headers', JSON.stringify(columnDefs.map((col) => col.field)));
-  //   formData.append('rows', JSON.stringify(rowData));
-
-  //   try {
-  //     const res = await fetch('http://localhost:8000/projectdata/save', {
-  //       method: 'POST',
-  //       body: formData,
-  //     });
-  //     const result = await res.json();
-  //     alert(result.message);
-  //   } catch (error) {
-  //     console.error('MongoDB 저장 오류:', error);
-  //     alert('MongoDB 저장 중 오류 발생');
-  //   }
-  // };
 
   //entity extraction
   const extractEntities = async (text) => {
@@ -215,55 +249,6 @@ const DataSheet = ({
       return [];
     }
   };
-
-  // const annotateColumnEntities = async (targetColumn) => {
-  //   const entityColField = `${targetColumn}_entities`;
-
-  //   // 1. 컬럼이 없으면 추가
-  //   const exists = columnDefs.some((col) => col.field === entityColField);
-  //   if (!exists) {
-  //     const newColDef = {
-  //       headerName: `${targetColumn} Entities`,
-  //       field: entityColField,
-  //       flex: 1,
-  //       editable: false,
-  //       cellRenderer: (params) => {
-  //         const entities = params.value;
-  //         if (!entities || !Array.isArray(entities)) return '';
-  //         return entities
-  //           .filter((e) => e.matched)
-  //           .map((e) => e.text)
-  //           .join(', ');
-  //       },
-  //     };
-  //     setColumnDefs((prev) => [...prev, newColDef]);
-  //   }
-
-  //   // 2. 각 row의 해당 컬럼에 대해 API 호출
-  //   const updatedRows = await Promise.all(
-  //     rowData.map(async (row) => {
-  //       const text = row[targetColumn];
-  //       const entities = await extractEntities(text);
-  //       return {
-  //         ...row,
-  //         [entityColField]: entities,
-  //       };
-  //     })
-  //   );
-
-  //   setRowData(updatedRows);
-
-  //   // 3. IndexedDB 저장 (headers에 새로운 컬럼 추가 포함)
-  //   const updatedHeaders = [...new Set([...columnDefs.map((col) => col.field), entityColField])];
-
-  //   await saveProjectData(projectId, {
-  //     headers: updatedHeaders,
-  //     rows: updatedRows,
-  //     filename,
-  //   });
-
-  //   alert('✅ 엔티티가 추출되어 저장되었습니다.');
-  // };
 
   const annotateColumnEntitiesWithFlags = async (targetColumn) => {
     const allEntitySet = new Set(); // 전체 고유 엔티티 모으기

@@ -5,6 +5,7 @@ import ProjectBar from './ProjectBar';
 import Menubar from '../Menubar';
 import DataSheet from './DataSheet';
 import { initIndexedDB, saveProjectData, getProjectData } from '../utils/indexedDB.js';
+import { createDataFile, readDataFile, readDataFileByProject } from '../Remote/apis/data.js';
 
 export default function Project() {
   const { projectId } = useParams();
@@ -17,6 +18,7 @@ export default function Project() {
   const [addColumnFunction, setAddColumnFunction] = useState(null);
   const [uploadedFilename, setUploadedFilename] = useState('');
   const [isDataSaved, setIsDataSaved] = useState(false);
+  const [originalUploadedFile, setOriginalUploadedFile] = useState(null);
 
   // 파일 업로드 전 더미데이터
   const generateDummyData = () => {
@@ -28,7 +30,7 @@ export default function Project() {
   };
 
   // 데이터 업로드시 indexed db에 저장, 조회, 뒤로 갔다 와도 유지
-  const handleDataUpload = async (uploadedData, filename) => {
+  const handleDataUpload = async (uploadedData, filename, originalFile) => {
     const dataToSave = {
       ...uploadedData,
       filename,
@@ -43,6 +45,7 @@ export default function Project() {
     if (stored && stored.headers && stored.rows) {
       setData({ headers: stored.headers, rows: stored.rows });
       setUploadedFilename(stored.filename || '');
+      setOriginalUploadedFile(originalFile);
     } else {
       console.warn(`fail to indexed db object: ${projectId}`);
     }
@@ -55,16 +58,65 @@ export default function Project() {
     }
   }, [projectId, location.key]);
 
+  // const loadData = async () => {
+  //   await initIndexedDB();
+  //   let stored = await getProjectData(projectId);
+
+  //   // 없는 경우 더미 데이터 저장
+  //   if (!stored || !stored.headers || !stored.rows) {
+  //     const dummy = generateDummyData();
+  //     await saveProjectData(projectId, dummy);
+  //     stored = dummy;
+  //     console.log(`📦 더미 데이터 저장됨: ${projectId}`);
+  //   }
+
+  //   setData({ headers: stored.headers, rows: stored.rows });
+  //   setUploadedFilename(stored.filename || '');
+  // };
+
+  const loadFromServer = async (projectId) => {
+    try {
+      // const response = await readDataFile(assetId);
+      const response = await readDataFileByProject(projectId);
+      const records = response.data;
+
+      if (!records || records.length === 0) {
+        throw new Error('Empty or invalid file');
+      }
+
+      const headers = Object.keys(records[0]);
+      const rows = records;
+
+      return { headers, rows };
+    } catch (error) {
+      console.error('📦 서버에서 CSV 로딩 실패:', error);
+      return null;
+    }
+  };
+
   const loadData = async () => {
     await initIndexedDB();
+
     let stored = await getProjectData(projectId);
 
-    // 없는 경우 더미 데이터 저장
     if (!stored || !stored.headers || !stored.rows) {
-      const dummy = generateDummyData();
-      await saveProjectData(projectId, dummy);
-      stored = dummy;
-      console.log(`📦 더미 데이터 저장됨: ${projectId}`);
+      console.warn('📭 IndexedDB에 없음 → 서버에서 복원 시도');
+
+      // ✅ S3에서 JSON 복원
+      const fallback = await loadFromServer(projectId);
+      if (fallback) {
+        await saveProjectData(projectId, {
+          ...fallback,
+          filename: 'restored.csv',
+          savedAt: new Date(),
+        });
+        stored = fallback;
+      } else {
+        // 없으면 더미
+        // stored = generateDummyData();
+        await saveProjectData(projectId, stored);
+        console.warn(`📦 더미 데이터 저장됨: ${projectId}`);
+      }
     }
 
     setData({ headers: stored.headers, rows: stored.rows });
@@ -80,6 +132,7 @@ export default function Project() {
           setActiveTab={setActiveTab}
           addRow={addRowFunction}
           addColumn={addColumnFunction}
+          projectId={projectId}
         />
       </div>
 
@@ -98,6 +151,7 @@ export default function Project() {
           filename={uploadedFilename}
           projectName={projectName}
           projectId={projectId}
+          originalFile={originalUploadedFile}
         />
       </div>
     </div>
