@@ -129,7 +129,7 @@ const Engineering1 = ({ selectedCellValue, columnDefs = [], onAnnotate, selected
         <Box sx={{ ml: '26px', marginBottom: '15px' }}>
           <Typography sx={{ fontFamily: 'Noto Sans KR' }}>SELECT TARGET COLUMN</Typography>
         </Box>
-        {/* <FormControl
+        <FormControl
           component="fieldset"
           sx={{
             ml: '26px',
@@ -173,60 +173,7 @@ const Engineering1 = ({ selectedCellValue, columnDefs = [], onAnnotate, selected
               />
             ))}
           </RadioGroup>
-        </FormControl> */}
-        <Box sx={{ maxWidth: 400 }}>
-          <Stepper orientation="vertical">
-            {steps.map((step, index) => (
-              <Step key={step.label}>
-                <StepLabel
-                  optional={
-                    index === steps.length - 1 ? (
-                      <Typography variant="caption">Last step</Typography>
-                    ) : null
-                  }
-                  sx={{
-                    '.MuiStepIcon-root': {
-                      color: '#1976d2', // 파란 점
-                    },
-                  }}
-                >
-                  {step.label}
-                </StepLabel>
-                <StepContent>
-                  <Typography sx={{ fontSize: '13px', color: '#666' }}>
-                    {step.description}
-                  </Typography>
-                  <Box sx={{ mb: 2 }}>
-                    <Button
-                      variant="contained"
-                      size="small"
-                      // onClick={handleNext}
-                      sx={{ mt: 1, mr: 1 }}
-                    >
-                      {index === steps.length - 1 ? 'Finish' : 'Next'}
-                    </Button>
-                    <Button
-                      size="small"
-                      disabled={index === 0}
-                      // onClick={handleBack}
-                      sx={{ mt: 1, mr: 1 }}
-                    >
-                      Back
-                    </Button>
-                  </Box>
-                </StepContent>
-              </Step>
-            ))}
-          </Stepper>
-          {/* {activeStep === steps.length && (
-        <Paper square elevation={0} sx={{ p: 3 }}>
-          <Typography>All steps completed — you’re done</Typography>
-          <Button onClick={handleReset} sx={{ mt: 1 }}>
-            Reset
-          </Button>
-        </Paper>
-      )} */}
-        </Box>
+        </FormControl>
         <Box
           sx={{
             display: 'flex',

@@ -15,7 +15,6 @@ import {
 import '@xyflow/react/dist/style.css';
 import { AgGridReact } from 'ag-grid-react';
 import PropTypes from 'prop-types';
-import { AgCharts } from 'ag-charts-react';
 
 //tab panel style
 function CustomTabPanel(props) {
@@ -48,13 +47,14 @@ const nodeTypes = {
   ),
 };
 
-const AnalysisFlowLayout = ({
+const EngineeringFlowLayout = ({
   analysisName,
   flow,
   parameterComponents,
   resultText,
   aiSuggestion,
   data,
+  onAnnotate,
 }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState(flow.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(flow.edges);
@@ -64,24 +64,6 @@ const AnalysisFlowLayout = ({
   const [columnDefs, setColumnDefs] = useState([]);
   const [rowData, setRowData] = useState([]);
   const gridRef = useRef();
-
-  const [alignment, setAlignment] = useState('');
-  const [histogramData, setHistogramData] = useState([]);
-
-  const onRunHistogram = () => {
-    if (!alignment) return alert('변수를 먼저 선택하세요.');
-
-    const data = rowData.map((row) => row[alignment]).filter((v) => !isNaN(v));
-    const frequency = {};
-
-    data.forEach((v) => {
-      const bin = Math.floor(Number(v) / 10) * 10;
-      frequency[bin] = (frequency[bin] || 0) + 1;
-    });
-
-    const chartData = Object.entries(frequency).map(([x, y]) => ({ bin: x, count: y }));
-    setHistogramData(chartData);
-  };
 
   useEffect(() => {
     if (data) {
@@ -98,6 +80,20 @@ const AnalysisFlowLayout = ({
 
   const [resultTabValue, setResultTabValue] = useState(0);
   const [configTabValue, setConfigTabValue] = useState(0);
+
+  const [alignment, setAlignment] = useState('');
+  const [selectedCellValue, setSelectedCellValue] = useState('');
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [response1, setResponse1] = useState('no result');
+
+  // 핵심 함수
+  const handleAnnotateClick = () => {
+    if (alignment) {
+      onAnnotate(alignment);
+    } else {
+      alert('📌 먼저 컬럼을 선택해주세요.');
+    }
+  };
 
   return (
     <Box sx={{ width: '98vw', height: '80vh', display: 'flex', gap: 2, px: 2 }}>
@@ -166,34 +162,8 @@ const AnalysisFlowLayout = ({
               </Box>
             </CustomTabPanel>
 
-            {/* <CustomTabPanel value={resultTabValue} index={2}>
-              <Box sx={{ p: 2, fontFamily: 'monospace', fontSize: '13px' }}>plot</Box>
-              
-            </CustomTabPanel> */}
             <CustomTabPanel value={resultTabValue} index={2}>
-              {histogramData.length > 0 ? (
-                <AgCharts
-                  options={{
-                    data: histogramData,
-                    title: { text: 'Histogram', fontSize: 16 },
-                    series: [
-                      {
-                        type: 'bar',
-                        xKey: 'bin',
-                        yKey: 'count',
-                        xName: 'Bin',
-                        yName: 'Frequency',
-                      },
-                    ],
-                    axes: [
-                      { type: 'category', position: 'bottom' },
-                      { type: 'number', position: 'left' },
-                    ],
-                  }}
-                />
-              ) : (
-                <Typography fontSize={13}>실행 버튼을 눌러 결과를 확인하세요.</Typography>
-              )}
+              <Box sx={{ p: 2, fontFamily: 'monospace', fontSize: '13px' }}>plot</Box>
             </CustomTabPanel>
           </Box>
         </Box>
@@ -214,19 +184,28 @@ const AnalysisFlowLayout = ({
               <Typography fontSize={12} sx={{ color: '#888', mb: 1 }}>
                 ▷ {selectedNode.data.label.toUpperCase()} 설정
               </Typography>
+              {/* {(() => {
+                const Comp = parameterComponents[selectedNode.data.label];
+                return Comp ? <Comp /> : <Typography>설정 없음</Typography>;
+              })()} */}
               {(() => {
                 const configType = selectedNode?.data?.configType;
-                const Comp = parameterComponents[configType];
+                console.log('✅ configType:', configType); // 추가
 
-                if (!Comp) return <Typography>설정 없음</Typography>;
+                const Comp = parameterComponents[configType]; // 올바른 방식
 
-                return (
+                return Comp ? (
                   <Comp
                     columnDefs={columnDefs}
                     alignment={alignment}
                     onChange={(e) => setAlignment(e.target.value)}
-                    onRunHistogram={onRunHistogram}
+                    onRunExtraction={handleAnnotateClick}
+                    selectedCellValue={selectedCellValue}
+                    selectedRow={selectedRow}
+                    response1={response1}
                   />
+                ) : (
+                  <Typography>설정 없음</Typography>
                 );
               })()}
             </>
@@ -245,7 +224,7 @@ const AnalysisFlowLayout = ({
   );
 };
 
-AnalysisFlowLayout.propTypes = {
+EngineeringFlowLayout.propTypes = {
   analysisName: PropTypes.string,
   flow: PropTypes.object.isRequired,
   parameterComponents: PropTypes.object.isRequired,
@@ -254,4 +233,4 @@ AnalysisFlowLayout.propTypes = {
   data: PropTypes.object,
 };
 
-export default AnalysisFlowLayout;
+export default EngineeringFlowLayout;

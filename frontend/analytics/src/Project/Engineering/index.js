@@ -1,7 +1,9 @@
-// OneSampleTTestPage.jsx
-import AnalysisFlowLayout from './components/AnalysisFlowLayout';
-import { exploration_flow } from './components/AnalysisFlow/index';
-import { nodeSettingComponents } from './components/AnalysisFlow/Parameter/Exploration';
+import EngineeringFlowLayout from './components/EngineeringFlowLayout';
+import {
+  total_extraction_flow,
+  selective_extraction_flow,
+} from './components/EngineeringFlow/index';
+import { nodeSettingComponents } from './components/EngineeringFlow/Parameter/TotalExtraction';
 import AISuggestion from './components/AISuggestionTab';
 
 const resultText = `Descriptive statistics by group
@@ -31,28 +33,30 @@ const resultText = `Descriptive statistics by group
     3     1   89    NA    89   89   0      NA
     4     1   90    NA    90   90   0      NA`;
 
-export function OneSampleTTest({ data }) {
+export function TotalExtraction({ data, onAnnotate }) {
   return (
-    <AnalysisFlowLayout
-      analysisName="One Sample T-Test"
-      flow={exploration_flow}
+    <EngineeringFlowLayout
+      analysisName="Total Extraction"
+      flow={total_extraction_flow}
       parameterComponents={nodeSettingComponents}
       resultText={resultText}
       aiSuggestion={<AISuggestion />}
       data={data}
+      onAnnotate={onAnnotate}
     />
   );
 }
 
-export function Exploration({ data }) {
+export function SelectiveExtraction({ data, onAnnotate }) {
   return (
-    <AnalysisFlowLayout
-      analysisName="Exploration"
-      flow={exploration_flow}
+    <EngineeringFlowLayout
+      analysisName="Selective Extraction"
+      flow={selective_extraction_flow}
       parameterComponents={nodeSettingComponents}
       resultText={resultText}
       aiSuggestion={<AISuggestion />}
       data={data}
+      onAnnotate={onAnnotate}
     />
   );
 }

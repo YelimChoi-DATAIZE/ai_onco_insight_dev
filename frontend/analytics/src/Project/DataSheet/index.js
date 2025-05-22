@@ -3,10 +3,7 @@ import { Box, Typography, IconButton } from '@mui/material';
 import Engineering1 from '../OutputView/Engineering1';
 import Engineering2 from '../OutputView/Engineering2';
 import { Exploration, OneSampleTTest } from '../Analysis';
-import Result1 from '../OutputView/Result1';
-import Result2 from '../OutputView/Result2';
-import Result3 from '../OutputView/Result3';
-import Result4 from '../OutputView/Result4';
+import { TotalExtraction, SelectiveExtraction } from '../Engineering';
 import { ClipboardProvider } from '../ClipboardContext';
 
 import SaveIcon from '@mui/icons-material/Save';
@@ -110,54 +107,27 @@ const DataSheet = ({
   const renderViewBox = () => {
     switch (activeTab) {
       case 'settings1':
-        return (
-          <Engineering1
-            selectedCellValue={selectedCellValue}
-            columnDefs={columnDefs}
-            onAnnotate={annotateColumnEntitiesWithFlags}
-            selectedRow={selectedRow}
-          />
-        );
+        return <TotalExtraction data={data} onAnnotate={annotateColumnEntitiesWithFlags} />;
       case 'settings2':
-        return (
-          <Engineering2
-            columnDefs={columnDefs}
-            selectColumn={selectColumn}
-            selectedColumns={selectedColumns}
-            removeColumn={removeColumn}
-          />
-        );
+        return <SelectiveExtraction data={data} onAnnotate={annotateColumnEntitiesWithFlags} />;
       case 'settings3':
         return <div>Settings 3 내용</div>;
       case 'analysis1':
         return <Exploration data={data} />;
       case 'analysis2':
         return <OneSampleTTest data={data} />;
-      case 'result1':
-        return <Result1 charts={charts} />;
-      case 'result2':
-        return <Result2 />;
-      case 'result3':
-        return <Result3 />;
-      case 'result4':
-        return <Result4 addChart={addChart} />;
+      // case 'result1':
+      //   return <Result1 charts={charts} />;
+      // case 'result2':
+      //   return <Result2 />;
+      // case 'result3':
+      //   return <Result3 />;
+      // case 'result4':
+      //   return <Result4 addChart={addChart} />;
       default:
         return null;
     }
   };
-
-  // const handleSave = async () => {
-  //   const headers = columnDefs.map((col) => col.field);
-  //   const updatedData = {
-  //     headers,
-  //     rows: rowData,
-  //     filename,
-  //   };
-
-  //   await saveProjectData(projectId, updatedData);
-  //   alert('data saved');
-  //   console.log('💾 Saved to IndexedDB:', updatedData);
-  // };
 
   const handleSave = async () => {
     if (!rowData || !columnDefs || !filename || !projectId) {
@@ -392,7 +362,7 @@ const DataSheet = ({
       </Box>
       {/* table style */}
       <div style={containerStyle(activeTab)}>
-        {!activeTab?.startsWith('analysis') && (
+        {!activeTab ? (
           <div className="ag-theme-alpine" style={tableStyle(activeTab)}>
             <AgGridReact
               ref={gridRef}
@@ -411,11 +381,11 @@ const DataSheet = ({
               onCellClicked={onCellClicked}
             />
           </div>
+        ) : (
+          <ClipboardProvider>
+            <div style={{ flexGrow: 1, overflow: 'auto' }}>{renderViewBox()}</div>
+          </ClipboardProvider>
         )}
-        <ClipboardProvider>
-          <div style={{ flexGrow: 1, overflow: 'auto' }}>{renderViewBox()}</div>
-        </ClipboardProvider>
-        {/* )} */}
       </div>
     </>
   );

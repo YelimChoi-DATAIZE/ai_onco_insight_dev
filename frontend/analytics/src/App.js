@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import Project from './Project';
 import Console from './Console';
+import Test from './Test.js';
 
 const App = () => {
   //get token from localStorage(개발환경에서만)
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="/console" element={<Console />} />
         <Route path="*" element={<Navigate to="/console" />} />
         <Route path="/project/:projectId" element={<Project />} />
+        <Route path="/test" element={<Test />} />
       </Routes>
     </div>
   );
