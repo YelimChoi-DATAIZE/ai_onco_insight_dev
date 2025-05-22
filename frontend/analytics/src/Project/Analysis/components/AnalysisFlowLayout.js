@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Box, Tabs, Tab, Typography, Divider } from '@mui/material';
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import {
   Background,
   ReactFlow,
@@ -16,6 +17,7 @@ import '@xyflow/react/dist/style.css';
 import { AgGridReact } from 'ag-grid-react';
 import PropTypes from 'prop-types';
 import { AgCharts } from 'ag-charts-react';
+import { Handle, Position } from '@xyflow/react';
 
 //tab panel style
 function CustomTabPanel(props) {
@@ -42,8 +44,60 @@ CustomTabPanel.propTypes = {
 
 const nodeTypes = {
   variableNode: ({ data }) => (
-    <div style={{ padding: 10, border: '1px solid #ccc', borderRadius: 6, background: '#fff' }}>
-      <strong>{data.label}</strong>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        width: '200px',
+        height: '60px',
+        borderRadius: '8px',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
+        backgroundColor: '#ffffff',
+        fontFamily: 'Noto Sans KR',
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: '#3163C2',
+          width: '50px',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      />
+
+      <div style={{ padding: '8px 12px' }}>
+        <div style={{ fontSize: '13px', fontWeight: 500, color: '#333' }}>{data.label}</div>
+        {/* <div style={{ fontSize: '11px', color: '#888' }}>100 RECORDS</div> */}
+      </div>
+
+      <Handle type="target" position={Position.Left} style={{ background: '#555' }} />
+      <Handle type="source" position={Position.Right} style={{ background: '#555' }} />
+    </div>
+  ),
+
+  RunNode: ({ data }) => (
+    <div
+      style={{
+        width: '200px',
+        height: '60px',
+        borderRadius: '8px',
+        backgroundColor: '#3163C2',
+        color: '#fff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontWeight: 600,
+        position: 'relative',
+      }}
+    >
+      {data.label}
+      <PlayCircleOutlineIcon />
+
+      <Handle type="target" position={Position.Left} style={{ background: '#fff' }} />
     </div>
   ),
 };
@@ -211,8 +265,11 @@ const AnalysisFlowLayout = ({
         <CustomTabPanel value={configTabValue} index={0}>
           {selectedNode ? (
             <>
-              <Typography fontSize={12} sx={{ color: '#888', mb: 1 }}>
-                ▷ {selectedNode.data.label.toUpperCase()} 설정
+              <Typography
+                fontSize={12}
+                sx={{ color: '#888', mb: 1, textAlign: 'left', fontFamily: 'Quicksand' }}
+              >
+                {selectedNode.data.label.toUpperCase()} 설정
               </Typography>
               {(() => {
                 const configType = selectedNode?.data?.configType;

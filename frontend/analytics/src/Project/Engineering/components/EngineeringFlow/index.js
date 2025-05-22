@@ -13,17 +13,19 @@ import {
 import '@xyflow/react/dist/style.css';
 import CustomNode from './Parameter/NodeViz/index.js';
 
+import { Position } from '@xyflow/react';
+
 export const total_extraction_flow = {
   nodes: [
     {
       id: '1',
-      type: 'custom',
+      type: 'variableNode',
       position: { x: 0, y: 100 },
       data: { label: 'Select Target Column', configType: 'SelectTargetColumn' },
     },
     {
       id: '2',
-      type: 'VariableNode',
+      type: 'variableNode',
       position: { x: 500, y: 100 },
       data: { label: 'Select Category' },
     },
@@ -35,7 +37,7 @@ export const total_extraction_flow = {
     },
   ],
   edges: [
-    { id: 'e1-2', source: '1', target: '2', style: { stroke: 'red' } },
+    { id: 'e1-2', source: '1', target: '2', type: 'smoothstep', style: { stroke: 'red' } },
     { id: 'e2-3', source: '2', target: '3' },
   ],
 };
@@ -65,8 +67,4 @@ export const selective_extraction_flow = {
     { id: 'e1-2', source: '1', target: '2' },
     { id: 'e2-3', source: '2', target: '3' },
   ],
-};
-
-const nodeTypes = {
-  custom: CustomNode,
 };

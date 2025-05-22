@@ -6,27 +6,25 @@ const CustomNode = ({ data }) => {
   return (
     <div
       style={{
-        width: '180px',
-        height: '80px',
-        border: '2px solid #92DAD8',
-        borderRadius: '8px',
-        background: '#f0f8ff',
-        fontFamily: 'Noto Sans KR',
-        padding: '10px',
-        boxSizing: 'border-box',
-        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.15)',
+        borderRadius: '100%',
+        backgroundColor: '#fff',
+        width: 50,
+        height: 50,
         display: 'flex',
-        flexDirection: 'column',
+        alignItems: 'center',
         justifyContent: 'center',
+        fontWeight: 'bold',
+        fontSize: '10px',
+        color: '#333',
+        border: '2px solid #2196f3',
         position: 'relative',
       }}
     >
-      <strong style={{ fontSize: '14px', marginBottom: '6px' }}>{data.label}</strong>
-      <div style={{ fontSize: '11px', color: '#888' }}>{data.recordCount || '100 records'}</div>
+      {data.label}
 
-      {/* 엣지 연결용 Handle */}
-      <Handle type="target" position={Position.Left} style={{ background: '#555' }} />
-      <Handle type="source" position={Position.Right} style={{ background: '#555' }} />
+      {/* 엣지 연결 핸들 */}
+      <Handle type="source" position={Position.Right} style={{ background: '#2196f3' }} />
+      <Handle type="target" position={Position.Left} style={{ background: '#2196f3' }} />
     </div>
   );
 };
