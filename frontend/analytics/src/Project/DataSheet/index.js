@@ -231,7 +231,7 @@ const DataSheet = ({
 
         // 추가 가공
         const { sentence, words } = convertToTextWithArrowFormat(text, entities);
-        console.log('🧠 convertToTextWithArrowFormat 결과:', {
+        console.log('convertToTextWithArrowFormat 결과:', {
           sentence,
           words,
         });
@@ -395,13 +395,12 @@ const containerStyle = (activeTab) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
-  // alignItems: 'flex-start',
   gap: '1px',
   width: activeTab ? '99vw' : '100vw',
   height: '80vh',
   overflow: 'hidden',
   backgroundColor: '#fff',
-  margin: '0 auto',
+  margin: '0',
 });
 
 const tableStyle = (activeTab) => ({

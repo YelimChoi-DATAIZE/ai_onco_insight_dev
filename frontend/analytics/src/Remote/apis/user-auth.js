@@ -21,13 +21,13 @@ export const googleSignIn = (token) => http.post(`${urls['user-auth']}/google-si
 export const getUserProfile = () =>
   http.get(`${urls['user-auth']}/read/profile`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
     },
   });
 
 export const updateUserProfile = (formData) =>
   http.put(`${urls['user-auth']}/update/profile`, formData, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
     },
   });

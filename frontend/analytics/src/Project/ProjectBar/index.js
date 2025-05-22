@@ -307,21 +307,6 @@ const ProjectBar = ({
           elevation={0}
         >
           <Toolbar>
-            {/* <IconButton
-              onClick={() => console.log('왼쪽 버튼 클릭')}
-              sx={{
-                width: '40px',
-                height: '40px',
-                backgroundColor: '#E7EFF3',
-                borderRadius: 1,
-                mr: 2,
-                '&:hover': {
-                  backgroundColor: '#D0E0EA',
-                },
-              }}
-            >
-              <KeyboardDoubleArrowRightIcon />
-            </IconButton> */}
             <Grid
               container
               alignItems="center"
@@ -336,11 +321,11 @@ const ProjectBar = ({
                 item
                 sx={{
                   flexGrow: 1,
-                  overflow: 'hidden', // 스크롤 완전 제거
-                  whiteSpace: 'nowrap', // 버튼 줄바꿈 방지
-                  height: '48px', // Button 높이에 맞춤
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  height: '48px',
                   // display: 'flex',
-                  alignItems: 'center', // ✅ 수직 정렬
+                  alignItems: 'center',
                 }}
               >
                 <ButtonGroup
@@ -365,14 +350,14 @@ const ProjectBar = ({
                         key={label}
                         onClick={() => handleGroupChange(label.toLowerCase())}
                         sx={{
-                          width: '160px',
+                          // width: '160px',
                           height: '48px',
+                          justifyContent: 'flex-start',
                           padding: '0 15px',
                           textTransform: 'none',
                           color: '#000000',
                           display: 'flex',
                           alignItems: 'center',
-                          justifyContent: 'center',
                           backgroundColor: '#FFFFFF',
                           '&:hover': {
                             backgroundColor: '#E7EFF3',
@@ -395,7 +380,7 @@ const ProjectBar = ({
                           sx={{
                             lineHeight: '16.8px',
                             fontSize: '14px',
-                            fontFamily: 'Noto Sans KR',
+                            fontFamily: 'Quicksand',
                             fontWeight: 400,
                             mt: '15px',
                           }}
@@ -416,15 +401,15 @@ const ProjectBar = ({
             flexGrow: 1,
             overflowX: 'auto',
             position: 'relative',
-            marginTop: '60px', // 기존 고정 영역(40+80)만큼
-            paddingTop: '20px', // 실제 콘텐츠가 Tabs와 겹치지 않도록 여유를 줌
+            marginTop: '60px',
+            paddingTop: '20px',
           }}
         >
           <DrawerHeader />
           <Box
             sx={{
-              position: 'fixed', // fixed로 바꿉니다
-              top: '80px', // AppBar 높이만큼 아래로
+              position: 'fixed',
+              top: '80px',
               width: '100%',
               height: '80px',
               zIndex: 1000,

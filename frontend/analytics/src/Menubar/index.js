@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -16,6 +17,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import Grid from '@mui/material/Grid2';
+import { getUserProfile } from '../Remote/apis/user-auth.js';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -57,9 +59,41 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function PrimarySearchAppBar() {
+export default function Menubar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const [username, setUsername] = useState('User');
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    navigate('/login');
+  };
+
+  const handleGoToConsole = () => {
+    navigate('/console');
+  };
+
+  const menuItemStyle = {
+    fontFamily: 'Noto Sans KR',
+    fontSize: '14px',
+    color: '#333',
+  };
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await getUserProfile();
+        setUsername(
+          res.data.profile.name || res.data.profile.username || res.data.profile.email || 'User'
+        );
+      } catch (err) {
+        console.error('Failed to fetch user profile:', err);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -98,8 +132,15 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose} sx={menuItemStyle}>
+        Profile
+      </MenuItem>
+      <MenuItem onClick={handleLogout} sx={menuItemStyle}>
+        Logout
+      </MenuItem>
+      <MenuItem onClick={handleGoToConsole} sx={menuItemStyle}>
+        Console
+      </MenuItem>
     </Menu>
   );
 
@@ -158,7 +199,7 @@ export default function PrimarySearchAppBar() {
         sx={{
           zIndex: 10000,
           height: '40px',
-          backgroundColor: '#316193',
+          backgroundColor: '#4A97FF',
           borderRadius: 0,
         }}
         elevation={0}
@@ -172,15 +213,11 @@ export default function PrimarySearchAppBar() {
             minWidth="100%"
           >
             <Grid item xs={4} container display="flex" justifyContent="flex-start">
-              <img src={'/static/Images/AppLogo.svg'} alt="Logo" style={{ height: '15px' }} />
-              {/* <Typography
-                variant="h7"
-                noWrap
-                component="div"
-                sx={{ fontWeight: 500, display: { xs: "none", sm: "block" } }}
-              >
-                DATAIZE AI
-              </Typography> */}
+              <img
+                src={'/static/Images/AppLogo.svg'}
+                alt="Logo"
+                style={{ marginLeft: 20, height: '15px' }}
+              />
             </Grid>
             <Grid item xs={12} container display="flex" justifyContent="flex-end">
               {/* <Search sx={{ mt: 0.8, height: '30px' }}>
@@ -193,38 +230,21 @@ export default function PrimarySearchAppBar() {
                   inputProps={{ 'aria-label': 'search' }}
                 />
               </Search> */}
-              {/* <IconButton size="small" aria-label="show 4 new mails" color="inherit">
-                  <Badge badgeContent={4} color="error">
-                    <MailIcon
-                      sx={{
-                        fontSize: '1.2rem',
-                      }}
-                    />
-                  </Badge>
-                </IconButton>
-                <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
-                  <Badge badgeContent={17} color="error">
-                    <NotificationsIcon
-                      sx={{
-                        fontSize: '1.2rem',
-                      }}
-                    />
-                  </Badge>
-                </IconButton> */}
               <Box
                 sx={{
                   display: { xs: 'none', md: 'flex' },
-                  alignItems: 'center', // ✅ 수직 정렬 맞춤
-                  gap: 1, // ✅ 간격 조절 (선택)
+                  alignItems: 'center',
+                  gap: 1,
                 }}
               >
                 <Typography
                   sx={{
                     fontSize: '0.9rem',
                     verticalAlign: 'middle',
+                    fontFamily: 'Quicksand',
                   }}
                 >
-                  User Id
+                  {username}
                 </Typography>
 
                 <IconButton
@@ -239,25 +259,12 @@ export default function PrimarySearchAppBar() {
                   <AccountCircle sx={{ fontSize: '1.2rem' }} />
                 </IconButton>
               </Box>
-
-              {/* <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-                <IconButton
-                  size="large"
-                  aria-label="show more"
-                  aria-controls={mobileMenuId}
-                  aria-haspopup="true"
-                  onClick={handleMobileMenuOpen}
-                  color="inherit"
-                >
-                  <MoreIcon />
-                </IconButton>
-              </Box> */}
             </Grid>
           </Grid>
         </Toolbar>
       </AppBar>
-      {/* {renderMobileMenu}
-      {renderMenu} */}
+      {/* {renderMobileMenu} */}
+      {renderMenu}
     </Box>
   );
 }

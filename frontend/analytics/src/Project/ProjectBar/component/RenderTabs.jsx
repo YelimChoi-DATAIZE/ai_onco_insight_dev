@@ -142,7 +142,7 @@ const RenderTabs = ({
         <input
           type="file"
           accept=".xlsx, .xls, .csv"
-          style={{ display: 'none' }} // 화면에 보이지 않음
+          style={{ display: 'none' }}
           ref={fileInputRef}
           onChange={handleFileUpload}
         />
@@ -160,7 +160,7 @@ const RenderTabs = ({
               justifyContent: 'center',
               zIndex: 1000,
             }}
-            onClick={closeModal} // 배경 클릭 시 모달 닫기
+            onClick={closeModal}
           >
             <div
               style={{
@@ -172,7 +172,7 @@ const RenderTabs = ({
                 textAlign: 'center',
                 position: 'relative',
               }}
-              onClick={(e) => e.stopPropagation()} // 모달 클릭 시 닫히지 않도록 방지
+              onClick={(e) => e.stopPropagation()}
             >
               <h3 style={{ marginBottom: '10px' }}>오류</h3>
               <p>{errorMessage}</p>
@@ -219,7 +219,13 @@ const RenderTabs = ({
                 }}
               />
             }
-            label={<span style={{ fontSize: '13px', textTransform: 'lowercase' }}>Upload</span>}
+            label={
+              <span
+                style={{ fontSize: '13px', textTransform: 'lowercase', fontFamily: 'Quicksand' }}
+              >
+                Upload
+              </span>
+            }
             onClick={triggerFileUpload}
             sx={{
               ml: 2,
@@ -243,11 +249,7 @@ const RenderTabs = ({
             }
             label={
               <span
-                style={{
-                  fontSize: '13px',
-                  textTransform: 'lowercase',
-                  mt: -1,
-                }}
+                style={{ fontSize: '13px', textTransform: 'lowercase', fontFamily: 'Quicksand' }}
               >
                 add row
               </span>
@@ -274,11 +276,7 @@ const RenderTabs = ({
             }
             label={
               <span
-                style={{
-                  fontSize: '13px',
-                  textTransform: 'lowercase',
-                  mt: -1,
-                }}
+                style={{ fontSize: '13px', textTransform: 'lowercase', fontFamily: 'Quicksand' }}
               >
                 add column
               </span>
@@ -322,14 +320,8 @@ const RenderTabs = ({
             />
           }
           label={
-            <span
-              style={{
-                fontSize: '13px',
-                textTransform: 'lowercase',
-                mt: -1,
-              }}
-            >
-              comprehend
+            <span style={{ fontSize: '13px', textTransform: 'lowercase', fontFamily: 'Quicksand' }}>
+              total <br /> extraction
             </span>
           }
           sx={{
@@ -348,7 +340,7 @@ const RenderTabs = ({
               style={{
                 width: '26px',
                 height: '26px',
-                marginTop: '0px',
+                // marginTop: '1px',
               }}
             />
           }
@@ -357,10 +349,11 @@ const RenderTabs = ({
               style={{
                 fontSize: '13px',
                 textTransform: 'lowercase',
-                mt: -1,
+                fontFamily: 'Quicksand',
+                // marginTop: '3px',
               }}
             >
-              foi extraction
+              selective <br /> extraction
             </span>
           }
           sx={{
@@ -371,7 +364,7 @@ const RenderTabs = ({
             },
           }}
         />
-        <Tab
+        {/* <Tab
           icon={
             <img
               src="/static/Images/app_icon/app_integrate.svg"
@@ -384,13 +377,7 @@ const RenderTabs = ({
             />
           }
           label={
-            <span
-              style={{
-                fontSize: '13px',
-                // textTransform: "lowercase",
-                mt: -1,
-              }}
-            >
+            <span style={{ fontSize: '13px', textTransform: 'lowercase', fontFamily: 'Quicksand' }}>
               FHIR
             </span>
           }
@@ -401,7 +388,7 @@ const RenderTabs = ({
               backgroundColor: '#FFFFFF',
             },
           }}
-        />{' '}
+        />{' '} */}
       </Tabs>
     );
   } else if (currentTabGroup === 'analysis') {
@@ -432,13 +419,7 @@ const RenderTabs = ({
             />
           }
           label={
-            <span
-              style={{
-                fontSize: '11px',
-                // textTransform: "lowercase",
-                mt: -1,
-              }}
-            >
+            <span style={{ fontSize: '13px', textTransform: 'lowercase', fontFamily: 'Quicksand' }}>
               EXPLORATION
             </span>
           }
@@ -463,13 +444,7 @@ const RenderTabs = ({
             />
           }
           label={
-            <span
-              style={{
-                fontSize: '11px',
-                // textTransform: "lowercase",
-                mt: -1,
-              }}
-            >
+            <span style={{ fontSize: '13px', textTransform: 'lowercase', fontFamily: 'Quicksand' }}>
               T-TEST
             </span>
           }
@@ -493,13 +468,7 @@ const RenderTabs = ({
             />
           }
           label={
-            <span
-              style={{
-                fontSize: '11px',
-                // textTransform: "lowercase",
-                mt: -1,
-              }}
-            >
+            <span style={{ fontSize: '13px', textTransform: 'lowercase', fontFamily: 'Quicksand' }}>
               ANOVA
             </span>
           }
@@ -523,13 +492,7 @@ const RenderTabs = ({
             />
           }
           label={
-            <span
-              style={{
-                fontSize: '11px',
-                // textTransform: "lowercase",
-                mt: -1,
-              }}
-            >
+            <span style={{ fontSize: '13px', textTransform: 'lowercase', fontFamily: 'Quicksand' }}>
               REGRESSION
             </span>
           }
@@ -552,13 +515,7 @@ const RenderTabs = ({
             />
           }
           label={
-            <span
-              style={{
-                fontSize: '11px',
-                // textTransform: "lowercase",
-                mt: -1,
-              }}
-            >
+            <span style={{ fontSize: '13px', textTransform: 'lowercase', fontFamily: 'Quicksand' }}>
               FREQUENCIES
             </span>
           }
@@ -582,13 +539,7 @@ const RenderTabs = ({
             />
           }
           label={
-            <span
-              style={{
-                fontSize: '11px',
-                // textTransform: "lowercase",
-                mt: -1,
-              }}
-            >
+            <span style={{ fontSize: '13px', textTransform: 'lowercase', fontFamily: 'Quicksand' }}>
               FACTOR
             </span>
           }

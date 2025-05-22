@@ -39,13 +39,72 @@ CustomTabPanel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-const nodeTypes = {
-  variableNode: ({ data }) => (
-    <div style={{ padding: 10, border: '1px solid #ccc', borderRadius: 6, background: '#fff' }}>
-      <strong>{data.label}</strong>
-    </div>
-  ),
-};
+// const nodeTypes = {
+//   variableNode: ({ data }) => (
+//     <div style={{ padding: 10, border: '1px solid #ccc', borderRadius: 6, background: '#fff' }}>
+//       <strong>{data.label}</strong>
+//     </div>
+//   ),
+// };
+
+// const nodeTypes = {
+//   variableNode: ({ data }) => (
+//     <div
+//       style={{
+//         display: 'flex',
+//         alignItems: 'center',
+//         width: '200px',
+//         height: '60px',
+//         borderRadius: '8px',
+//         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
+//         backgroundColor: '#ffffff',
+//         fontFamily: 'Noto Sans KR',
+//         overflow: 'hidden',
+//       }}
+//     >
+//       {/* 좌측 파란 배경 + 아이콘 */}
+//       <div
+//         style={{
+//           backgroundColor: '#3163C2',
+//           width: '50px',
+//           height: '100%',
+//           display: 'flex',
+//           alignItems: 'center',
+//           justifyContent: 'center',
+//         }}
+//       >
+//         {/* <img
+//           src="/static/Images/icon-customers.svg"
+//           alt="icon"
+//           style={{ width: '18px', height: '18px' }}
+//         /> */}
+//       </div>
+
+//       {/* 텍스트 영역 */}
+//       <div style={{ padding: '8px 12px' }}>
+//         <div style={{ fontSize: '13px', fontWeight: 500, color: '#333' }}>{data.label}</div>
+//         <div style={{ fontSize: '11px', color: '#888' }}>100 RECORDS</div>
+//       </div>
+//     </div>
+//   ),
+//   RunNode: ({ data }) => (
+//     <div
+//       style={{
+//         width: '200px',
+//         height: '60px',
+//         borderRadius: '8px',
+//         backgroundColor: '#3163C2',
+//         color: '#fff',
+//         display: 'flex',
+//         alignItems: 'center',
+//         justifyContent: 'center',
+//         fontWeight: 600,
+//       }}
+//     >
+//       {data.label}
+//     </div>
+//   ),
+// };
 
 const EngineeringFlowLayout = ({
   analysisName,
@@ -76,6 +135,7 @@ const EngineeringFlowLayout = ({
       setColumnDefs(cols);
       setRowData(data.rows);
     }
+    // console.log(nodes, nodeTypes);
   }, [data]);
 
   const [resultTabValue, setResultTabValue] = useState(0);
@@ -113,7 +173,7 @@ const EngineeringFlowLayout = ({
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
-            nodeTypes={nodeTypes}
+            // nodeTypes={nodeTypes}
             defaultViewport={{ x: 300, y: 0, zoom: 0.8 }}
             onNodeClick={onNodeClick}
           >
