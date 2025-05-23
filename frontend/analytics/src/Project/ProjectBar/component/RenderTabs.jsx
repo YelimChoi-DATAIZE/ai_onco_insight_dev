@@ -526,7 +526,7 @@ const RenderTabs = ({
             },
           }}
         />{' '}
-        <Tab
+        {/* <Tab
           icon={
             <img
               src="/static/Images/app_icon/app_factor.svg"
@@ -549,7 +549,7 @@ const RenderTabs = ({
               backgroundColor: '#FFFFFF',
             },
           }}
-        />{' '}
+        />{' '} */}
       </Tabs>
     );
   } else if (currentTabGroup === 'result') {

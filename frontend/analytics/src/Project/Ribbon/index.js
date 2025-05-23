@@ -10,9 +10,9 @@ import SmartButtonIcon from '@mui/icons-material/SmartButton';
 import RibbonPopup from './popup';
 
 const RibbonMenu = ({ open }) => {
-  const [tabValue, setTabValue] = useState(0); // 선택된 탭 관리
-  const [currentTabGroup, setCurrentTabGroup] = useState('home'); // 현재 탭 그룹 관리
-  const [popupOpen, setPopupOpen] = useState(false); // 팝업 상태 관리
+  const [tabValue, setTabValue] = useState(0);
+  const [currentTabGroup, setCurrentTabGroup] = useState('home');
+  const [popupOpen, setPopupOpen] = useState(false);
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);

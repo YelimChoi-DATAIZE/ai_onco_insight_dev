@@ -86,9 +86,9 @@ const ProjectBar = ({
       setTabValue(index);
 
       if (currentTabGroup === 'engineering') {
-        selectedTab = index === 0 ? 'settings1' : index === 1 ? 'settings2' : 'settings3';
+        selectedTab = `settings${index + 1}`;
       } else if (currentTabGroup === 'analysis') {
-        selectedTab = index === 0 ? 'analysis1' : index === 1 ? 'analysis2' : 'analysis3';
+        selectedTab = `analysis${index + 1}`;
       } else if (currentTabGroup === 'result') {
         selectedTab = `result${index + 1}`;
       }

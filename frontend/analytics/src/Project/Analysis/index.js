@@ -1,7 +1,16 @@
 // OneSampleTTestPage.jsx
 import AnalysisFlowLayout from './components/AnalysisFlowLayout';
-import { exploration_flow } from './components/AnalysisFlow/index';
-import { nodeSettingComponents } from './components/AnalysisFlow/Parameter/Exploration';
+import {
+  exploration_flow,
+  one_sample_ttest_flow,
+  anova_flow,
+  frequency_flow,
+} from './components/AnalysisFlow/index';
+import { exploration_node } from './components/AnalysisFlow/Parameter/Exploration';
+import { ttest_node } from './components/AnalysisFlow/Parameter/TTest';
+import { anova_node } from './components/AnalysisFlow/Parameter/Anova';
+import { frequency_node } from './components/AnalysisFlow/Parameter/Frequency';
+
 import AISuggestion from './components/AISuggestionTab';
 
 const resultText = `Descriptive statistics by group
@@ -31,12 +40,12 @@ const resultText = `Descriptive statistics by group
     3     1   89    NA    89   89   0      NA
     4     1   90    NA    90   90   0      NA`;
 
-export function OneSampleTTest({ data }) {
+export function Exploration({ data }) {
   return (
     <AnalysisFlowLayout
-      analysisName="One Sample T-Test"
+      analysisName="Exploration"
       flow={exploration_flow}
-      parameterComponents={nodeSettingComponents}
+      parameterComponents={exploration_node}
       resultText={resultText}
       aiSuggestion={<AISuggestion />}
       data={data}
@@ -44,12 +53,38 @@ export function OneSampleTTest({ data }) {
   );
 }
 
-export function Exploration({ data }) {
+export function OneSampleTTest({ data }) {
   return (
     <AnalysisFlowLayout
-      analysisName="Exploration"
-      flow={exploration_flow}
-      parameterComponents={nodeSettingComponents}
+      analysisName="One Sample T-Test"
+      flow={one_sample_ttest_flow}
+      parameterComponents={ttest_node}
+      resultText={resultText}
+      aiSuggestion={<AISuggestion />}
+      data={data}
+    />
+  );
+}
+
+export function AnovaTest({ data }) {
+  return (
+    <AnalysisFlowLayout
+      analysisName="ANOVA"
+      flow={anova_flow}
+      parameterComponents={anova_node}
+      resultText={resultText}
+      aiSuggestion={<AISuggestion />}
+      data={data}
+    />
+  );
+}
+
+export function Frequency({ data }) {
+  return (
+    <AnalysisFlowLayout
+      analysisName="Frequency"
+      flow={frequency_flow}
+      parameterComponents={frequency_node}
       resultText={resultText}
       aiSuggestion={<AISuggestion />}
       data={data}

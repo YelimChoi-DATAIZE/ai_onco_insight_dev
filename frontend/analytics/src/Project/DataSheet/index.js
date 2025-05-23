@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Box, Typography, IconButton } from '@mui/material';
-import Engineering1 from '../OutputView/Engineering1';
-import Engineering2 from '../OutputView/Engineering2';
-import { Exploration, OneSampleTTest } from '../Analysis';
+// import Engineering1 from '../OutputView/Engineering1';
+// import Engineering2 from '../OutputView/Engineering2';
+import { Exploration, OneSampleTTest, AnovaTest, Frequency } from '../Analysis';
 import { TotalExtraction, SelectiveExtraction } from '../Engineering';
 import { ClipboardProvider } from '../ClipboardContext';
 
@@ -116,8 +116,10 @@ const DataSheet = ({
         return <Exploration data={data} />;
       case 'analysis2':
         return <OneSampleTTest data={data} />;
-      // case 'result1':
-      //   return <Result1 charts={charts} />;
+      case 'analysis3':
+        return <AnovaTest data={data} />;
+      case 'analysis4':
+        return <Frequency data={data} />;
       // case 'result2':
       //   return <Result2 />;
       // case 'result3':

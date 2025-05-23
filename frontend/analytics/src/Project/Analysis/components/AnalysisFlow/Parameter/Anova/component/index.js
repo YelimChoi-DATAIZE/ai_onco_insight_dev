@@ -149,35 +149,157 @@ export const GroupVariable = ({ columnDefs = [], alignment, onChange }) => {
   );
 };
 
-export function TestSectionVariance({ options = {}, setOptions = () => {} }) {
+export function TestSectionTest({ options, setOptions }) {
   const handleCheckboxChange = (key) => (e) => setOptions({ ...options, [key]: e.target.checked });
+
+  const handleInputChange = (key) => (e) => setOptions({ ...options, [key]: e.target.value });
 
   return (
     <Card variant="outlined">
       <CardContent>
         <Typography fontWeight="bold" fontFamily="Quicksand" fontSize={13}>
-          Variance
+          Test Type
         </Typography>
         <FormGroup>
           <FormControlLabel
             control={
               <Checkbox
                 size="small"
-                checked={options.assumeUnequalVariance ?? false}
-                onChange={handleCheckboxChange('assumeUnequalVariance')}
+                checked={options.student}
+                onChange={handleCheckboxChange('student')}
               />
             }
-            label="Do not assume equal variance (Welch's)"
+            label={
+              <Typography fontSize={13} fontFamily="Quicksand">
+                Student t ttest
+              </Typography>
+            }
           />
           <FormControlLabel
             control={
               <Checkbox
                 size="small"
-                checked={options.assumeEqualVariance ?? false}
-                onChange={handleCheckboxChange('assumeEqualVariance')}
+                checked={options.bayes}
+                onChange={handleCheckboxChange('bayes')}
               />
             }
-            label="Assume equal variance (Fisher)"
+            label={
+              <Typography fontSize={13} fontFamily="Quicksand">
+                Bayes Factor
+              </Typography>
+            }
+          />
+          <TextField
+            label="Prior"
+            size="small"
+            type="number"
+            variant="standard"
+            value={options.prior}
+            onChange={handleInputChange('prior')}
+            sx={{ ml: 3, mt: -2 }}
+            disabled={!options.bayes}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                size="small"
+                checked={options.wilcoxon}
+                onChange={handleCheckboxChange('wilcoxon')}
+              />
+            }
+            label={
+              <Typography fontSize={13} fontFamily="Quicksand">
+                WilcoxonRank-Sum test
+              </Typography>
+            }
+          />
+        </FormGroup>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function TestSectionHypothesis({ options = {}, setOptions = () => {} }) {
+  const handleInputChange = (key) => (e) => setOptions({ ...options, [key]: e.target.value });
+
+  const handleRadioChange = (key) => (e) => setOptions({ ...options, [key]: e.target.value });
+
+  return (
+    <Card variant="outlined">
+      <CardContent>
+        <Typography fontWeight="bold" fontFamily="Quicksand" fontSize={13}>
+          Hypothesis
+        </Typography>
+        <TextField
+          label="Test value"
+          size="small"
+          type="number"
+          variant="standard"
+          value={options.hypothesisValue ?? ''}
+          onChange={handleInputChange('hypothesisValue')}
+          fullWidth
+          sx={{ mb: 1 }}
+        />
+        <FormLabel component="legend" sx={{ fontSize: 12 }}>
+          Condition
+        </FormLabel>
+        <RadioGroup
+          value={options.hypothesisCondition ?? ''}
+          onChange={handleRadioChange('hypothesisCondition')}
+        >
+          <FormControlLabel value="!=" control={<Radio size="small" />} label="≠ Test value" />
+          <FormControlLabel value=">" control={<Radio size="small" />} label="> Test value" />
+          <FormControlLabel value="<" control={<Radio size="small" />} label="< Test value" />
+        </RadioGroup>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function Hypothesis() {
+  const [options, setOptions] = useState({
+    hypothesisValue: 0,
+    hypothesisCondition: '!=',
+  });
+
+  return <TestSectionHypothesis options={options} setOptions={setOptions} />;
+}
+
+export function VarianceSection({ options = {}, setOptions = () => {} }) {
+  const handleExclusiveChange = (key) => (e) => {
+    const checked = e.target.checked;
+    setOptions({
+      assumeWelch: key === 'assumeWelch' ? checked : false,
+      assumeFisher: key === 'assumeFisher' ? checked : false,
+    });
+  };
+
+  return (
+    <Card variant="outlined">
+      <CardContent>
+        <Typography fontWeight="bold" fontFamily="Quicksand" fontSize={13}>
+          분산
+        </Typography>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                size="small"
+                checked={options.assumeWelch ?? false}
+                onChange={handleExclusiveChange('assumeWelch')}
+              />
+            }
+            label="동분산을 가정하지 않음 (Welch's)"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                size="small"
+                checked={options.assumeFisher ?? false}
+                onChange={handleExclusiveChange('assumeFisher')}
+              />
+            }
+            label="동분산 가정 (Fisher)"
           />
         </FormGroup>
       </CardContent>
@@ -187,14 +309,61 @@ export function TestSectionVariance({ options = {}, setOptions = () => {} }) {
 
 export function Variance() {
   const [options, setOptions] = useState({
-    assumeUnequalVariance: true,
-    assumeEqualVariance: false,
+    assumeWelch: true,
+    assumeFisher: false,
   });
 
-  return <TestSectionVariance options={options} setOptions={setOptions} />;
+  return <VarianceSection options={options} setOptions={setOptions} />;
 }
 
-export function TestSectionMissing({ options = {}, setOptions = () => {} }) {
+export function AdditionalStatisticSection({ options = {}, setOptions = () => {} }) {
+  const handleCheckboxChange = (key) => (e) => {
+    setOptions({ ...options, [key]: e.target.checked });
+  };
+
+  return (
+    <Card variant="outlined">
+      <CardContent>
+        <Typography fontWeight="bold" fontFamily="Quicksand" fontSize={13}>
+          Additional Statistics
+        </Typography>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                size="small"
+                checked={options.statTable || false}
+                onChange={handleCheckboxChange('statTable')}
+              />
+            }
+            label="Descriptive statistics table"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                size="small"
+                checked={options.statGraph || false}
+                onChange={handleCheckboxChange('statGraph')}
+              />
+            }
+            label="Descriptive statistics plot"
+          />
+        </FormGroup>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function AdditionalStatistic() {
+  const [options, setOptions] = useState({
+    statTable: false,
+    statGraph: false,
+  });
+
+  return <AdditionalStatisticSection options={options} setOptions={setOptions} />;
+}
+
+export function MissingSection({ options = {}, setOptions = () => {} }) {
   const handleRadioChange = (key) => (e) => setOptions({ ...options, [key]: e.target.value });
 
   return (
@@ -224,93 +393,55 @@ export function TestSectionMissing({ options = {}, setOptions = () => {} }) {
   );
 }
 
-export function MissingValue() {
+export function Missing() {
   const [options, setOptions] = useState({
     missingHandling: 'pairwise',
   });
 
-  return <TestSectionMissing options={options} setOptions={setOptions} />;
+  return <MissingSection options={options} setOptions={setOptions} />;
 }
 
-export function Assumptionopt({ options = {}, setOptions = () => {} }) {
+export function AssumptionSection({ options = {}, setOptions = () => {} }) {
   const handleCheckboxChange = (key) => (e) => {
     setOptions({ ...options, [key]: e.target.checked });
-  };
-
-  const handleInputChange = (key) => (e) => {
-    setOptions({ ...options, [key]: e.target.value });
   };
 
   return (
     <Card variant="outlined">
       <CardContent>
-        <Typography fontWeight="bold" fontFamily="Quicksand" fontSize={13}>
-          Additional Statistics
+        <Typography fontWeight="bold" fontSize={13} fontFamily="Quicksand">
+          가정검증
         </Typography>
         <FormGroup>
           <FormControlLabel
             control={
               <Checkbox
                 size="small"
-                checked={options.meanDiff || false}
-                onChange={handleCheckboxChange('meanDiff')}
+                checked={options.homogeneityTest ?? false}
+                onChange={handleCheckboxChange('homogeneityTest')}
               />
             }
-            label="Mean difference"
-          />
-          <TextField
-            label="Confidence Interval"
-            size="small"
-            type="number"
-            variant="standard"
-            value={options.meanDiffCI || ''}
-            onChange={handleInputChange('meanDiffCI')}
-            sx={{ ml: 3 }}
-            disabled={!options.meanDiff}
+            label="동질성 검증"
           />
           <FormControlLabel
             control={
               <Checkbox
                 size="small"
-                checked={options.effectSize || false}
-                onChange={handleCheckboxChange('effectSize')}
+                checked={options.normalityTest ?? false}
+                onChange={handleCheckboxChange('normalityTest')}
               />
             }
-            label="Effect size"
-          />
-          <TextField
-            label="Confidence Interval"
-            size="small"
-            type="number"
-            variant="standard"
-            value={options.effectSizeCI || ''}
-            onChange={handleInputChange('effectSizeCI')}
-            sx={{ ml: 3 }}
-            disabled={!options.effectSize}
+            label="정규분포성 검증"
           />
           <FormControlLabel
             control={
               <Checkbox
                 size="small"
-                checked={options.statTable || false}
-                onChange={handleCheckboxChange('statTable')}
+                checked={options.qqPlot ?? false}
+                onChange={handleCheckboxChange('qqPlot')}
               />
             }
-            label={
-              <Typography fontSize={13} fontFamily="Quicksand">
-                Descriptive statistics table
-              </Typography>
-            }
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                size="small"
-                checked={options.statGraph || false}
-                onChange={handleCheckboxChange('statGraph')}
-              />
-            }
-            label="Descriptive plots"
+            label="Q-Q 도표"
           />
         </FormGroup>
       </CardContent>
@@ -320,77 +451,22 @@ export function Assumptionopt({ options = {}, setOptions = () => {} }) {
 
 export function Assumption() {
   const [options, setOptions] = useState({
-    meanDiff: false,
-    meanDiffCI: 95,
-    effectSize: false,
-    effectSizeCI: 95,
-    statTable: false,
-    statGraph: false,
-  });
-
-  return <Assumptionopt options={options} setOptions={setOptions} />;
-}
-
-export function AssumptionCheckSection({ options = {}, setOptions = () => {} }) {
-  const handleCheckboxChange = (key) => (e) => setOptions({ ...options, [key]: e.target.checked });
-
-  return (
-    <Card variant="outlined">
-      <CardContent>
-        <Typography fontWeight="bold" fontFamily="Quicksand" fontSize={13}>
-          Assumption Check
-        </Typography>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                size="small"
-                checked={options.homogeneityTest || false}
-                onChange={handleCheckboxChange('homogeneityTest')}
-              />
-            }
-            label="Homogeneity test"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                size="small"
-                checked={options.normalityTest || false}
-                onChange={handleCheckboxChange('normalityTest')}
-              />
-            }
-            label="Normality test"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                size="small"
-                checked={options.qqPlot || false}
-                onChange={handleCheckboxChange('qqPlot')}
-              />
-            }
-            label="Q-Q Plot"
-          />
-        </FormGroup>
-      </CardContent>
-    </Card>
-  );
-}
-
-export function AssumptionCheckSection2() {
-  const [options, setOptions] = useState({
     homogeneityTest: false,
     normalityTest: false,
     qqPlot: false,
   });
 
-  return <AssumptionCheckSection options={options} setOptions={setOptions} />;
+  return <AssumptionSection options={options} setOptions={setOptions} />;
 }
 
-export function PostHocSection({ options = {}, setOptions = () => {} }) {
-  const handleRadioChange = (e) => setOptions({ ...options, postHocTest: e.target.value });
+export function PostHocStatisticsSection({ options = {}, setOptions = () => {} }) {
+  const handleRadioChange = (e) => {
+    setOptions({ ...options, postHoc: e.target.value });
+  };
 
-  const handleCheckboxChange = (key) => (e) => setOptions({ ...options, [key]: e.target.checked });
+  const handleCheckboxChange = (key) => (e) => {
+    setOptions({ ...options, [key]: e.target.checked });
+  };
 
   return (
     <Card variant="outlined">
@@ -400,12 +476,12 @@ export function PostHocSection({ options = {}, setOptions = () => {} }) {
         </Typography>
 
         <Grid container spacing={2}>
-          {/* Left: Post-hoc Radio Options */}
+          {/* Post-hoc Test Options */}
           <Grid item xs={12} sm={6}>
             <FormLabel component="legend" sx={{ fontSize: 12 }}>
-              Post-hoc Comparison
+              Post-hoc Options
             </FormLabel>
-            <RadioGroup value={options.postHocTest ?? 'none'} onChange={handleRadioChange}>
+            <RadioGroup value={options.postHoc ?? 'none'} onChange={handleRadioChange}>
               <FormControlLabel value="none" control={<Radio size="small" />} label="None" />
               <FormControlLabel
                 value="gamesHowell"
@@ -420,7 +496,7 @@ export function PostHocSection({ options = {}, setOptions = () => {} }) {
             </RadioGroup>
           </Grid>
 
-          {/* Right: Statistics Checkboxes */}
+          {/* Statistics Options */}
           <Grid item xs={12} sm={6}>
             <FormLabel component="legend" sx={{ fontSize: 12 }}>
               Statistics
@@ -430,8 +506,8 @@ export function PostHocSection({ options = {}, setOptions = () => {} }) {
                 control={
                   <Checkbox
                     size="small"
-                    checked={options.showMeanDiff ?? false}
-                    onChange={handleCheckboxChange('showMeanDiff')}
+                    checked={options.meanDiff ?? false}
+                    onChange={handleCheckboxChange('meanDiff')}
                   />
                 }
                 label="Mean difference"
@@ -460,11 +536,11 @@ export function PostHocSection({ options = {}, setOptions = () => {} }) {
                 control={
                   <Checkbox
                     size="small"
-                    checked={options.flagSignificant ?? false}
-                    onChange={handleCheckboxChange('flagSignificant')}
+                    checked={options.flagImportant ?? false}
+                    onChange={handleCheckboxChange('flagImportant')}
                   />
                 }
-                label="Flag significant comparison"
+                label="Flag important comparisons"
               />
             </FormGroup>
           </Grid>
@@ -474,19 +550,19 @@ export function PostHocSection({ options = {}, setOptions = () => {} }) {
   );
 }
 
-export function PostHoc() {
+export function PostHocStatistics() {
   const [options, setOptions] = useState({
-    postHocTest: 'none',
-    showMeanDiff: true,
+    postHoc: 'none', // 'none' | 'gamesHowell' | 'tukey'
+    meanDiff: true,
     showPValue: true,
     showTestResult: false,
-    flagSignificant: false,
+    flagImportant: false,
   });
 
-  return <PostHocSection options={options} setOptions={setOptions} />;
+  return <PostHocStatisticsSection options={options} setOptions={setOptions} />;
 }
 
-export const RunAnalysis = ({ onRunHistogram }) => {
+export const Run = ({ onRunHistogram }) => {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
       <Button onClick={onRunHistogram} sx={{ backgroundColor: '#2F72B9', color: '#fff' }}>
@@ -495,3 +571,13 @@ export const RunAnalysis = ({ onRunHistogram }) => {
     </Box>
   );
 };
+
+// export const anova_node = {
+//   GroupVariable,
+//   Variance,(ㅇ)
+//   AdditionalStatistic,(ㅇ)
+//   Missing,(ㅇ)
+//   Assumption,(ㅇ)
+//   PostHocStatistics,(ㅇ)
+//   Run,(ㅇ)
+// };

@@ -18,6 +18,9 @@ import {
   CardContent,
   Select,
   MenuItem,
+  FormLabel,
+  RadioGroup,
+  Radio,
 } from '@mui/material';
 
 function not(a, b) {
@@ -32,7 +35,7 @@ export const SelectVariable = ({ columnDefs = [], alignment, onChange }) => {
   const fields = columnDefs.map((col) => col.field);
 
   const [checked, setChecked] = useState([]);
-  const [top, setTop] = useState(fields); // 위쪽 리스트
+  const [top, setTop] = useState(fields);
   const [bottom, setBottom] = useState(alignment ? [alignment] : []);
 
   useEffect(() => {
