@@ -106,34 +106,52 @@ const AnalysisFlowLayout = ({
   analysisName,
   flow,
   parameterComponents,
-  resultText,
-  aiSuggestion,
   data,
+  columnDefs,
+  setColumnDefs,
+  rowData,
+  setRowData,
+  resultText,
+  setResultText,
+  resultTabValue,
+  setResultTabValue,
+  onRunAnalysis,
+  aiSuggestion,
 }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState(flow.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(flow.edges);
   const [selectedNode, setSelectedNode] = useState(null);
-  const onNodeClick = (_, node) => setSelectedNode(node);
-
-  const [columnDefs, setColumnDefs] = useState([]);
-  const [rowData, setRowData] = useState([]);
-  const gridRef = useRef();
-
+  const [configTabValue, setConfigTabValue] = useState(0);
   const [alignment, setAlignment] = useState('');
   const [histogramData, setHistogramData] = useState([]);
 
+  const gridRef = useRef();
+
+  const runAnalysisInternal = async () => {
+    const parameters = {
+      variable: alignment,
+    };
+    if (typeof onRunAnalysis === 'function') {
+      await onRunAnalysis(parameters);
+    }
+  };
+
+  const onNodeRunClick = async (_, node) => {
+    setSelectedNode(node);
+    if (node.type === 'RunNode') {
+      await runAnalysisInternal();
+    }
+  };
+
   const onRunHistogram = () => {
-    if (!alignment) return alert('변수를 먼저 선택하세요.');
-
-    const data = rowData.map((row) => row[alignment]).filter((v) => !isNaN(v));
-    const frequency = {};
-
-    data.forEach((v) => {
+    if (!alignment) return alert('Please select a variable');
+    const values = rowData.map((row) => row[alignment]).filter((v) => !isNaN(v));
+    const freq = {};
+    values.forEach((v) => {
       const bin = Math.floor(Number(v) / 10) * 10;
-      frequency[bin] = (frequency[bin] || 0) + 1;
+      freq[bin] = (freq[bin] || 0) + 1;
     });
-
-    const chartData = Object.entries(frequency).map(([x, y]) => ({ bin: x, count: y }));
+    const chartData = Object.entries(freq).map(([x, y]) => ({ bin: x, count: y }));
     setHistogramData(chartData);
   };
 
@@ -149,9 +167,6 @@ const AnalysisFlowLayout = ({
       setRowData(data.rows);
     }
   }, [data]);
-
-  const [resultTabValue, setResultTabValue] = useState(0);
-  const [configTabValue, setConfigTabValue] = useState(0);
 
   return (
     <Box sx={{ width: '98vw', height: '80vh', display: 'flex', gap: 2, px: 2 }}>
@@ -173,7 +188,7 @@ const AnalysisFlowLayout = ({
             onEdgesChange={onEdgesChange}
             nodeTypes={nodeTypes}
             defaultViewport={{ x: 300, y: 0, zoom: 0.8 }}
-            onNodeClick={onNodeClick}
+            onNodeClick={onNodeRunClick}
           >
             <Controls />
             <Background variant="dots" gap={16} size={1} />
@@ -204,7 +219,6 @@ const AnalysisFlowLayout = ({
                 />
               </Box>
             </CustomTabPanel>
-
             <CustomTabPanel value={resultTabValue} index={1}>
               <Box
                 sx={{
@@ -222,7 +236,7 @@ const AnalysisFlowLayout = ({
 
             {/* <CustomTabPanel value={resultTabValue} index={2}>
               <Box sx={{ p: 2, fontFamily: 'monospace', fontSize: '13px' }}>plot</Box>
-              
+
             </CustomTabPanel> */}
             <CustomTabPanel value={resultTabValue} index={2}>
               {histogramData.length > 0 ? (
@@ -262,8 +276,8 @@ const AnalysisFlowLayout = ({
           <Tab label="AI Suggestion" />
         </Tabs>
 
-        <CustomTabPanel value={configTabValue} index={0}>
-          {selectedNode ? (
+        {/* <CustomTabPanel value={configTabValue} index={0}> */}
+        {/* {selectedNode ? (
             <>
               <Typography
                 fontSize={12}
@@ -291,8 +305,40 @@ const AnalysisFlowLayout = ({
             <Typography fontSize={12} color="#888" mt={2}>
               노드를 클릭하면 설정이 표시됩니다.
             </Typography>
+          )} */}
+        <CustomTabPanel value={configTabValue} index={0}>
+          {selectedNode ? (
+            <>
+              <Typography
+                fontSize={12}
+                sx={{ color: '#888', mb: 1, textAlign: 'left', fontFamily: 'Quicksand' }}
+              >
+                {selectedNode.data.label.toUpperCase()} 설정
+              </Typography>
+
+              {(() => {
+                const configType = selectedNode?.data?.configType;
+                const Comp = parameterComponents[configType];
+
+                if (!Comp) return <Typography>설정 없음</Typography>;
+
+                return (
+                  <Comp
+                    columnDefs={columnDefs}
+                    alignment={alignment}
+                    onChange={(e) => setAlignment(e.target.value)}
+                  />
+                );
+              })()}
+            </>
+          ) : (
+            <Typography fontSize={12} color="#888" mt={2}>
+              노드를 클릭하면 설정이 표시됩니다.
+            </Typography>
           )}
         </CustomTabPanel>
+
+        {/* </CustomTabPanel> */}
 
         <CustomTabPanel value={configTabValue} index={1}>
           {aiSuggestion}
@@ -306,9 +352,17 @@ AnalysisFlowLayout.propTypes = {
   analysisName: PropTypes.string,
   flow: PropTypes.object.isRequired,
   parameterComponents: PropTypes.object.isRequired,
-  resultText: PropTypes.string,
-  aiSuggestion: PropTypes.node,
   data: PropTypes.object,
+  columnDefs: PropTypes.array,
+  setColumnDefs: PropTypes.func,
+  rowData: PropTypes.array,
+  setRowData: PropTypes.func,
+  resultText: PropTypes.string,
+  setResultText: PropTypes.func,
+  resultTabValue: PropTypes.number,
+  setResultTabValue: PropTypes.func,
+  onRunAnalysis: PropTypes.func,
+  aiSuggestion: PropTypes.node,
 };
 
 export default AnalysisFlowLayout;

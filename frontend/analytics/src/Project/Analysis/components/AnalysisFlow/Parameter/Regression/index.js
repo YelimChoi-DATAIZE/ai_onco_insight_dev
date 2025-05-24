@@ -1,19 +1,17 @@
 import {
-  GroupVariable,
-  Variance,
-  AdditionalStatistic,
-  Missing,
-  Assumption,
-  PostHocStatistics,
+  SelectVariable,
+  HypothesisTest,
+  Summary,
+  GoodnessOfFit,
+  ModelValidation,
   Run,
 } from './component';
 
-export const anova_node = {
-  GroupVariable,
-  Variance,
-  AdditionalStatistic,
-  Missing,
-  Assumption,
-  PostHocStatistics,
+export const regression_node = {
+  SelectVariable,
+  HypothesisTest,
+  Summary,
+  GoodnessOfFit,
+  ModelValidation,
   Run,
 };
